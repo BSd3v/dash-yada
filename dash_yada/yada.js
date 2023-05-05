@@ -22,6 +22,7 @@ async function playScript(data) {
             await delay(500)
         }
         if (target) {
+            target.focus();
             target.classList.toggle('highlighting')
             tBounds = target.getBoundingClientRect()
             yada.style.top = tBounds.top + tBounds.height/4+'px'
@@ -33,7 +34,11 @@ async function playScript(data) {
             }
             if (escaped) {break}
             if ('action' in data[y]) {
-                if (data[y]['action'] == 'click') {target.dispatchEvent(new Event("click"))}
+                if (data[y]['action'] == 'click') {target.dispatchEvent(new MouseEvent("click"))}
+                if (data[y]['action'] == 'dblclick') {target.dispatchEvent(new MouseEvent("dblclick"))}
+                if (data[y]['action'] == 'send_keys') {
+                    target.send_keys(data[y]['action_args'])
+                }
             }
             target.classList.toggle('highlighting')
         }
