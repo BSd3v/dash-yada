@@ -6,6 +6,20 @@ function escaping() {
 
 function nextItem() {paused = false}
 
+const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
+function simulateMouseClick(element){
+  mouseClickEvents.forEach(mouseEventType =>
+    element.dispatchEvent(
+      new MouseEvent(mouseEventType, {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+          buttons: 1
+      })
+    )
+  );
+}
+
 async function playScript(data) {
     yada = document.querySelector(".yada")
     yada_img = document.querySelector(".yada > img")
@@ -34,10 +48,18 @@ async function playScript(data) {
             }
             if (escaped) {break}
             if ('action' in data[y]) {
-                if (data[y]['action'] == 'click') {target.dispatchEvent(new MouseEvent("click"))}
-                if (data[y]['action'] == 'dblclick') {target.dispatchEvent(new MouseEvent("dblclick"))}
+                if (data[y]['action'] == 'click') {simulateMouseClick(target)}
+                if (data[y]['action'] == 'dblclick') {
+                    simulateMouseClick(target)
+                    setTimeout(() => simulateMouseClick(target), 100)
+                }
                 if (data[y]['action'] == 'send_keys') {
-                    target.send_keys(data[y]['action_args'])
+                    // This will work by calling the native setter bypassing Reacts incorrect value change check
+                    Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')
+                      .set.call(target, data[y]['action_args']);
+
+                    // This will trigger a new render wor the component
+                    target.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
             target.classList.toggle('highlighting')
