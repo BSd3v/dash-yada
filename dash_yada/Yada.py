@@ -22,15 +22,16 @@ class Yada(html.Div):
 
     - sleepmessage_props (dict; optional):
         Props to display for the message when yada is not clicked and not playing a script.
+        {name (string; optional), greeting (string; optional)}
 
-    - activemessage_props (dict; optional):
-        Props to display for the message when yada is clicked and not playing a script.
+    - activemessage (string; optional):
+        String to display for the message when yada is clicked and not playing a script.
 
     - playscript_props (dict; optional):
-        Props to control the options for the play button to run the scripts.
+        Props to control the options for the play button to run the scripts. dbc.Button props.
 
     - yada_src (string; optional):
-        Location of the image that you want to display for yada.
+        Location src of the image that you want to display for yada.
 
     - scripts (dict; optional):
         Dictionary of keys to scripts:
@@ -84,7 +85,7 @@ class Yada(html.Div):
 
     ids = ids
     def __init__(
-            self, sleepmessage_props={}, activemessage_props={}, playscript_props={},
+            self, sleepmessage_props={}, activemessage='', playscript_props={},
             yada_src=None, scripts=None, yada_id=None
     ):
 
@@ -100,7 +101,6 @@ class Yada(html.Div):
 
         sleepmessage_props = sleepmessage_props.copy()
         playscript_props = playscript_props.copy()
-        activemessage_props = activemessage_props.copy()
         if scripts is None:
             scripts = addScripts()
         if sleepmessage_props:
@@ -116,11 +116,8 @@ class Yada(html.Div):
                 playscript_props['children'] = 'play selected'
         else:
             playscript_props['children'] = 'play selected'
-        if activemessage_props:
-            if not activemessage_props['message']:
-                activemessage_props['message'] = 'What would you like to do?'
-        else:
-            activemessage_props['message'] = 'What would you like to do?'
+        if activemessage == '':
+            activemessage = 'What would you like to do?'
 
         children = [
                 html.Div(html.Img(id=self.ids.dummy_div(yada_id), src=yada_src, className='sleeping'), className='yada'),
@@ -139,7 +136,7 @@ class Yada(html.Div):
                     id=self.ids.sleepmessage(yada_id)
                 ),
                 dbc.Popover(
-                    dbc.PopoverBody([activemessage_props['message'],
+                    dbc.PopoverBody([activemessage,
                                      dcc.Dropdown(id=self.ids.scriptChoices(yada_id)),
                                      dbc.Button(**playscript_props, id=self.ids.playScript(yada_id))]),
                     target=self.ids.dummy_div(yada_id),
