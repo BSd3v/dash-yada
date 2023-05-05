@@ -25,17 +25,18 @@ _js_dist = [
         'external_url': f'{_unpkg}yada.js',
         'namespace': package_name,
     },
-    {
-        'relative_package_path': 'tech-support.png',
-        'external_url': f'{_unpkg}tech-support.png',
-        'namespace': package_name,
-    }
+
 ]
 
 _css_dist = [
     {
         'relative_package_path': 'yada.css',
         'external_url': f'{_unpkg}yada.css',
+        'namespace': package_name,
+    },
+    {
+        'relative_package_path': 'tech-support.png',
+        'external_url': f'{_unpkg}tech-support.png',
         'namespace': package_name,
     }
 ]
