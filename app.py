@@ -2,6 +2,7 @@ import dash
 from dash_yada import Yada
 from dash import html, Dash, dcc, Input, Output
 import dash_bootstrap_components as dbc
+import dash_ag_grid as dag
 
 app = Dash(__name__, use_pages=True, pages_folder='', external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -9,18 +10,19 @@ dash.register_page('home', path='/', layout=html.Div('rawr'))
 
 app.layout = html.Div([
     Yada(yada_id='test',
-         sleepmessage_props={'name':'yada', 'greeting':'''
+         sleep_message_props={'greeting':[dcc.Markdown('''
          _rawr!_  
           check out:  
           * 1  
           * 2  
           [markdown](#)
-          '''},
-         activemessage="testing",
-         playscript_props={'color':'warning', 'children': 'play'},
-         scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},
-                              {'target': '#test_click', 'convo':'rawr',
-                               'action': 'click'}]}),
+          ''')]},
+         active_message="testing",
+         play_script_props={'color':'warning', 'children': 'play'},
+         # scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},
+         #                      {'target': '#test_click', 'convo':'rawr',
+         #                       'action': 'click'}]}
+         ),
     dcc.Input(id='testing_type'),
     dbc.Button(id='test_click', children='testing click'),
     dbc.Modal('test', id='modal'),
@@ -44,4 +46,4 @@ def typing(v):
     return v
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

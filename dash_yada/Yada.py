@@ -66,6 +66,11 @@ class Yada(html.Div):
             "subcomponent": "active_message",
             "yada_id": yada_id,
         }
+        active_body = lambda yada_id: {
+            "component": "yada",
+            "subcomponent": "active_body",
+            "yada_id": yada_id,
+        }
         scripts = lambda yada_id: {
             "component": "yada",
             "subcomponent": "scripts",
@@ -164,13 +169,18 @@ class Yada(html.Div):
             dbc.Popover(
                 dbc.PopoverBody(
                     [
-                        html.Div(active_message),
-                        dcc.Dropdown(id=self.ids.script_choices(yada_id), style={"minWidth":350}),
+                        html.Div(children=[
+                        html.Div(active_message, style={"minWidth": 350}),
+                        dcc.Dropdown(id=self.ids.script_choices(yada_id)),
                         dbc.Button(
                             **play_script_props, id=self.ids.play_script(yada_id)
                         ),
+                        ], className='data_message'
+                        ),
+                        html.Div('Sorry, there are no scripts loaded', className='no_message')
                     ],
-                    className="d-none" if scripts == {} else "",
+                    className='data' if scripts != {} else 'no_data',
+                    id=self.ids.active_body(yada_id)
                 ),
                 target=self.ids.dummy_div(yada_id),
                 trigger="legacy",
@@ -182,7 +192,10 @@ class Yada(html.Div):
 
     clientside_callback(
         """
-        async function (n, o) {
+        async function (n, s, o) {
+            if (s) {return false}
+            trig = JSON.parse(window.dash_clientside.callback_context.triggered[0].prop_id.split('.')[0])
+            if (trig.subcomponent === 'active_message') {return window.dash_clientside.no_update}
             if (document.querySelector('.yada > img').classList.contains('sleeping')) {
                 return !o
             }
@@ -191,16 +204,21 @@ class Yada(html.Div):
         """,
         Output(ids.sleep_message(MATCH), "is_open"),
         Input(ids.dummy_div(MATCH), "n_clicks"),
+        Input(ids.active_message(MATCH), "is_open"),
         State(ids.script_choices(MATCH), "is_open"),
         prevent_initial_call=True,
     )
 
     clientside_callback(
         """function (i, g) {
-            if (document.querySelector(".yada").getAttribute("convo")) {
-                return document.querySelector(".yada").getAttribute("convo")
+            if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
+                if (document.querySelector(".yada").getAttribute("convo")) {
+                    return document.querySelector(".yada").getAttribute("convo")
+                }
+                return ''
             }
             return g
+            
         }""",
         Output(ids.convo(MATCH), "children"),
         Input(ids.sleep_message(MATCH), "is_open"),
@@ -214,6 +232,9 @@ class Yada(html.Div):
             if (!document.querySelector('.yada > img').classList.contains('sleeping')) {
                 return ['hidden', window.dash_clientside.no_update,  window.dash_clientside.no_update]
             }
+            if (!d) {
+                return ['', [], null]
+            }
             return ['', Object.keys(d), Object.keys(d)[0]]
         }
         """,
@@ -223,6 +244,25 @@ class Yada(html.Div):
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.scripts(MATCH), "data"),
         prevent_initial_call=True,
+    )
+
+    clientside_callback(
+        """
+            function (s, d) {
+                if (s) {
+                    if (d) {
+                        return 'no_data'
+                    } else {
+                        return 'data'
+                    }
+                }
+                return window.dash_clientside.no_update
+            }
+        """,
+        Output(ids.active_body(MATCH), "className"),
+        Input(ids.active_message(MATCH), "is_open"),
+        State(ids.scripts(MATCH), "data"),
+        prevent_initial_call=True
     )
 
     clientside_callback(

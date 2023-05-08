@@ -20,7 +20,17 @@
 
 .highlighting {
     box-shadow: 0px 0px 15px yellow;
+    filter: brightness(0.8)
 }
+
+.data > .no_message, .no_data > .data_message {
+    display: none;
+}
+
+.no_data > .no_message, .data > .data_message {
+    display: initial;
+}
+
 
 .hidden {
     display: none;
@@ -28,6 +38,7 @@
 
 input.highlighting {
     border: 5px yellow;
+
 }
 
 button.hightlighting {
