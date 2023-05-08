@@ -20,7 +20,7 @@ function simulateMouseClick(element){
   );
 }
 
-async function playScript(data) {
+async function play_script(data) {
     yada = document.querySelector(".yada")
     yada_img = document.querySelector(".yada > img")
     yada.style.top = '0px'
