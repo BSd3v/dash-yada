@@ -37,7 +37,7 @@ class Yada(html.Div):
     - yada_src (string; optional):
         Location src of the image that you want to display for yada.
 
-    - scripts (list of dicts; optional):
+    - scripts (dict of list of dicts; optional):
         Dictionary of keys to scripts:
             - each key will have an array of a directory:
             {target (string; required), convo (string; required), action (string; optional),
