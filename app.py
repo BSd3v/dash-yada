@@ -19,9 +19,9 @@ app.layout = html.Div([
           ''')]},
          active_message="testing",
          play_script_props={'color':'warning', 'children': 'play'},
-         # scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},
-         #                      {'target': '#test_click', 'convo':'rawr',
-         #                       'action': 'click'}]}
+         scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},
+                              {'target': '#test_click', 'convo':'rawr',
+                               'action': 'click'}]}
          ),
     dcc.Input(id='testing_type'),
     dbc.Button(id='test_click', children='testing click'),

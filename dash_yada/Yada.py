@@ -250,10 +250,10 @@ class Yada(html.Div):
         """
             function (s, d) {
                 if (s) {
-                    if (d) {
-                        return 'no_data'
-                    } else {
+                    if (Object.keys(d).length > 0) {
                         return 'data'
+                    } else {
+                        return 'no_data'
                     }
                 }
                 return window.dash_clientside.no_update
