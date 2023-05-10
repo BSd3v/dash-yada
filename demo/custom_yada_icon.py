@@ -12,12 +12,13 @@ yada = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b2
 
 yada = Yada(
     yada_id="my_yada",
-    yada_src=yada
+    yada_src=yada,
+    yada_class='testing'
 )
 
 app.layout = dbc.Container(
     [
-       html.Div(html.Div(yada), style={"width":30, "height":40}),
+       yada,
        # dbc.Row(dbc.Col(yada, width=1), justify="end"),
     ],
     fluid=True

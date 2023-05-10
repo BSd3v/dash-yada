@@ -86,6 +86,11 @@ class Yada(html.Div):
             "subcomponent": "dummy_div",
             "yada_id": yada_id,
         }
+        sleepy_div = lambda yada_id: {
+            "component": "yada",
+            "subcomponent": "sleepy_div",
+            "yada_id": yada_id,
+        }
         play_script = lambda yada_id: {
             "component": "yada",
             "subcomponent": "play_script",
@@ -97,11 +102,12 @@ class Yada(html.Div):
     def __init__(
         self,
         sleep_message_props={},
-        active_message="",
+        active_message='',
         play_script_props={},
         yada_src=None,
         scripts=None,
         yada_id=None,
+        yada_class='',
     ):
 
         if yada_id is None:
@@ -127,19 +133,24 @@ class Yada(html.Div):
             sleep_message_props["name"] = "yada"
             sleep_message_props["greeting"] = default_greet
         if play_script_props:
-            if not play_script_props["children"]:
+            if sleep_message_props.get("children") is None:
                 play_script_props["children"] = "play selected"
         else:
             play_script_props["children"] = "play selected"
-        if active_message == "":
+        if active_message == '':
             active_message = "What would you like to do?"
 
         children = [
             html.Div(
+                children=[
+                    html.Div(id=self.ids.sleepy_div(yada_id),
+                                   style={'height': '100%', 'width': '100%', 'position': 'absolute'},
+                             className='sleepy_yada'),
                 html.Img(
-                    id=self.ids.dummy_div(yada_id), src=yada_src, className="sleeping"
-                ),
-                className="yada",
+                    src=yada_src, className="sleeping"
+                )],
+                id=self.ids.dummy_div(yada_id),
+                className=("yada " + yada_class).strip(),
             ),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
@@ -154,7 +165,7 @@ class Yada(html.Div):
                         else ""
                     ),
                     dbc.PopoverBody(
-                        html.Div(
+                        dcc.Markdown(
                             sleep_message_props["greeting"], id=self.ids.convo(yada_id)
                         ),
                         className="btn-info yada-info",
@@ -170,8 +181,8 @@ class Yada(html.Div):
                 dbc.PopoverBody(
                     [
                         html.Div(children=[
-                        html.Div(active_message, style={"minWidth": 350}),
-                        dcc.Dropdown(id=self.ids.script_choices(yada_id)),
+                        html.Div(active_message),
+                        dcc.Dropdown(id=self.ids.script_choices(yada_id), style={"minWidth": 350}),
                         dbc.Button(
                             **play_script_props, id=self.ids.play_script(yada_id)
                         ),
@@ -182,7 +193,8 @@ class Yada(html.Div):
                     className='data' if scripts != {} else 'no_data',
                     id=self.ids.active_body(yada_id)
                 ),
-                target=self.ids.dummy_div(yada_id),
+                style={"minWidth": 100},
+                target=self.ids.sleepy_div(yada_id),
                 trigger="legacy",
                 id=self.ids.active_message(yada_id),
             ),

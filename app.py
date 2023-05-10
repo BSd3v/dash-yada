@@ -10,13 +10,13 @@ dash.register_page('home', path='/', layout=html.Div('rawr'))
 
 app.layout = html.Div([
     Yada(yada_id='test',
-         sleep_message_props={'greeting':[dcc.Markdown('''
+         sleep_message_props={'greeting':'''
          _rawr!_  
           check out:  
           * 1  
           * 2  
           [markdown](#)
-          ''')]},
+          '''},
          active_message="testing",
          play_script_props={'color':'warning', 'children': 'play'},
          scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},

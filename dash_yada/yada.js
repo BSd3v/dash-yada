@@ -23,9 +23,9 @@ function simulateMouseClick(element){
 async function play_script(data) {
     yada = document.querySelector(".yada")
     yada_img = document.querySelector(".yada > img")
-    yada.style.top = '0px'
-    yada.style.left = document.body.getBoundingClientRect().width - 30
-     - yada.getBoundingClientRect().width + 'px'
+    initialYada = yada.getBoundingClientRect()
+    yada.style.top = initialYada.top + 'px'
+    yada.style.left = initialYada.left + 'px'
     yada_img.classList.remove('sleeping')
     escaped = false
     document.addEventListener('keydown', escaping)
@@ -68,13 +68,22 @@ async function play_script(data) {
     document.removeEventListener('keydown', escaping)
     document.querySelectorAll('.highlighting').forEach((t) => t.classList.remove('highlighting'))
     yada.removeEventListener('click', nextItem)
+
+    // opens active_message
+    yada.querySelector('div').dispatchEvent(new Event('click'))
     yada.removeAttribute('convo')
-    yada.style.top = '0px'
-    yada.style.left = document.body.getBoundingClientRect().width - 30 - yada.getBoundingClientRect().width + 'px'
+    yada.style.top = initialYada.top + 'px'
+    yada.style.left = initialYada.left + 'px'
+    yada.style.height = initialYada.height + 'px'
     await delay(1000)
+
+    // closes active_message
+    yada.querySelector('div').dispatchEvent(new Event('click'))
+    yada_img.classList.add('sleeping')
+    await delay(1000)
+    yada.style.height = ''
     yada.style.top = ''
     yada.style.left = ''
-    yada_img.classList.add('sleeping')
 }
 
 function delay(ms) {

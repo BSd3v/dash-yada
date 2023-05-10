@@ -19,6 +19,7 @@ forumula = dcc.Markdown(
 
 yada = Yada(
     yada_id="my_yada",
+    yada_class='testing',
     active_message="testing",
     play_script_props={'color': 'warning', 'children': 'play'},
     scripts= {

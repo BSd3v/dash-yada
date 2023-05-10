@@ -11,6 +11,10 @@
     height: 100%;
 }
 
+.yada:not(:has(.sleeping)) .sleepy_yada {
+    display: none;
+}
+
 .yada:has(.sleeping) {
     right: 30px;
     top: 5px;
