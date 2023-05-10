@@ -14,7 +14,19 @@ function simulateMouseClick(element){
           view: window,
           bubbles: true,
           cancelable: true,
-          buttons: 1
+          buttons: 1,
+          target: element,
+      })
+    )
+  );
+  mouseClickEvents.forEach(mouseEventType =>
+    element.dispatchEvent(
+      new PointerEvent(mouseEventType, {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+          buttons: 1,
+          target: element,
       })
     )
   );
@@ -35,8 +47,13 @@ async function play_script(data) {
         if (!target) {
             await delay(500)
         }
+
         if (target) {
             target.focus();
+            try {
+                target.select();
+            } catch {
+            }
             target.classList.toggle('highlighting')
             tBounds = target.getBoundingClientRect()
             yada.style.top = tBounds.top + tBounds.height/4+'px'
@@ -48,6 +65,7 @@ async function play_script(data) {
             }
             if (escaped) {break}
             if ('action' in data[y]) {
+                target.focus();
                 if (data[y]['action'] == 'click') {simulateMouseClick(target)}
                 if (data[y]['action'] == 'dblclick') {
                     simulateMouseClick(target)
@@ -55,11 +73,15 @@ async function play_script(data) {
                 }
                 if (data[y]['action'] == 'send_keys') {
                     // This will work by calling the native setter bypassing Reacts incorrect value change check
+                    typing = document.querySelector(data[y].target);
                     Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')
                       .set.call(target, data[y]['action_args']);
 
-                    // This will trigger a new render wor the component
-                    target.dispatchEvent(new Event('change', { bubbles: true }));
+//                  This will trigger a new render with the component
+                    typing.focus();
+                    typing.dispatchEvent(new KeyboardEvent('change', { bubbles: true, keepValue: true}));
+                    typing.dispatchEvent(new KeyboardEvent('input', { bubbles: true, keepValue: true}));
+                    await delay(100)
                 }
             }
             target.classList.toggle('highlighting')

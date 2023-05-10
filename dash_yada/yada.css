@@ -23,8 +23,8 @@
 }
 
 .highlighting {
-    box-shadow: 0px 0px 15px yellow;
-    filter: brightness(0.8)
+    box-shadow: 0px 0px 15px yellow !important;
+    filter: brightness(0.8) !important;
 }
 
 .data > .no_message, .no_data > .data_message {

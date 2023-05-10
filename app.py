@@ -4,30 +4,59 @@ from dash import html, Dash, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 
-app = Dash(__name__, use_pages=True, pages_folder='', external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-dash.register_page('home', path='/', layout=html.Div('rawr'))
+columnDefs = [
+    {"headerName": "Row ID", "valueGetter": {"function": "params.node.id"}},
+    {"field": "make"},
+    {"field": "model"},
+    {"field": "price"},
+]
+
+rowData = [
+    {"make": "Toyota", "model": "Celica", "price": 35000},
+    {"make": "Ford", "model": "Mondeo", "price": 32000},
+    {"make": "Porsche", "model": "Boxster", "price": 72000},
+    {"make": "BMW", "model": "M50", "price": 60000},
+    {"make": "Aston Martin", "model": "DBX", "price": 190000},
+]
 
 app.layout = html.Div([
     Yada(yada_id='test',
          sleep_message_props={'greeting':'''
-         _rawr!_  
-          check out:  
-          * 1  
-          * 2  
+         _rawr!_  \r
+          check out:  \r
+          * 1  \r
+          * 2  \r
           [markdown](#)
           '''},
          active_message="testing",
          play_script_props={'color':'warning', 'children': 'play'},
-         scripts={'explore': [{'target': '#testing_type', 'convo':'testing', 'action': 'send_keys', 'action_args': 'test'},
-                              {'target': '#test_click', 'convo':'rawr',
-                               'action': 'click'}]}
+         scripts={'explore': [
+                {'target': '#testing_type', 'convo':'I can interact with input boxes',
+                               'action': 'send_keys', 'action_args': 'test'},
+                {'target': '#test_click', 'convo':'and click buttons', 'action': 'click'},
+                {'target': '#grid', "convo": "I can highlight entire elements"},
+                {'target': '#grid .ag-header-cell .ag-header-cell-label',
+                 "convo": "I can sort grids", "action": "click"},
+                {'target': '#grid .ag-header-row-column-filter .ag-header-cell:nth-child(2)'
+                           ' .ag-input-wrapper .ag-input-field-input',
+                 "convo": "I filter as well", "action": "send_keys", "action_args": "BMW"},
+             {'target': "#grid .ag-header-cell:nth-child(2)", "convo": 'See!  \rI just applied a filter to this column'}
+            ]}
          ),
     dcc.Input(id='testing_type'),
     dbc.Button(id='test_click', children='testing click'),
     dbc.Modal('test', id='modal'),
     html.Div(id='output'),
-    dash.page_container
+    dag.AgGrid(
+        columnDefs=columnDefs,
+        rowData=rowData,
+        columnSize="sizeToFit",
+        defaultColDef={"resizable": True, "sortable": True, "filter": True,
+                       "floatingFilter": True},
+        id="grid"
+    ),
 ])
 
 @app.callback(
