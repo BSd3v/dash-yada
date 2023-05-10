@@ -39,10 +39,13 @@ app.layout = html.Div([
                 {'target': '#grid', "convo": "I can highlight entire elements"},
                 {'target': '#grid .ag-header-cell .ag-header-cell-label',
                  "convo": "I can sort grids", "action": "click"},
+                {'target': '#grid .ag-header-cell:nth-child(3) .ag-header-cell-label',
+                 "convo": "I can multi-sort grids", "action": "click", "action_args": {"shiftKey": True}},
                 {'target': '#grid .ag-header-row-column-filter .ag-header-cell:nth-child(2)'
                            ' .ag-input-wrapper .ag-input-field-input',
                  "convo": "I filter as well", "action": "send_keys", "action_args": "BMW"},
-             {'target': "#grid .ag-header-cell:nth-child(2)", "convo": 'See!  \rI just applied a filter to this column'}
+             {'target': "#grid .ag-header-cell:nth-child(2)", "convo": 'See!  \rI just applied a filter to this column'},
+             {'target': "#testing", "convo": "I can even scroll"}
             ]}
          ),
     dcc.Input(id='testing_type'),
@@ -57,6 +60,7 @@ app.layout = html.Div([
                        "floatingFilter": True},
         id="grid"
     ),
+    html.Div(id="testing", style={"position":"absolute", "top":"101vh"}, children="testing")
 ])
 
 @app.callback(

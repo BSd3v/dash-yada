@@ -7,7 +7,7 @@ function escaping() {
 function nextItem() {paused = false}
 
 const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
-function simulateMouseClick(element){
+function simulateMouseClick(element, args){
   mouseClickEvents.forEach(mouseEventType =>
     element.dispatchEvent(
       new MouseEvent(mouseEventType, {
@@ -16,6 +16,7 @@ function simulateMouseClick(element){
           cancelable: true,
           buttons: 1,
           target: element,
+          ...args
       })
     )
   );
@@ -27,9 +28,20 @@ function simulateMouseClick(element){
           cancelable: true,
           buttons: 1,
           target: element,
+          ...args
       })
     )
   );
+}
+
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
 }
 
 async function play_script(data) {
@@ -48,6 +60,7 @@ async function play_script(data) {
             await delay(500)
         }
 
+
         if (target) {
             target.focus();
             try {
@@ -59,17 +72,21 @@ async function play_script(data) {
             yada.style.top = tBounds.top + tBounds.height/4+'px'
             yada.style.left = tBounds.left + tBounds.width/2.5 +'px'
             yada.setAttribute('convo', data[y].convo)
+            setTimeout(() => {if (!isInViewport(target)) {
+                window.scrollTo(tBounds.left, tBounds.top + yada.getBoundingClientRect().height + 15)
+            }}, 1000)
             paused = true
             while (paused) {
                 await delay(300)
             }
+
             if (escaped) {break}
             if ('action' in data[y]) {
                 target.focus();
-                if (data[y]['action'] == 'click') {simulateMouseClick(target)}
+                if (data[y]['action'] == 'click') {simulateMouseClick(target, data[y]['action_args'])}
                 if (data[y]['action'] == 'dblclick') {
-                    simulateMouseClick(target)
-                    setTimeout(() => simulateMouseClick(target), 100)
+                    simulateMouseClick(target, data[y]['action_args'])
+                    setTimeout(() => simulateMouseClick(target, data[y]['action_args']), 100)
                 }
                 if (data[y]['action'] == 'send_keys') {
                     // This will work by calling the native setter bypassing Reacts incorrect value change check
@@ -102,6 +119,7 @@ async function play_script(data) {
     // closes active_message
     yada.querySelector('div').dispatchEvent(new Event('click'))
     yada_img.classList.add('sleeping')
+    window.scrollTo(0,0)
     await delay(1000)
     yada.style.height = ''
     yada.style.top = ''
