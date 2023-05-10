@@ -74,31 +74,34 @@ async function play_script(data) {
             yada.setAttribute('convo', data[y].convo)
             setTimeout(() => {if (!isInViewport(target)) {
                 window.scrollTo(tBounds.left, tBounds.top + yada.getBoundingClientRect().height + 15)
-            }}, 1000)
-            paused = true
+            }}, 1100)
+            paused = true;
+            previous = false;
             while (paused) {
                 await delay(300)
             }
 
             if (escaped) {break}
-            if ('action' in data[y]) {
-                target.focus();
-                if (data[y]['action'] == 'click') {simulateMouseClick(target, data[y]['action_args'])}
-                if (data[y]['action'] == 'dblclick') {
-                    simulateMouseClick(target, data[y]['action_args'])
-                    setTimeout(() => simulateMouseClick(target, data[y]['action_args']), 100)
-                }
-                if (data[y]['action'] == 'send_keys') {
-                    // This will work by calling the native setter bypassing Reacts incorrect value change check
-                    typing = document.querySelector(data[y].target);
-                    Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')
-                      .set.call(target, data[y]['action_args']);
+            if (!previous) {
+                if ('action' in data[y]) {
+                    target.focus();
+                    if (data[y]['action'] == 'click') {simulateMouseClick(target, data[y]['action_args'])}
+                    if (data[y]['action'] == 'dblclick') {
+                        simulateMouseClick(target, data[y]['action_args'])
+                        setTimeout(() => simulateMouseClick(target, data[y]['action_args']), 100)
+                    }
+                    if (data[y]['action'] == 'send_keys') {
+                        // This will work by calling the native setter bypassing Reacts incorrect value change check
+                        typing = document.querySelector(data[y].target);
+                        Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')
+                          .set.call(target, data[y]['action_args']);
 
-//                  This will trigger a new render with the component
-                    typing.focus();
-                    typing.dispatchEvent(new KeyboardEvent('change', { bubbles: true, keepValue: true}));
-                    typing.dispatchEvent(new KeyboardEvent('input', { bubbles: true, keepValue: true}));
-                    await delay(100)
+    //                  This will trigger a new render with the component
+                        typing.focus();
+                        typing.dispatchEvent(new KeyboardEvent('change', { bubbles: true, keepValue: true}));
+                        typing.dispatchEvent(new KeyboardEvent('input', { bubbles: true, keepValue: true}));
+                        await delay(100)
+                    }
                 }
             }
             target.classList.toggle('highlighting')

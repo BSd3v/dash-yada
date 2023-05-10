@@ -15,6 +15,10 @@
     display: none;
 }
 
+body:has(.yada > img.sleeping) .yada-info button {
+    display: none;
+}
+
 .yada:has(.sleeping) {
     right: 30px;
     top: 5px;
