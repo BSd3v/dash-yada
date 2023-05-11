@@ -36,6 +36,7 @@ app.layout = html.Div([
                 {'target': '#testing_type', 'convo':'I can interact with input boxes',
                                'action': 'send_keys', 'action_args': 'test'},
                 {'target': '#test_click', 'convo':'and click buttons', 'action': 'click'},
+             {'target': '#modal', 'convo': 'I can go onto modals'},
                 {'target': '#grid', "convo": "I can highlight entire elements"},
                 {'target': '#grid .ag-header-cell .ag-header-cell-label',
                  "convo": "I can sort grids", "action": "click"},

@@ -59,7 +59,7 @@ async function play_script(data) {
         if (!target) {
             await delay(500)
         }
-
+        target = document.querySelector(data[y].target)
 
         if (target) {
             target.focus();
