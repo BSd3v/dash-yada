@@ -4,7 +4,7 @@ from dash import html, Dash, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import dash_ag_grid as dag
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME])
 
 columnDefs = [
     {"headerName": "Row ID", "valueGetter": {"function": "params.node.id"}},
@@ -46,7 +46,9 @@ app.layout = html.Div([
                  "convo": "I filter as well", "action": "send_keys", "action_args": "BMW"},
              {'target': "#grid .ag-header-cell:nth-child(2)", "convo": 'See!  \rI just applied a filter to this column'},
              {'target': "#testing", "convo": "I can even scroll"}
-            ]}
+            ]},
+         next_button_props={'size':'sm', 'class_name': 'fa-solid fa-arrow-right mb-2', 'children': ''},
+        prev_button_props={'size':'sm', 'class_name': 'fa-solid fa-arrow-left mb-2', 'children': ''}
          ),
     dcc.Input(id='testing_type'),
     dbc.Button(id='test_click', children='testing click'),

@@ -43,6 +43,12 @@ class Yada(html.Div):
             {target (string; required), convo (string; required), action (string; optional),
             action_args (string; optional)}
 
+    - next_button_props (dict; optional):
+        Props to control the options for the next button. dbc.Button props.
+
+    - prev_button_props (dict; optional):
+        Props to control the options for the previous button. dbc.Button props.
+
     """
 
     class ids:
@@ -108,6 +114,8 @@ class Yada(html.Div):
         scripts=None,
         yada_id=None,
         yada_class='',
+        prev_button_props={},
+        next_button_props={}
     ):
 
         if yada_id is None:
@@ -122,6 +130,8 @@ class Yada(html.Div):
 
         sleep_message_props = sleep_message_props.copy()
         play_script_props = play_script_props.copy()
+        prev_button_props = prev_button_props.copy()
+        next_button_props = next_button_props.copy()
         if scripts is None:
             scripts = addScripts()
         if sleep_message_props:
@@ -139,6 +149,26 @@ class Yada(html.Div):
             play_script_props["children"] = "play selected"
         if active_message == '':
             active_message = "What would you like to do?"
+            
+            
+        if next_button_props.get('children') is None:
+            next_button_props['children'] = 'next'
+        if next_button_props.get('class_name') is None:
+            next_button_props['class_name'] = 'next'
+        else:
+            next_button_props['class_name'] = 'next ' + next_button_props['class_name']
+        if next_button_props.get('style') is None:
+            next_button_props['style'] = {'float': 'right'}
+            
+        if prev_button_props.get('children') is None:
+            prev_button_props['children'] = 'previous'
+        if prev_button_props.get('class_name') is None:
+            prev_button_props['class_name'] = 'previous'
+        else:
+            prev_button_props['class_name'] = 'previous ' + prev_button_props['class_name']
+        if prev_button_props.get('style') is None:
+            prev_button_props['style'] = {'float': 'left'}
+        
 
         children = [
             html.Div(
@@ -168,8 +198,8 @@ class Yada(html.Div):
                             dcc.Markdown(
                                 sleep_message_props["greeting"], id=self.ids.convo(yada_id)
                             ),
-                            dbc.Button('previous', class_name="previous"),
-                            dbc.Button('next', class_name='next'),
+                            dbc.Button(**prev_button_props),
+                            dbc.Button(**next_button_props),
                         ],
                         className="btn-info yada-info",
                     ),
