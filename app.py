@@ -26,7 +26,8 @@ app.layout = html.Div([
     yada_test,
     dcc.Input(id='testing_type'),
     dbc.Button(id='test_click', children='testing click'),
-    dbc.Modal('test', id='modal'),
+    dbc.Modal([dbc.ModalHeader(dbc.ModalTitle("Header"), close_button=True),
+               'test'], id='modal'),
     html.Div(id='output'),
     dag.AgGrid(
         columnDefs=columnDefs,

@@ -152,7 +152,6 @@ async function play_script(data) {
     dash_yada.yada_img.classList.add('sleeping')
     dash_yada.yada.classList.add('sleeping')
     dash_yada.yada.removeAttribute('convo')
-    await delay(1)
     document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'))
     window.scrollTo(0,0)
     await delay(1000)
