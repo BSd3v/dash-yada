@@ -1,4 +1,4 @@
-.yada.testing:has(.sleeping) {
+.yada.testing.sleeping {
     left: 75px;
     top: auto;
     bottom: 5px;
