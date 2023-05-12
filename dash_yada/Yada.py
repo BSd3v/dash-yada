@@ -257,15 +257,15 @@ class Yada(html.Div):
         """function (i, g) {
             if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
                 if (document.querySelector(".yada").getAttribute("convo")) {
-                    if (window.y == 0) {
+                    if (window.dash_yada.y == 0) {
                         document.querySelector(".yada-info .previous").style.display = 'none'
                     } else {
                         document.querySelector(".yada-info .previous").style.display = 'initial'
                     }
                     document.querySelector(".yada-info .previous").addEventListener('click', 
-                    function() {window.y = window.y-2, window.previous = true, window.paused = false})
+                    function() {window.dash_yada.y = window.dash_yada.y-2, window.dash_yada.previous = true, window.dash_yada.paused = false})
                     document.querySelector(".yada-info .next").addEventListener('click', 
-                    function() {window.yada.dispatchEvent(new Event('click'))})
+                    function() {window.dash_yada.yada.dispatchEvent(new Event('click'))})
                     return [document.querySelector(".yada").getAttribute("convo"), {hide: 1000}]
                 }
                 return ['', {hide: 200}]

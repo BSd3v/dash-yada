@@ -1,10 +1,11 @@
+var dash_yada = window.dash_yada = window.dash_yada || {}
 function escaping() {
     if (event.key == 'Escape' || event.which == 27 || event.code == 'Escape') {
-        escaped = true
-        paused = false
+        dash_yada.escaped = true
+        dash_yada.paused = false
     }}
 
-function nextItem() {paused = false}
+function nextItem() {dash_yada.paused = false}
 
 const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
 function simulateMouseClick(element, args){
@@ -45,23 +46,23 @@ function isInViewport(element) {
 }
 
 async function play_script(data) {
-    yada = document.querySelector(".yada")
-    yada_img = document.querySelector(".yada > img")
-    initialYada = yada.getBoundingClientRect()
-    yada.style.top = initialYada.top + 'px'
-    yada.style.left = initialYada.left + 'px'
-    yada_img.classList.remove('sleeping')
-    escaped = false
+    dash_yada.yada = document.querySelector(".yada")
+    dash_yada.yada_img = document.querySelector(".yada > img")
+    dash_yada.initialYada = dash_yada.yada.getBoundingClientRect()
+    dash_yada.yada.style.top = dash_yada.initialYada.top + 'px'
+    dash_yada.yada.style.left = dash_yada.initialYada.left + 'px'
+    dash_yada.yada_img.classList.remove('sleeping')
+    dash_yada.escaped = false
     document.addEventListener('keydown', escaping)
-    yada.addEventListener('click', nextItem)
-    for (y=0; y<data.length; y++) {
-        target = document.querySelector(data[y].target)
-        if (!target) {
+    dash_yada.yada.addEventListener('click', nextItem)
+    for (dash_yada.y=0; dash_yada.y<data.length; dash_yada.y++) {
+        dash_yada.target = document.querySelector(data[dash_yada.y].target)
+        if (!dash_yada.target) {
             await delay(500)
         }
-        target = document.querySelector(data[y].target)
+        dash_yada.target = document.querySelector(data[dash_yada.y].target)
 
-        if (target) {
+        if (dash_yada.target) {
             if (document.querySelector('.yada-convo')) {
                 ReactDOM.render(
                     React.createElement(
@@ -71,91 +72,91 @@ async function play_script(data) {
                         document.querySelector('.yada-convo').getBoundingClientRect().top,
                         left:
                         document.querySelector('.yada-convo').getBoundingClientRect().left
-                        }}, data[y].convo
+                        }}, data[dash_yada.y].convo
                     ), document.querySelector('.yada-convo')
                 )
-                if (window.y == 0) {
+                if (dash_yada.y == 0) {
                     document.querySelector(".yada-info .previous").style.display = 'none'
                 } else {
                     document.querySelector(".yada-info .previous").style.display = 'initial'
                 }
             }
 
-            target.focus();
+            dash_yada.target.focus();
             try {
-                target.select();
+                dash_yada.target.select();
             } catch {
             }
-            target.classList.toggle('highlighting')
-            tBounds = target.getBoundingClientRect()
-            yada.style.top = tBounds.top + tBounds.height/4+'px'
-            yada.style.left = tBounds.left + tBounds.width/2.5 +'px'
-            yada.setAttribute('convo', data[y].convo)
-            setTimeout(() => {if (!isInViewport(target)) {
-                window.scrollTo(tBounds.left, tBounds.top + yada.getBoundingClientRect().height + 15)
+            dash_yada.target.classList.toggle('highlighting')
+            dash_yada.tBounds = dash_yada.target.getBoundingClientRect()
+            dash_yada.yada.style.top = dash_yada.tBounds.top + dash_yada.tBounds.height/4+'px'
+            dash_yada.yada.style.left = dash_yada.tBounds.left + dash_yada.tBounds.width/2.5 +'px'
+            dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo)
+            setTimeout(() => {if (!isInViewport(dash_yada.target)) {
+                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top + dash_yada.yada.getBoundingClientRect().height + 15)
             }}, 1100)
-            paused = true;
-            previous = false;
-            while (paused) {
+            dash_yada.paused = true;
+            dash_yada.previous = false;
+            while (dash_yada.paused) {
                 await delay(300)
             }
 
-            if (escaped) {break}
-            if (!previous) {
-                if ('action' in data[y]) {
-                    target.focus();
-                    if (data[y]['action'] == 'click') {simulateMouseClick(target, data[y]['action_args'])}
-                    if (data[y]['action'] == 'dblclick') {
-                        simulateMouseClick(target, data[y]['action_args'])
-                        setTimeout(() => simulateMouseClick(target, data[y]['action_args']), 100)
-                        target.dispatchEvent(new Event('dblclick', {bubbles: true, view: window}))
+            if (dash_yada.escaped) {break}
+            if (!dash_yada.previous) {
+                if ('action' in data[dash_yada.y]) {
+                    dash_yada.target.focus();
+                    if (data[dash_yada.y]['action'] == 'click') {simulateMouseClick(dash_yada.target, data[dash_yada.y]['action_args'])}
+                    if (data[dash_yada.y]['action'] == 'dblclick') {
+                        simulateMouseClick(dash_yada.target, data[dash_yada.y]['action_args'])
+                        setTimeout(() => simulateMouseClick(dash_yada.target, data[dash_yada.y]['action_args']), 100)
+                        dash_yada.target.dispatchEvent(new Event('dblclick', {bubbles: true, view: window}))
                     }
-                    if (data[y]['action'] == 'sendKeys') {
+                    if (data[dash_yada.y]['action'] == 'sendKeys') {
     //                  This will trigger a new render with the component
-                        target.focus();
-                        target.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, keepValue: true, view: window,
-                         ...data[y]['action_args']}));
-                        target.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, keepValue: true, view: window,
-                         ...data[y]['action_args']}));
+                        dash_yada.target.focus();
+                        dash_yada.target.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, keepValue: true, view: window,
+                         ...data[dash_yada.y]['action_args']}));
+                        dash_yada.target.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, keepValue: true, view: window,
+                         ...data[dash_yada.y]['action_args']}));
                         await delay(100)
                     }
-                    if (data[y]['action'] == 'type') {
+                    if (data[dash_yada.y]['action'] == 'type') {
                         // This will work by calling the native setter bypassing Reacts incorrect value change check
-                        typing = document.querySelector(data[y].target);
+                        dash_yada.typing = document.querySelector(data[dash_yada.y].target);
                         Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')
-                          .set.call(target, data[y]['action_args']);
+                          .set.call(dash_yada.target, data[dash_yada.y]['action_args']);
 
     //                  This will trigger a new render with the component
-                        typing.focus();
-                        typing.dispatchEvent(new KeyboardEvent('change', { bubbles: true, keepValue: true}));
-                        typing.dispatchEvent(new KeyboardEvent('input', { bubbles: true, keepValue: true}));
+                        dash_yada.typing.focus();
+                        dash_yada.typing.dispatchEvent(new KeyboardEvent('change', { bubbles: true, keepValue: true}));
+                        dash_yada.typing.dispatchEvent(new KeyboardEvent('input', { bubbles: true, keepValue: true}));
                         await delay(100)
                     }
                 }
             }
-            target.classList.toggle('highlighting')
+            dash_yada.target.classList.toggle('highlighting')
         }
     }
     document.removeEventListener('keydown', escaping)
     document.querySelectorAll('.highlighting').forEach((t) => t.classList.remove('highlighting'))
-    yada.removeEventListener('click', nextItem)
+    dash_yada.yada.removeEventListener('click', nextItem)
 
     // opens active_message
-    yada.querySelector('div').dispatchEvent(new Event('click'))
-    yada.removeAttribute('convo')
-    yada.style.top = initialYada.top + 'px'
-    yada.style.left = initialYada.left + 'px'
-    yada.style.height = initialYada.height + 'px'
+    dash_yada.yada.querySelector('div').dispatchEvent(new Event('click'))
+    dash_yada.yada.removeAttribute('convo')
+    dash_yada.yada.style.top = dash_yada.initialYada.top + 'px'
+    dash_yada.yada.style.left = dash_yada.initialYada.left + 'px'
+    dash_yada.yada.style.height = dash_yada.initialYada.height + 'px'
     await delay(1000)
 
     // closes active_message
-    yada.querySelector('div').dispatchEvent(new Event('click'))
-    yada_img.classList.add('sleeping')
+    dash_yada.yada.querySelector('div').dispatchEvent(new Event('click'))
+    dash_yada.yada_img.classList.add('sleeping')
     window.scrollTo(0,0)
     await delay(1000)
-    yada.style.height = ''
-    yada.style.top = ''
-    yada.style.left = ''
+    dash_yada.yada.style.height = ''
+    dash_yada.yada.style.top = ''
+    dash_yada.yada.style.left = ''
 }
 
 function delay(ms) {
