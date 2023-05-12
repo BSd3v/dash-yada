@@ -60,6 +60,14 @@ async function play_script(data) {
             await delay(500)
         }
         target = document.querySelector(data[y].target)
+        if (document.querySelector('.yada-convo')) {
+            ReactDOM.render(
+                React.createElement(
+                    window.dash_core_components.Markdown, {style: {width:
+                    document.querySelector('.yada-convo').getBoundingClientRect().width}}, data[y].convo
+                ), document.querySelector('.yada-convo')
+            )
+        }
 
         if (target) {
             target.focus();

@@ -196,7 +196,7 @@ class Yada(html.Div):
                     ),
                     dbc.PopoverBody([
                             dcc.Markdown(
-                                sleep_message_props["greeting"], id=self.ids.convo(yada_id)
+                                sleep_message_props["greeting"], id=self.ids.convo(yada_id), className="yada-convo"
                             ),
                             dbc.Button(**prev_button_props),
                             dbc.Button(**next_button_props),
@@ -259,9 +259,10 @@ class Yada(html.Div):
                     if (window.y == 0) {
                         document.querySelector(".yada-info .previous").style.display = 'none'
                     } else {
-                        document.querySelector(".yada-info .previous").style.display = 'intial'
+                        document.querySelector(".yada-info .previous").style.display = 'initial'
                     }
-                    document.querySelector(".yada-info .previous").addEventListener('click', function() {window.y = window.y-2, window.previous = true, window.paused = false})
+                    document.querySelector(".yada-info .previous").addEventListener('click', 
+                    function() {window.y = window.y-2, window.previous = true, window.paused = false})
                     document.querySelector(".yada-info .next").addEventListener('click', function() {window.paused = false})
                     return document.querySelector(".yada").getAttribute("convo")
                 }
