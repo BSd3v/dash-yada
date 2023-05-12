@@ -22,13 +22,13 @@ class Yada(html.Div):
     - yada_id (string; optional):
         The ID used to identify this component in Dash callbacks.
 
-    - sleep_message_props (dict; optional):
+    - hover_message_props (dict; optional):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
         If greeting or name is a component, it must be wrapped in [ ], for example {"greeting": [html.Div("Hi")]
         {name (string; optional), greeting (string; optional)}
 
-    - active_message (string; optional):
+    - script_message (dict; optional):
         String to display for the message when yada is clicked and not playing a script.
 
     - play_script_props (dict; optional):
@@ -107,8 +107,8 @@ class Yada(html.Div):
 
     def __init__(
         self,
-        sleep_message_props={},
-        active_message='',
+        hover_message_props={},
+        script_message={},
         play_script_props={},
         yada_src=None,
         scripts=None,
@@ -128,27 +128,36 @@ class Yada(html.Div):
         But you can call me, Y.A.D.A!
         """
 
-        sleep_message_props = sleep_message_props.copy()
+        hover_message_props = hover_message_props.copy()
         play_script_props = play_script_props.copy()
         prev_button_props = prev_button_props.copy()
         next_button_props = next_button_props.copy()
         if scripts is None:
             scripts = addScripts()
-        if sleep_message_props:
-            if sleep_message_props.get("name") is None:
-                sleep_message_props["name"] = "yada"
-            if sleep_message_props.get("greeting") is None:
-                sleep_message_props["greeting"] = default_greet
+        if hover_message_props:
+            if hover_message_props.get("name") is None:
+                hover_message_props["name"] = "yada"
+            if hover_message_props.get("greeting") is None:
+                hover_message_props["greeting"] = default_greet
+            if hover_message_props.get("style") is None:
+                hover_message_props['style'] = {}
         else:
-            sleep_message_props["name"] = "yada"
-            sleep_message_props["greeting"] = default_greet
+            hover_message_props["name"] = "yada"
+            hover_message_props["greeting"] = default_greet
+            hover_message_props['style'] = {}
         if play_script_props:
-            if sleep_message_props.get("children") is None:
+            if play_script_props.get("children") is None:
                 play_script_props["children"] = "play selected"
         else:
             play_script_props["children"] = "play selected"
-        if active_message == '':
-            active_message = "What would you like to do?"
+        if script_message:
+            if script_message.get("message") is None:
+                script_message['message'] = "What would you like to do?"
+            if script_message.get("style") is None:
+                script_message['style'] = {}
+        else:
+            script_message['message'] = "What would you like to do?"
+            script_message['style'] = {}
             
             
         if next_button_props.get('children') is None:
@@ -185,22 +194,21 @@ class Yada(html.Div):
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
                 id=self.ids.sleep_message_greeting(yada_id),
-                data=sleep_message_props["greeting"],
+                data=hover_message_props["greeting"],
             ),
             dbc.Popover(
                 [
                     dbc.PopoverHeader(
-                        sleep_message_props["name"]
-                        if sleep_message_props["name"]
-                        else ""
+                        hover_message_props["name"]
                     ),
                     dbc.PopoverBody([
                             dcc.Markdown(
-                                sleep_message_props["greeting"], id=self.ids.convo(yada_id), className="yada-convo"
+                                hover_message_props["greeting"], id=self.ids.convo(yada_id), className="yada-convo"
                             ),
                             dbc.Button(**prev_button_props),
                             dbc.Button(**next_button_props),
                         ],
+                        style=hover_message_props['style'],
                         className="btn-info yada-info",
                     ),
                 ],
@@ -213,7 +221,7 @@ class Yada(html.Div):
                 dbc.PopoverBody(
                     [
                         html.Div(children=[
-                        html.Div(active_message),
+                        html.Div(script_message['message']),
                         dcc.Dropdown(id=self.ids.script_choices(yada_id), style={"minWidth": 350}),
                         dbc.Button(
                             **play_script_props, id=self.ids.play_script(yada_id)
@@ -223,7 +231,8 @@ class Yada(html.Div):
                         html.Div('Sorry, there are no scripts loaded', className='no_message')
                     ],
                     className='data' if scripts != {} else 'no_data',
-                    id=self.ids.active_body(yada_id)
+                    id=self.ids.active_body(yada_id),
+                    style=script_message['style'],
                 ),
                 style={"minWidth": 100},
                 target=self.ids.sleepy_div(yada_id),
