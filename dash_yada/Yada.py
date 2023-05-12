@@ -180,7 +180,7 @@ class Yada(html.Div):
                     src=yada_src, className="sleeping"
                 )],
                 id=self.ids.dummy_div(yada_id),
-                className=("yada " + yada_class).strip(),
+                className=("yada sleeping" + yada_class).strip(),
             ),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
@@ -227,6 +227,7 @@ class Yada(html.Div):
                 ),
                 style={"minWidth": 100},
                 target=self.ids.sleepy_div(yada_id),
+                delay={'show': 5},
                 trigger="legacy",
                 id=self.ids.active_message(yada_id),
             ),
@@ -256,6 +257,7 @@ class Yada(html.Div):
     clientside_callback(
         """function (i, g) {
             if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
+                document.querySelector(".yada-info .next").style.display = 'initial'
                 if (document.querySelector(".yada").getAttribute("convo")) {
                     if (window.dash_yada.y == 0) {
                         document.querySelector(".yada-info .previous").style.display = 'none'
@@ -268,9 +270,13 @@ class Yada(html.Div):
                     function() {window.dash_yada.yada.dispatchEvent(new Event('click'))})
                     return [document.querySelector(".yada").getAttribute("convo"), {hide: 1000}]
                 }
-                return ['', {hide: 200}]
+                return ['', {hide: 50}]
             }
-            return [g, {hide: 200}]
+            try {
+                document.querySelector(".yada-info .previous").style.display = 'none'
+                document.querySelector(".yada-info .next").style.display = 'none'
+            } catch {}
+            return [g, {hide: 50}]
             
         }""",
         Output(ids.convo(MATCH), "children"),

@@ -36,6 +36,7 @@ function simulateMouseClick(element, args){
 }
 
 function isInViewport(element) {
+    if (!element) {return;}
     const rect = element.getBoundingClientRect();
     return (
         rect.top >= 0 &&
@@ -52,6 +53,7 @@ async function play_script(data) {
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px'
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px'
     dash_yada.yada_img.classList.remove('sleeping')
+    dash_yada.yada.classList.remove('sleeping')
     dash_yada.escaped = false
     document.addEventListener('keydown', escaping)
     dash_yada.yada.addEventListener('click', nextItem)
@@ -141,17 +143,17 @@ async function play_script(data) {
     document.querySelectorAll('.highlighting').forEach((t) => t.classList.remove('highlighting'))
     dash_yada.yada.removeEventListener('click', nextItem)
 
-    // opens active_message
-    dash_yada.yada.querySelector('div').dispatchEvent(new Event('click'))
-    dash_yada.yada.removeAttribute('convo')
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'))
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px'
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px'
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px'
     await delay(1000)
 
-    // closes active_message
-    dash_yada.yada.querySelector('div').dispatchEvent(new Event('click'))
     dash_yada.yada_img.classList.add('sleeping')
+    dash_yada.yada.classList.add('sleeping')
+    dash_yada.yada.removeAttribute('convo')
+    await delay(1)
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'))
     window.scrollTo(0,0)
     await delay(1000)
     dash_yada.yada.style.height = ''

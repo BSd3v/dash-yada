@@ -11,15 +11,15 @@
     height: 100%;
 }
 
-.yada:not(:has(.sleeping)) .sleepy_yada {
+.yada:not(.sleeping) .sleepy_yada {
     display: none;
 }
 
-body:has(.yada > img.sleeping) .yada-info button {
+.yada-info button {
     display: none;
 }
 
-.yada:has(.sleeping) {
+.yada.sleeping {
     right: 30px;
     top: 5px;
     height: 50px;
