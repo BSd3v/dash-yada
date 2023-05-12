@@ -113,11 +113,10 @@ class Yada(html.Div):
         yada_src=None,
         scripts=None,
         yada_id=None,
-        yada_class='',
+        yada_class="",
         prev_button_props={},
-        next_button_props={}
+        next_button_props={},
     ):
-
         if yada_id is None:
             yada_id = str(uuid.uuid4())
         if yada_src is None:
@@ -140,11 +139,11 @@ class Yada(html.Div):
             if hover_message_props.get("greeting") is None:
                 hover_message_props["greeting"] = default_greet
             if hover_message_props.get("style") is None:
-                hover_message_props['style'] = {}
+                hover_message_props["style"] = {}
         else:
             hover_message_props["name"] = "yada"
             hover_message_props["greeting"] = default_greet
-            hover_message_props['style'] = {}
+            hover_message_props["style"] = {}
         if play_script_props:
             if play_script_props.get("children") is None:
                 play_script_props["children"] = "play selected"
@@ -152,42 +151,47 @@ class Yada(html.Div):
             play_script_props["children"] = "play selected"
         if script_message:
             if script_message.get("message") is None:
-                script_message['message'] = "What would you like to do?"
+                script_message["message"] = "What would you like to do?"
             if script_message.get("style") is None:
-                script_message['style'] = {}
+                script_message["style"] = {}
         else:
-            script_message['message'] = "What would you like to do?"
-            script_message['style'] = {}
-            
-            
-        if next_button_props.get('children') is None:
-            next_button_props['children'] = 'next'
-        if next_button_props.get('class_name') is None:
-            next_button_props['class_name'] = 'next'
+            script_message["message"] = "What would you like to do?"
+            script_message["style"] = {}
+
+        if next_button_props.get("children") is None:
+            next_button_props["children"] = "next"
+        if next_button_props.get("class_name") is None:
+            next_button_props["class_name"] = "next"
         else:
-            next_button_props['class_name'] = 'next ' + next_button_props['class_name']
-        if next_button_props.get('style') is None:
-            next_button_props['style'] = {'float': 'right'}
-            
-        if prev_button_props.get('children') is None:
-            prev_button_props['children'] = 'previous'
-        if prev_button_props.get('class_name') is None:
-            prev_button_props['class_name'] = 'previous'
+            next_button_props["class_name"] = "next " + next_button_props["class_name"]
+        if next_button_props.get("style") is None:
+            next_button_props["style"] = {"float": "right"}
+
+        if prev_button_props.get("children") is None:
+            prev_button_props["children"] = "previous"
+        if prev_button_props.get("class_name") is None:
+            prev_button_props["class_name"] = "previous"
         else:
-            prev_button_props['class_name'] = 'previous ' + prev_button_props['class_name']
-        if prev_button_props.get('style') is None:
-            prev_button_props['style'] = {'float': 'left'}
-        
+            prev_button_props["class_name"] = (
+                "previous " + prev_button_props["class_name"]
+            )
+        if prev_button_props.get("style") is None:
+            prev_button_props["style"] = {"float": "left"}
 
         children = [
             html.Div(
                 children=[
-                    html.Div(id=self.ids.sleepy_div(yada_id),
-                                   style={'height': '100%', 'width': '100%', 'position': 'absolute'},
-                             className='sleepy_yada'),
-                html.Img(
-                    src=yada_src, className="sleeping"
-                )],
+                    html.Div(
+                        id=self.ids.sleepy_div(yada_id),
+                        style={
+                            "height": "100%",
+                            "width": "100%",
+                            "position": "absolute",
+                        },
+                        className="sleepy_yada",
+                    ),
+                    html.Img(src=yada_src, className="sleeping"),
+                ],
                 id=self.ids.dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
             ),
@@ -198,21 +202,22 @@ class Yada(html.Div):
             ),
             dbc.Popover(
                 [
-                    dbc.PopoverHeader(
-                        hover_message_props["name"]
-                    ),
-                    dbc.PopoverBody([
+                    dbc.PopoverHeader(hover_message_props["name"]),
+                    dbc.PopoverBody(
+                        [
                             dcc.Markdown(
-                                hover_message_props["greeting"], id=self.ids.convo(yada_id), className="yada-convo"
+                                hover_message_props["greeting"],
+                                id=self.ids.convo(yada_id),
+                                className="yada-convo",
                             ),
                             dbc.Button(**prev_button_props),
                             dbc.Button(**next_button_props),
                         ],
-                        style=hover_message_props['style'],
+                        style=hover_message_props["style"],
                         className="btn-info yada-info",
                     ),
                 ],
-                style={'zIndex':9999},
+                style={"zIndex": 9999},
                 target=self.ids.dummy_div(yada_id),
                 trigger="hover",
                 id=self.ids.sleep_message(yada_id),
@@ -220,23 +225,31 @@ class Yada(html.Div):
             dbc.Popover(
                 dbc.PopoverBody(
                     [
-                        html.Div(children=[
-                        html.Div(script_message['message']),
-                        dcc.Dropdown(id=self.ids.script_choices(yada_id), style={"minWidth": 350}),
-                        dbc.Button(
-                            **play_script_props, id=self.ids.play_script(yada_id)
+                        html.Div(
+                            children=[
+                                html.Div(script_message["message"]),
+                                dcc.Dropdown(
+                                    id=self.ids.script_choices(yada_id),
+                                    style={"minWidth": 350},
+                                ),
+                                dbc.Button(
+                                    **play_script_props,
+                                    id=self.ids.play_script(yada_id)
+                                ),
+                            ],
+                            className="data_message",
                         ),
-                        ], className='data_message'
+                        html.Div(
+                            "Sorry, there are no scripts loaded", className="no_message"
                         ),
-                        html.Div('Sorry, there are no scripts loaded', className='no_message')
                     ],
-                    className='data' if scripts != {} else 'no_data',
+                    className="data" if scripts != {} else "no_data",
                     id=self.ids.active_body(yada_id),
-                    style=script_message['style'],
+                    style=script_message["style"],
                 ),
                 style={"minWidth": 100},
                 target=self.ids.sleepy_div(yada_id),
-                delay={'show': 5},
+                delay={"show": 5},
                 trigger="legacy",
                 id=self.ids.active_message(yada_id),
             ),
@@ -331,7 +344,7 @@ class Yada(html.Div):
         Output(ids.active_body(MATCH), "className"),
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.scripts(MATCH), "data"),
-        prevent_initial_call=True
+        prevent_initial_call=True,
     )
 
     clientside_callback(

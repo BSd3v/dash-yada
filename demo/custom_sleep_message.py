@@ -7,10 +7,12 @@ from dash_yada import Yada
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-formula_intro = dcc.Markdown("""
+formula_intro = dcc.Markdown(
+    """
 The Poisson distribution describes the probability of obtaining k successes during a given time interval.  
 If a random variable X follows a Poisson distribution, then the probability that X = k successes can be found by the following formula:
-""")
+"""
+)
 
 formula = dcc.Markdown(
     "$P\\left( x \\right) = \\frac{{e^{ - \\lambda } \\lambda ^x }}{{x!}}$",
@@ -20,17 +22,15 @@ formula = dcc.Markdown(
 
 yada = Yada(
     yada_id="my_yada",
-    sleep_message_props={'name':"", 'greeting': [html.Div([formula_intro, formula])]}
+    sleep_message_props={"name": "", "greeting": [html.Div([formula_intro, formula])]},
 )
 
 inputs = dbc.Card(
     [
         html.Label("lambda (must be >= 0): "),
-        dcc.Input(
-            id="lambda", placeholder="number", value=4
-        ),
+        dcc.Input(id="lambda", placeholder="number", value=4),
     ],
-    body=True
+    body=True,
 )
 
 
@@ -39,12 +39,12 @@ graph = dbc.Card(dbc.CardBody(dcc.Graph(id="histogram")))
 
 app.layout = dbc.Container(
     [
-        dbc.Row(dbc.Col(yada,width=1), justify="end"),
+        dbc.Row(dbc.Col(yada, width=1), justify="end"),
         html.H1("Poisson distribution graph", className="m-4"),
         inputs,
         graph,
     ],
-    fluid=True
+    fluid=True,
 )
 
 
@@ -63,5 +63,3 @@ def graph_histogram(lambda_value):
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-
-

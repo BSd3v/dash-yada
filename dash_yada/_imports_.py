@@ -1,5 +1,3 @@
 from .Yada import Yada
 
-__all__ = [
-    "Yada"
-]
+__all__ = ["Yada"]

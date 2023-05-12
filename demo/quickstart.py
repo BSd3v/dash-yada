@@ -9,21 +9,11 @@ yada = Yada(yada_id="my_yada")
 
 app.layout = dbc.Container(
     [
-        dbc.Row(dbc.Col(yada,width=1), justify="end"),
+        dbc.Row(dbc.Col(yada, width=1), justify="end"),
         html.H1("My Dashboard", className="m-4"),
     ],
-    fluid=True
+    fluid=True,
 )
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-
-
-
-
-
-
-
-
-
-
