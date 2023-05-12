@@ -204,6 +204,7 @@ class Yada(html.Div):
                         className="btn-info yada-info",
                     ),
                 ],
+                style={'zIndex':9999},
                 target=self.ids.dummy_div(yada_id),
                 trigger="hover",
                 id=self.ids.sleep_message(yada_id),
@@ -264,14 +265,15 @@ class Yada(html.Div):
                     document.querySelector(".yada-info .previous").addEventListener('click', 
                     function() {window.y = window.y-2, window.previous = true, window.paused = false})
                     document.querySelector(".yada-info .next").addEventListener('click', function() {window.paused = false})
-                    return document.querySelector(".yada").getAttribute("convo")
+                    return [document.querySelector(".yada").getAttribute("convo"), {hide: 1000}]
                 }
-                return ''
+                return ['', {hide: 200}]
             }
-            return g
+            return [g, {hide: 200}]
             
         }""",
         Output(ids.convo(MATCH), "children"),
+        Output(ids.sleep_message(MATCH), "delay"),
         Input(ids.sleep_message(MATCH), "is_open"),
         State(ids.sleep_message_greeting(MATCH), "data"),
         prevent_initial_call=True,

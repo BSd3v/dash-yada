@@ -60,16 +60,27 @@ async function play_script(data) {
             await delay(500)
         }
         target = document.querySelector(data[y].target)
-        if (document.querySelector('.yada-convo')) {
-            ReactDOM.render(
-                React.createElement(
-                    window.dash_core_components.Markdown, {style: {width:
-                    document.querySelector('.yada-convo').getBoundingClientRect().width}}, data[y].convo
-                ), document.querySelector('.yada-convo')
-            )
-        }
 
         if (target) {
+            if (document.querySelector('.yada-convo')) {
+                ReactDOM.render(
+                    React.createElement(
+                        window.dash_core_components.Markdown, {style: {width:
+                        document.querySelector('.yada-convo').getBoundingClientRect().width, position: "sticky",
+                        top:
+                        document.querySelector('.yada-convo').getBoundingClientRect().top,
+                        left:
+                        document.querySelector('.yada-convo').getBoundingClientRect().left
+                        }}, data[y].convo
+                    ), document.querySelector('.yada-convo')
+                )
+                if (window.y == 0) {
+                    document.querySelector(".yada-info .previous").style.display = 'none'
+                } else {
+                    document.querySelector(".yada-info .previous").style.display = 'initial'
+                }
+            }
+
             target.focus();
             try {
                 target.select();
