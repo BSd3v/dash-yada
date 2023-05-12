@@ -264,7 +264,8 @@ class Yada(html.Div):
                     }
                     document.querySelector(".yada-info .previous").addEventListener('click', 
                     function() {window.y = window.y-2, window.previous = true, window.paused = false})
-                    document.querySelector(".yada-info .next").addEventListener('click', function() {window.paused = false})
+                    document.querySelector(".yada-info .next").addEventListener('click', 
+                    function() {window.yada.dispatchEvent(new Event('click'))})
                     return [document.querySelector(".yada").getAttribute("convo"), {hide: 1000}]
                 }
                 return ['', {hide: 200}]
