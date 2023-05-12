@@ -180,7 +180,7 @@ class Yada(html.Div):
                     src=yada_src, className="sleeping"
                 )],
                 id=self.ids.dummy_div(yada_id),
-                className=("yada sleeping" + yada_class).strip(),
+                className=("yada sleeping " + yada_class).strip(),
             ),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
