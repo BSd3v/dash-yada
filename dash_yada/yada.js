@@ -36,7 +36,7 @@ function simulateMouseClick(element, args){
 }
 
 function isInViewport(element) {
-    if (!element) {return;}
+    if (!element) {return true;}
     const rect = element.getBoundingClientRect();
     return (
         rect.top >= 0 &&

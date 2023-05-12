@@ -23,14 +23,14 @@ rowData = [
 
 app.layout = html.Div([
     Yada(yada_id='test',
-         sleep_message_props={'greeting':'''
+         hover_message_props={'greeting':'''
          _rawr!_  \r
           check out:  \r
           * 1  \r
           * 2  \r
           [markdown](#)
           '''},
-         active_message="testing",
+         script_message={"message": "testing"},
          play_script_props={'color':'warning', 'children': 'play'},
          scripts={'explore': [
                 {'target': '#testing_type', 'convo':'I can interact with input boxes',
