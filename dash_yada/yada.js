@@ -20,18 +20,6 @@ function simulateMouseClick(element, args){
       })
     )
   );
-  mouseClickEvents.forEach(mouseEventType =>
-    element.dispatchEvent(
-      new PointerEvent(mouseEventType, {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-          buttons: 1,
-          target: element,
-          ...args
-      })
-    )
-  );
 }
 
 function isInViewport(element) {
@@ -89,8 +77,18 @@ async function play_script(data) {
                     if (data[y]['action'] == 'dblclick') {
                         simulateMouseClick(target, data[y]['action_args'])
                         setTimeout(() => simulateMouseClick(target, data[y]['action_args']), 100)
+                        target.dispatchEvent(new Event('dblclick', {bubbles: true, view: window}))
                     }
-                    if (data[y]['action'] == 'send_keys') {
+                    if (data[y]['action'] == 'sendKeys') {
+    //                  This will trigger a new render with the component
+                        target.focus();
+                        target.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, keepValue: true, view: window,
+                         ...data[y]['action_args']}));
+                        target.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, keepValue: true, view: window,
+                         ...data[y]['action_args']}));
+                        await delay(100)
+                    }
+                    if (data[y]['action'] == 'type') {
                         // This will work by calling the native setter bypassing Reacts incorrect value change check
                         typing = document.querySelector(data[y].target);
                         Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')

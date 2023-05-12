@@ -34,7 +34,7 @@ app.layout = html.Div([
          play_script_props={'color':'warning', 'children': 'play'},
          scripts={'explore': [
                 {'target': '#testing_type', 'convo':'I can interact with input boxes',
-                               'action': 'send_keys', 'action_args': 'test'},
+                               'action': 'type', 'action_args': 'test'},
                 {'target': '#test_click', 'convo':'and click buttons', 'action': 'click'},
              {'target': '#modal', 'convo': 'I can go onto modals'},
                 {'target': '#grid', "convo": "I can highlight entire elements"},
@@ -42,9 +42,16 @@ app.layout = html.Div([
                  "convo": "I can sort grids", "action": "click"},
                 {'target': '#grid .ag-header-cell:nth-child(3) .ag-header-cell-label',
                  "convo": "I can multi-sort grids", "action": "click", "action_args": {"shiftKey": True}},
+             {'target': '.ag-row[row-index="2"] .ag-cell[aria-colindex="3"]', "action": "dblclick", "convo": "I can edit a grid"},
+             {'target': '.ag-row[row-index="2"] .ag-cell[aria-colindex="3"] input',
+              "action": "type", "convo": "I can edit a grid", "action_args": "testing"},
+            {'target': '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]',
+              "action": "click", "convo": "See?"},
+            {'target': '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]', "convo": "I can even ctrl-z",
+             "action": "sendKeys", "action_args": {"ctrlKey": True, "key": "z", "code": "KeyZ", "keyCode": 90}},
                 {'target': '#grid .ag-header-row-column-filter .ag-header-cell:nth-child(2)'
                            ' .ag-input-wrapper .ag-input-field-input',
-                 "convo": "I filter as well", "action": "send_keys", "action_args": "BMW"},
+                 "convo": "I filter as well", "action": "type", "action_args": "BMW"},
              {'target': "#grid .ag-header-cell:nth-child(2)", "convo": 'See!  \rI just applied a filter to this column'},
              {'target': "#testing", "convo": "I can even scroll"}
             ]},
@@ -60,7 +67,11 @@ app.layout = html.Div([
         rowData=rowData,
         columnSize="sizeToFit",
         defaultColDef={"resizable": True, "sortable": True, "filter": True,
-                       "floatingFilter": True},
+                       "floatingFilter": True, "editable": True},
+        dashGridOptions={
+            'undoRedoCellEditing': True,
+            'undoRedoCellEditingLimit': 20
+        },
         id="grid"
     ),
     html.Div(id="testing", style={"position":"absolute", "top":"101vh"}, children="testing")
