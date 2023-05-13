@@ -119,21 +119,22 @@ async function play_script(data) {
             }
             dash_yada.target.classList.toggle('highlighting');
             dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
+            if (!isInViewport(dash_yada.target)) {
+                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
+                await delay(100);
+                dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
+                setTimeout(() => {
+                    window.scrollTo(
+                        dash_yada.yada.getBoundingClientRect().left,
+                        dash_yada.yada.getBoundingClientRect().top
+                    );
+                }, 1100);
+            }
             dash_yada.yada.style.top =
                 dash_yada.tBounds.top + dash_yada.tBounds.height / 4 + 'px';
             dash_yada.yada.style.left =
                 dash_yada.tBounds.left + dash_yada.tBounds.width / 2.5 + 'px';
             dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
-            setTimeout(() => {
-                if (!isInViewport(dash_yada.target)) {
-                    window.scrollTo(
-                        dash_yada.tBounds.left,
-                        dash_yada.tBounds.top +
-                            dash_yada.yada.getBoundingClientRect().height +
-                            15
-                    );
-                }
-            }, 1100);
             dash_yada.paused = true;
             dash_yada.previous = false;
             while (dash_yada.paused) {
