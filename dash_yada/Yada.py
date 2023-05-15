@@ -363,20 +363,27 @@ class Yada(html.Div):
     clientside_callback(
         """
             function (p, s) {
-                if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
-                    if (document.querySelector(".yada").getAttribute("convo")) {
-                        return [true, s, document.querySelector(".yada").getAttribute("convo")]
-                    }
-                }
-                return [true, s, '']
+                return [true, s]
             }
         """,
         Output(ids.steps_canvas(MATCH), "is_open"),
         Output(ids.steps_canvas(MATCH), "title"),
-        Output(ids.convo(MATCH), "children"),
         Input(ids.play_script(MATCH), "n_clicks"),
         State(ids.script_choices(MATCH), "value"),
         prevent_initial_call=True,
+    )
+
+    clientside_callback(
+        """function (s) {
+                if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
+                    if (document.querySelector(".yada").getAttribute("convo")) {
+                        return document.querySelector(".yada").getAttribute("convo")
+                    }
+                }
+                return window.dash_clientside.no_update
+    }""",
+        Output(ids.convo(MATCH), "children"),
+        Input(ids.steps_canvas(MATCH), "is_open"),
     )
 
     clientside_callback(
