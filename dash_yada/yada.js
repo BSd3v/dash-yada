@@ -84,8 +84,7 @@ async function play_script(data) {
                 window.ReactDOM.render(
                     window.React.createElement(
                         window.dash_core_components.Markdown,
-                        {
-                        },
+                        {},
                         data[dash_yada.y].convo
                     ),
                     document.querySelector('.yada-convo')
@@ -101,7 +100,7 @@ async function play_script(data) {
             dash_yada.target.classList.toggle('highlighting');
             dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
             if (!isInViewport(dash_yada.target)) {
-//                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
+                //                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
                 await delay(100);
                 dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
                 setTimeout(() => {
@@ -113,44 +112,60 @@ async function play_script(data) {
             }
 
             dash_yada.yada.style.top =
-                dash_yada.tBounds.top + dash_yada.tBounds.height / 4 + window.scrollY + 'px';
+                dash_yada.tBounds.top +
+                dash_yada.tBounds.height / 4 +
+                window.scrollY +
+                'px';
             dash_yada.yada.style.left =
-                dash_yada.tBounds.left + dash_yada.tBounds.width / 2.5 + window.scrollX + 'px';
+                dash_yada.tBounds.left +
+                dash_yada.tBounds.width / 2.5 +
+                window.scrollX +
+                'px';
             dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
             if (dash_yada.y > 0) {
-                dash_yada.offcanvas = document.querySelector(".yada-info")
+                dash_yada.offcanvas = document.querySelector('.yada-info');
                 if (!dash_yada.offcanvas) {
-                    simulateMouseClick(document.querySelector(".yada_canvas_button_open"))
+                    simulateMouseClick(
+                        document.querySelector('.yada_canvas_button_open')
+                    );
                     while (!dash_yada.offcanvas) {
-                        await delay(300)
-                        dash_yada.offcanvas = document.querySelector(".yada-info")
+                        await delay(300);
+                        dash_yada.offcanvas =
+                            document.querySelector('.yada-info');
                     }
                 }
             }
             try {
-            if ((document.querySelector(".yada-info").getBoundingClientRect().top + window.scrollY) < parseFloat(window.dash_yada.yada.style.top)) {
-                if (window.dash_yada.placement !== "top") {
-                    window.dash_yada.placement = "top"
-                    dash_yada.offcanvas.classList.add("offcanvas-top")
-                    dash_yada.offcanvas.classList.remove("offcanvas-bottom")
+                if (
+                    document.querySelector('.yada-info').getBoundingClientRect()
+                        .top +
+                        window.scrollY <
+                    parseFloat(window.dash_yada.yada.style.top)
+                ) {
+                    if (window.dash_yada.placement !== 'top') {
+                        window.dash_yada.placement = 'top';
+                        dash_yada.offcanvas.classList.add('offcanvas-top');
+                        dash_yada.offcanvas.classList.remove(
+                            'offcanvas-bottom'
+                        );
+                    }
+                } else {
+                    if (window.dash_yada.placement !== 'bottom') {
+                        window.dash_yada.placement = 'bottom';
+                        dash_yada.offcanvas.classList.remove('offcanvas-top');
+                        dash_yada.offcanvas.classList.add('offcanvas-bottom');
+                    }
                 }
-            } else {
-                if (window.dash_yada.placement !== "bottom") {
-                    window.dash_yada.placement = "bottom"
-                    dash_yada.offcanvas.classList.remove("offcanvas-top")
-                    dash_yada.offcanvas.classList.add("offcanvas-bottom")
-                }
-            }
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
 
             dash_yada.paused = true;
             dash_yada.previous = false;
             if (dash_yada.y !== 0) {
-                document.querySelector(".yada-info .previous").style.display = "initial"
+                document.querySelector('.yada-info .previous').style.display =
+                    'initial';
             }
-
 
             while (dash_yada.paused) {
                 await delay(300);
@@ -241,15 +256,16 @@ async function play_script(data) {
         }
     }
 
-    document.querySelector(".yada-info .next").style.display = "none"
-    document.querySelector(".yada-info .previous").style.display = ""
+    if (document.querySelector('.yada-info')) {
+        document.querySelector('.yada-info .next').style.display = 'none';
+        document.querySelector('.yada-info .previous').style.display = '';
+    }
 
     if (!dash_yada.escaped) {
         window.ReactDOM.render(
             window.React.createElement(
                 window.dash_core_components.Markdown,
-                {
-                },
+                {},
                 dash_yada.close_statement
             ),
             document.querySelector('.yada-convo')
