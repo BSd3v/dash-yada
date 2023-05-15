@@ -417,7 +417,7 @@ class Yada(html.Div):
                         return [document.querySelector(".yada").getAttribute("convo"), true, window.dash_yada.placement]
                     }
                 }
-                return [window.dash_clientside.no_update, true, window.dash_yada.placement]
+                return [window.dash_clientside.no_update, true, window.dash_clientside.no_update]
         }""",
         Output(ids.convo(MATCH), "children", allow_duplicate=True),
         Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),
