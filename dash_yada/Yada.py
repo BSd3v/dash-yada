@@ -102,6 +102,16 @@ class Yada(html.Div):
             "subcomponent": "play_script",
             "yada_id": yada_id,
         }
+        steps_canvas = lambda yada_id: {
+            "component": "yada",
+            "subcomponent": "steps_canvas",
+            "yada_id": yada_id,
+        }
+        canvas_button_placement = lambda yada_id: {
+            "component": "yada",
+            "subcomponent": "canvas_button_placement",
+            "yada_id": yada_id,
+        }
 
     ids = ids
 
@@ -195,6 +205,8 @@ class Yada(html.Div):
                 id=self.ids.dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
             ),
+            html.Button(id=self.ids.canvas_button_placement(yada_id), style={'display': 'none'},
+                        className="yada-canvas-placement-button", n_clicks=0),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
                 id=self.ids.sleep_message_greeting(yada_id),
@@ -207,18 +219,13 @@ class Yada(html.Div):
                         [
                             dcc.Markdown(
                                 hover_message_props["greeting"],
-                                id=self.ids.convo(yada_id),
-                                className="yada-convo",
                             ),
-                            dbc.Button(**prev_button_props),
-                            dbc.Button(**next_button_props),
                         ],
                         style=hover_message_props["style"],
-                        className="btn-info yada-info",
                     ),
                 ],
                 style={"zIndex": 9999},
-                target=self.ids.dummy_div(yada_id),
+                target=self.ids.sleepy_div(yada_id),
                 trigger="hover",
                 id=self.ids.sleep_message(yada_id),
             ),
@@ -253,6 +260,20 @@ class Yada(html.Div):
                 trigger="legacy",
                 id=self.ids.active_message(yada_id),
             ),
+            dbc.Offcanvas(
+                children=[
+                dcc.Markdown(
+                    id=self.ids.convo(yada_id),
+                    className="yada-convo",
+                    ),
+                    dbc.Button(**prev_button_props),
+                    dbc.Button(**next_button_props),
+                ],
+                className="yada-info",
+                id=self.ids.steps_canvas(yada_id),
+                backdrop=False,
+                placement="bottom"
+            )
         ]
 
         super(Yada, self).__init__(children)
@@ -273,38 +294,6 @@ class Yada(html.Div):
         Input(ids.dummy_div(MATCH), "n_clicks"),
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.script_choices(MATCH), "is_open"),
-        prevent_initial_call=True,
-    )
-
-    clientside_callback(
-        """function (i, g) {
-            if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
-                document.querySelector(".yada-info .next").style.display = 'initial'
-                if (document.querySelector(".yada").getAttribute("convo")) {
-                    if (window.dash_yada.y == 0) {
-                        document.querySelector(".yada-info .previous").style.display = 'none'
-                    } else {
-                        document.querySelector(".yada-info .previous").style.display = 'initial'
-                    }
-                    document.querySelector(".yada-info .previous").addEventListener('click', 
-                    function() {window.dash_yada.y = window.dash_yada.y-2, window.dash_yada.previous = true, window.dash_yada.paused = false})
-                    document.querySelector(".yada-info .next").addEventListener('click', 
-                    function() {window.dash_yada.yada.dispatchEvent(new Event('click'))})
-                    return [document.querySelector(".yada").getAttribute("convo"), {hide: 1000}]
-                }
-                return ['', {hide: 50}]
-            }
-            try {
-                document.querySelector(".yada-info .previous").style.display = 'none'
-                document.querySelector(".yada-info .next").style.display = 'none'
-            } catch {}
-            return [g, {hide: 50}]
-            
-        }""",
-        Output(ids.convo(MATCH), "children"),
-        Output(ids.sleep_message(MATCH), "delay"),
-        Input(ids.sleep_message(MATCH), "is_open"),
-        State(ids.sleep_message_greeting(MATCH), "data"),
         prevent_initial_call=True,
     )
 
@@ -352,17 +341,79 @@ class Yada(html.Div):
         function(c, v, d) {
             if (c) {
                 if (v != '') {
+                    window.dash_yada.close_statement = `Great job finishing ` + v + `  \rBe sure to come check out more tutorials!`
                     play_script(d[v])
-                    return [false, '']
+                    return false
                 }
             }
-            return [true, '']
+            return true
         }
         """,
         Output(ids.active_message(MATCH), "is_open"),
-        Output(ids.convo(MATCH), "children", allow_duplicate=True),
         Input(ids.play_script(MATCH), "n_clicks"),
         State(ids.script_choices(MATCH), "value"),
         State(ids.scripts(MATCH), "data"),
         prevent_initial_call=True,
+    )
+    clientside_callback(
+        """
+            function (p, s) {
+                if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
+                    if (document.querySelector(".yada").getAttribute("convo")) {
+                        return [true, s, document.querySelector(".yada").getAttribute("convo")]
+                    }
+                }
+                return [true, s, '']
+            }
+        """,
+        Output(ids.steps_canvas(MATCH), 'is_open'),
+        Output(ids.steps_canvas(MATCH), 'title'),
+        Output(ids.convo(MATCH), 'children'),
+        Input(ids.play_script(MATCH), "n_clicks"),
+        State(ids.script_choices(MATCH), "value"),
+        prevent_initial_call=True,
+    )
+
+    clientside_callback(
+    """function (o) {
+        if (o) {
+            document.querySelector(".yada-info .previous").addEventListener('click',
+                                                                            function()
+            {window.dash_yada.y = window.dash_yada.y - 2, window.dash_yada.previous = true, window.dash_yada.paused = false})
+            
+            if (!window.dash_yada.y) {
+                document.querySelector(".yada-info .next").style.display = "initial"
+                if ((document.querySelector(".yada-info").getBoundingClientRect().top + window.scrollY) < parseFloat(window.dash_yada.yada.getBoundingClientRect().top + window.scrollY)) {
+                    if (window.dash_yada.placement !== "top") {
+                        window.dash_yada.placement = "top"
+                    }
+                } else {
+                    if (window.dash_yada.placement !== "bottom") {
+                        window.dash_yada.placement = "bottom"
+                    }
+                }
+            }
+            document.querySelector(".yada-info .next").addEventListener('click',
+                                                                        function()
+            {window.dash_yada.yada.dispatchEvent(new
+            Event('click'))})
+            return [window.dash_clientside.no_update, window.dash_yada.placement]
+        }
+        return [window.dash_clientside.no_update, window.dash_clientside.no_update]
+    }""",
+        Output(ids.steps_canvas(MATCH), 'id'),
+        Output(ids.steps_canvas(MATCH), 'placement'),
+        Input(ids.steps_canvas(MATCH), 'is_open'),
+    )
+
+    clientside_callback(
+        """function (n) {
+            if (window.dash_yada.placement) {
+                return window.dash_yada.placement
+            }
+            return window.dash_clientside.no_update
+        }""",
+        Output(ids.steps_canvas(MATCH), 'placement', allow_duplicate=True),
+        Input(ids.canvas_button_placement(MATCH), 'n_clicks'),
+        prevent_initial_call=True
     )

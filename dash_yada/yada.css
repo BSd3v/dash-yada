@@ -15,8 +15,20 @@
     display: none;
 }
 
-.yada-info button {
+.yada-info {
+    z-index: 10001;
+}
+
+.yada-info .previous, .yada-info .next {
     display: none;
+}
+
+.yada-info.offcanvas-start,  .yada-info.offcanvas-end {
+    width: 200px;
+}
+
+.yada-info.offcanvas-top,  .yada-info.offcanvas-bottom {
+    height: 200px;
 }
 
 .yada.sleeping {

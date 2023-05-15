@@ -70,6 +70,7 @@ async function play_script(data) {
     dash_yada.escaped = false;
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
+
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
         dash_yada.target = document.querySelector(data[dash_yada.y].target);
         if (!dash_yada.target) {
@@ -83,32 +84,11 @@ async function play_script(data) {
                     window.React.createElement(
                         window.dash_core_components.Markdown,
                         {
-                            style: {
-                                width: document
-                                    .querySelector('.yada-convo')
-                                    .getBoundingClientRect().width,
-                                position: 'sticky',
-                                top: document
-                                    .querySelector('.yada-convo')
-                                    .getBoundingClientRect().top,
-                                left: document
-                                    .querySelector('.yada-convo')
-                                    .getBoundingClientRect().left,
-                            },
                         },
                         data[dash_yada.y].convo
                     ),
                     document.querySelector('.yada-convo')
                 );
-                if (dash_yada.y === 0) {
-                    document.querySelector(
-                        '.yada-info .previous'
-                    ).style.display = 'none';
-                } else {
-                    document.querySelector(
-                        '.yada-info .previous'
-                    ).style.display = 'initial';
-                }
             }
 
             try {
@@ -120,7 +100,7 @@ async function play_script(data) {
             dash_yada.target.classList.toggle('highlighting');
             dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
             if (!isInViewport(dash_yada.target)) {
-            //  window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
+//                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
                 await delay(100);
                 dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
                 setTimeout(() => {
@@ -130,13 +110,33 @@ async function play_script(data) {
                     );
                 }, 1100);
             }
+
             dash_yada.yada.style.top =
-                dash_yada.tBounds.top + dash_yada.tBounds.height / 4 +  window.scrollY + 'px';
+                dash_yada.tBounds.top + dash_yada.tBounds.height / 4 + window.scrollY + 'px';
             dash_yada.yada.style.left =
-                dash_yada.tBounds.left + dash_yada.tBounds.width / 2.5 + window.scrollX +'px';
+                dash_yada.tBounds.left + dash_yada.tBounds.width / 2.5 + window.scrollX + 'px';
             dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
+            try {
+            if ((document.querySelector(".yada-info").getBoundingClientRect().top + window.scrollY) < parseFloat(window.dash_yada.yada.style.top)) {
+                if (window.dash_yada.placement !== "top") {
+                    window.dash_yada.placement = "top"
+                    simulateMouseClick(document.querySelector('.yada-canvas-placement-button'))
+                }
+            } else {
+                if (window.dash_yada.placement !== "bottom") {
+                    window.dash_yada.placement = "bottom"
+                    simulateMouseClick(document.querySelector('.yada-canvas-placement-button'))
+                }
+            }
+            } catch {}
+
             dash_yada.paused = true;
             dash_yada.previous = false;
+            if (dash_yada.y !== 0) {
+                document.querySelector(".yada-info .previous").style.display = "initial"
+            }
+
+
             while (dash_yada.paused) {
                 await delay(300);
             }
@@ -225,22 +225,37 @@ async function play_script(data) {
             dash_yada.target.classList.toggle('highlighting');
         }
     }
+
+    document.querySelector(".yada-info .next").style.display = "none"
+    document.querySelector(".yada-info .previous").style.display = ""
+
+    if (!dash_yada.escaped) {
+        window.ReactDOM.render(
+            window.React.createElement(
+                window.dash_core_components.Markdown,
+                {
+                },
+                dash_yada.close_statement
+            ),
+            document.querySelector('.yada-convo')
+        );
+    }
+
     document.removeEventListener('keydown', escaping);
     document
         .querySelectorAll('.highlighting')
         .forEach((t) => t.classList.remove('highlighting'));
     dash_yada.yada.removeEventListener('click', nextItem);
 
-    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px';
     await delay(1000);
 
+
     dash_yada.yada_img.classList.add('sleeping');
     dash_yada.yada.classList.add('sleeping');
     dash_yada.yada.removeAttribute('convo');
-    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     window.scrollTo(0, 0);
     await delay(1000);
     dash_yada.yada.style.height = '';
