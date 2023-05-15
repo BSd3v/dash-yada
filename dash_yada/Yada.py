@@ -395,15 +395,6 @@ class Yada(html.Div):
             
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
-                if ((document.querySelector(".yada-info").getBoundingClientRect().top + window.scrollY) < parseFloat(window.dash_yada.yada.getBoundingClientRect().top + window.scrollY)) {
-                    if (window.dash_yada.placement !== "top") {
-                        window.dash_yada.placement = "top"
-                    }
-                } else {
-                    if (window.dash_yada.placement !== "bottom") {
-                        window.dash_yada.placement = "bottom"
-                    }
-                }
             } else if (window.dash_yada.y < window.dash_yada.script_length) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             }
@@ -411,12 +402,11 @@ class Yada(html.Div):
                                                                         function()
             {window.dash_yada.yada.dispatchEvent(new
             Event('click'))})
-            return [window.dash_clientside.no_update, window.dash_yada.placement]
+
         }
-        return [window.dash_clientside.no_update, window.dash_clientside.no_update]
+        return window.dash_clientside.no_update
     }""",
         Output(ids.steps_canvas(MATCH), "id"),
-        Output(ids.steps_canvas(MATCH), "placement"),
         Input(ids.steps_canvas(MATCH), "is_open"),
     )
 
