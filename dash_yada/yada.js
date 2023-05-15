@@ -72,7 +72,10 @@ async function play_script(data) {
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
 
+    dash_yada.reopen = false
+
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
+
         dash_yada.target = document.querySelector(data[dash_yada.y].target);
         if (!dash_yada.target) {
             await delay(500);
@@ -81,14 +84,9 @@ async function play_script(data) {
 
         if (dash_yada.target) {
             if (document.querySelector('.yada-convo')) {
-                window.ReactDOM.render(
-                    window.React.createElement(
-                        window.dash_core_components.Markdown,
-                        {},
-                        data[dash_yada.y].convo
-                    ),
-                    document.querySelector('.yada-convo')
-                );
+                simulateMouseClick(
+                        document.querySelector('.yada_canvas_button_open')
+                    );
             }
 
             try {
@@ -122,7 +120,7 @@ async function play_script(data) {
                 window.scrollX +
                 'px';
             dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
-            if (dash_yada.y > 0) {
+            if (dash_yada.y > 0 || dash_yada.reopen) {
                 dash_yada.offcanvas = document.querySelector('.yada-info');
                 if (!dash_yada.offcanvas) {
                     simulateMouseClick(
@@ -136,6 +134,7 @@ async function play_script(data) {
                 }
             }
             try {
+                if (dash_yada.y !== dash_yada.last) {
                 if (
                     document.querySelector('.yada-info').getBoundingClientRect()
                         .top +
@@ -158,6 +157,8 @@ async function play_script(data) {
                         dash_yada.offcanvas.classList.add('offcanvas-bottom');
                     }
                 }
+                    dash_yada.last = dash_yada.y
+                }
             } catch (err) {
                 console.log(err);
             }
@@ -169,12 +170,17 @@ async function play_script(data) {
                     'initial';
             }
 
+            dash_yada.reopen = true
             while (dash_yada.paused) {
                 await delay(300);
             }
 
             if (dash_yada.escaped) {
                 break;
+            }
+            if (!document.querySelector('.yada-info')) {
+                dash_yada.previous = true;
+                dash_yada.y--
             }
             if (!dash_yada.previous) {
                 if ('action' in data[dash_yada.y]) {
@@ -263,7 +269,7 @@ async function play_script(data) {
         document.querySelector('.yada-info .previous').style.display = '';
     }
 
-    if (!dash_yada.escaped) {
+    if (!dash_yada.escaped && document.querySelector('.yada-convo')) {
         window.ReactDOM.render(
             window.React.createElement(
                 window.dash_core_components.Markdown,

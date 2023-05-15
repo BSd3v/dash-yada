@@ -381,7 +381,7 @@ class Yada(html.Div):
                     }
                 }
                 return window.dash_clientside.no_update
-    }""",
+        }""",
         Output(ids.convo(MATCH), "children"),
         Input(ids.steps_canvas(MATCH), "is_open"),
     )
@@ -412,9 +412,16 @@ class Yada(html.Div):
 
     clientside_callback(
         """function (n) {
-            return true
+                if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
+                    if (document.querySelector(".yada").getAttribute("convo")) {
+                        return [document.querySelector(".yada").getAttribute("convo"), true, window.dash_yada.placement]
+                    }
+                }
+                return [window.dash_clientside.no_update, true, window.dash_yada.placement]
         }""",
+        Output(ids.convo(MATCH), "children", allow_duplicate=True),
         Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),
+        Output(ids.steps_canvas(MATCH),"placement"),
         Input(ids.canvas_button_open(MATCH), "n_clicks"),
         prevent_initial_call=True,
     )
