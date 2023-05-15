@@ -60,6 +60,7 @@ function isInViewport(element) {
 /* eslint-disable no-magic-numbers, no-unused-vars*/
 async function play_script(data) {
     /* eslint-enable no-unused-vars*/
+    dash_yada.script_length = data.length;
     dash_yada.yada = document.querySelector('.yada');
     dash_yada.yada_img = document.querySelector('.yada > img');
     dash_yada.initialYada = dash_yada.yada.getBoundingClientRect();
@@ -116,19 +117,33 @@ async function play_script(data) {
             dash_yada.yada.style.left =
                 dash_yada.tBounds.left + dash_yada.tBounds.width / 2.5 + window.scrollX + 'px';
             dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
+            if (dash_yada.y > 0) {
+                dash_yada.offcanvas = document.querySelector(".yada-info")
+                if (!dash_yada.offcanvas) {
+                    simulateMouseClick(document.querySelector(".yada_canvas_button_open"))
+                    while (!dash_yada.offcanvas) {
+                        await delay(300)
+                        dash_yada.offcanvas = document.querySelector(".yada-info")
+                    }
+                }
+            }
             try {
             if ((document.querySelector(".yada-info").getBoundingClientRect().top + window.scrollY) < parseFloat(window.dash_yada.yada.style.top)) {
                 if (window.dash_yada.placement !== "top") {
                     window.dash_yada.placement = "top"
-                    simulateMouseClick(document.querySelector('.yada-canvas-placement-button'))
+                    dash_yada.offcanvas.classList.add("offcanvas-top")
+                    dash_yada.offcanvas.classList.remove("offcanvas-bottom")
                 }
             } else {
                 if (window.dash_yada.placement !== "bottom") {
                     window.dash_yada.placement = "bottom"
-                    simulateMouseClick(document.querySelector('.yada-canvas-placement-button'))
+                    dash_yada.offcanvas.classList.remove("offcanvas-top")
+                    dash_yada.offcanvas.classList.add("offcanvas-bottom")
                 }
             }
-            } catch {}
+            } catch (err) {
+                console.log(err)
+            }
 
             dash_yada.paused = true;
             dash_yada.previous = false;
@@ -247,12 +262,13 @@ async function play_script(data) {
         .forEach((t) => t.classList.remove('highlighting'));
     dash_yada.yada.removeEventListener('click', nextItem);
 
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px';
     await delay(1000);
 
-
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     dash_yada.yada_img.classList.add('sleeping');
     dash_yada.yada.classList.add('sleeping');
     dash_yada.yada.removeAttribute('convo');
