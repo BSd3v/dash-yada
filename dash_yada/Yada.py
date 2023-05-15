@@ -414,7 +414,8 @@ class Yada(html.Div):
         """function (n) {
                 if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
                     if (document.querySelector(".yada").getAttribute("convo")) {
-                        return [document.querySelector(".yada").getAttribute("convo"), true, window.dash_yada.placement]
+                        return [document.querySelector(".yada").getAttribute("convo"), true, 
+                        window.dash_yada.placement || "bottom"]
                     }
                 }
                 return [window.dash_clientside.no_update, true, window.dash_clientside.no_update]
