@@ -157,6 +157,9 @@ async function play_script(data) {
                         dash_yada.offcanvas.classList.add('offcanvas-bottom');
                     }
                 }
+                    simulateMouseClick(
+                        document.querySelector('.yada_canvas_button_open')
+                    );
                     dash_yada.last = dash_yada.y
                 }
             } catch (err) {
