@@ -272,7 +272,8 @@ class Yada(html.Div):
                 className="yada-info",
                 id=self.ids.steps_canvas(yada_id),
                 backdrop=False,
-                placement="bottom"
+                placement="bottom",
+                scrollable=True
             )
         ]
 

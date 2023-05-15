@@ -247,12 +247,13 @@ async function play_script(data) {
         .forEach((t) => t.classList.remove('highlighting'));
     dash_yada.yada.removeEventListener('click', nextItem);
 
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px';
     await delay(1000);
 
-
+    document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
     dash_yada.yada_img.classList.add('sleeping');
     dash_yada.yada.classList.add('sleeping');
     dash_yada.yada.removeAttribute('convo');
