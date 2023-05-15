@@ -175,7 +175,7 @@ class Yada(html.Div):
         else:
             next_button_props["class_name"] = "next " + next_button_props["class_name"]
         if next_button_props.get("style") is None:
-            next_button_props["style"] = {"float": "right"}
+            next_button_props["style"] = {"right": "0px"}
 
         if prev_button_props.get("children") is None:
             prev_button_props["children"] = "previous"
@@ -186,7 +186,7 @@ class Yada(html.Div):
                 "previous " + prev_button_props["class_name"]
             )
         if prev_button_props.get("style") is None:
-            prev_button_props["style"] = {"float": "left"}
+            prev_button_props["style"] = {"left": "0px"}
 
         children = [
             html.Div(
@@ -266,12 +266,18 @@ class Yada(html.Div):
             ),
             dbc.Offcanvas(
                 children=[
+                    dbc.Row([
+                        dbc.Col(
+                    dbc.Button(**prev_button_props), width=1),
+                        dbc.Col(width=10),
+                        dbc.Col(
+                    dbc.Button(**next_button_props), width=1),
+                    ], style={'maxWidth': '100%'}),
                     dcc.Markdown(
                         id=self.ids.convo(yada_id),
                         className="yada-convo",
                     ),
-                    dbc.Button(**prev_button_props),
-                    dbc.Button(**next_button_props),
+
                 ],
                 className="yada-info",
                 id=self.ids.steps_canvas(yada_id),
