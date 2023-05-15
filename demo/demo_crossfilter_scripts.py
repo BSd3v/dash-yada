@@ -45,6 +45,16 @@ yada = Yada(
                 "action": "type",
                 "action_args": "",
             },
+            {
+                "target": "#gdpPercap",
+                "convo": "Testing lower"
+            },
+{
+                "target": "#quick-filter-input",
+                "convo": "Next, I'll clear the filter so you can see all the data again.",
+                "action": "type",
+                "action_args": "",
+            },
         ]
     },
 )
