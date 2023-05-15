@@ -107,9 +107,9 @@ class Yada(html.Div):
             "subcomponent": "steps_canvas",
             "yada_id": yada_id,
         }
-        canvas_button_placement = lambda yada_id: {
+        canvas_button_open = lambda yada_id: {
             "component": "yada",
-            "subcomponent": "canvas_button_placement",
+            "subcomponent": "canvas_button_open",
             "yada_id": yada_id,
         }
 
@@ -205,8 +205,8 @@ class Yada(html.Div):
                 id=self.ids.dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
             ),
-            html.Button(id=self.ids.canvas_button_placement(yada_id), style={'display': 'none'},
-                        className="yada-canvas-placement-button", n_clicks=0),
+            html.Button(id=self.ids.canvas_button_open(yada_id), n_clicks=0, className='yada_canvas_button_open',
+                        style={"display":"none"}),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
                 id=self.ids.sleep_message_greeting(yada_id),
@@ -393,6 +393,8 @@ class Yada(html.Div):
                         window.dash_yada.placement = "bottom"
                     }
                 }
+            } else if (window.dash_yada.y < window.dash_yada.script_length) {
+                document.querySelector(".yada-info .next").style.display = "initial"
             }
             document.querySelector(".yada-info .next").addEventListener('click',
                                                                         function()
@@ -409,12 +411,9 @@ class Yada(html.Div):
 
     clientside_callback(
         """function (n) {
-            if (window.dash_yada.placement) {
-                return window.dash_yada.placement
-            }
-            return window.dash_clientside.no_update
+            return true
         }""",
-        Output(ids.steps_canvas(MATCH), 'placement', allow_duplicate=True),
-        Input(ids.canvas_button_placement(MATCH), 'n_clicks'),
+        Output(ids.steps_canvas(MATCH), 'is_open', allow_duplicate=True),
+        Input(ids.canvas_button_open(MATCH), 'n_clicks'),
         prevent_initial_call=True
     )
