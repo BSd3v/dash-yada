@@ -140,18 +140,20 @@ async function play_script(data) {
                     document.querySelector('.yada-info').getBoundingClientRect()
                         .top +
                         window.scrollY <
-                    parseFloat(window.dash_yada.yada.style.top)
+                        parseFloat(window.dash_yada.yada.style.top) +
+                            dash_yada.yada.getBoundingClientRect().height &&
+                    dash_yada.placement === 'bottom'
                 ) {
-                    if (window.dash_yada.placement !== 'top') {
-                        window.dash_yada.placement = 'top';
+                    if (dash_yada.placement !== 'top') {
+                        dash_yada.placement = 'top';
                         dash_yada.offcanvas.classList.add('offcanvas-top');
                         dash_yada.offcanvas.classList.remove(
                             'offcanvas-bottom'
                         );
                     }
                 } else {
-                    if (window.dash_yada.placement !== 'bottom') {
-                        window.dash_yada.placement = 'bottom';
+                    if (dash_yada.placement !== 'bottom') {
+                        dash_yada.placement = 'bottom';
                         dash_yada.offcanvas.classList.remove('offcanvas-top');
                         dash_yada.offcanvas.classList.add('offcanvas-bottom');
                     }
