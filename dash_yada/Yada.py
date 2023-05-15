@@ -205,8 +205,12 @@ class Yada(html.Div):
                 id=self.ids.dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
             ),
-            html.Button(id=self.ids.canvas_button_open(yada_id), n_clicks=0, className='yada_canvas_button_open',
-                        style={"display":"none"}),
+            html.Button(
+                id=self.ids.canvas_button_open(yada_id),
+                n_clicks=0,
+                className="yada_canvas_button_open",
+                style={"display": "none"},
+            ),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
                 id=self.ids.sleep_message_greeting(yada_id),
@@ -262,9 +266,9 @@ class Yada(html.Div):
             ),
             dbc.Offcanvas(
                 children=[
-                dcc.Markdown(
-                    id=self.ids.convo(yada_id),
-                    className="yada-convo",
+                    dcc.Markdown(
+                        id=self.ids.convo(yada_id),
+                        className="yada-convo",
                     ),
                     dbc.Button(**prev_button_props),
                     dbc.Button(**next_button_props),
@@ -273,8 +277,8 @@ class Yada(html.Div):
                 id=self.ids.steps_canvas(yada_id),
                 backdrop=False,
                 placement="bottom",
-                scrollable=True
-            )
+                scrollable=True,
+            ),
         ]
 
         super(Yada, self).__init__(children)
@@ -367,16 +371,16 @@ class Yada(html.Div):
                 return [true, s, '']
             }
         """,
-        Output(ids.steps_canvas(MATCH), 'is_open'),
-        Output(ids.steps_canvas(MATCH), 'title'),
-        Output(ids.convo(MATCH), 'children'),
+        Output(ids.steps_canvas(MATCH), "is_open"),
+        Output(ids.steps_canvas(MATCH), "title"),
+        Output(ids.convo(MATCH), "children"),
         Input(ids.play_script(MATCH), "n_clicks"),
         State(ids.script_choices(MATCH), "value"),
         prevent_initial_call=True,
     )
 
     clientside_callback(
-    """function (o) {
+        """function (o) {
         if (o) {
             document.querySelector(".yada-info .previous").addEventListener('click',
                                                                             function()
@@ -404,16 +408,16 @@ class Yada(html.Div):
         }
         return [window.dash_clientside.no_update, window.dash_clientside.no_update]
     }""",
-        Output(ids.steps_canvas(MATCH), 'id'),
-        Output(ids.steps_canvas(MATCH), 'placement'),
-        Input(ids.steps_canvas(MATCH), 'is_open'),
+        Output(ids.steps_canvas(MATCH), "id"),
+        Output(ids.steps_canvas(MATCH), "placement"),
+        Input(ids.steps_canvas(MATCH), "is_open"),
     )
 
     clientside_callback(
         """function (n) {
             return true
         }""",
-        Output(ids.steps_canvas(MATCH), 'is_open', allow_duplicate=True),
-        Input(ids.canvas_button_open(MATCH), 'n_clicks'),
-        prevent_initial_call=True
+        Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),
+        Input(ids.canvas_button_open(MATCH), "n_clicks"),
+        prevent_initial_call=True,
     )
