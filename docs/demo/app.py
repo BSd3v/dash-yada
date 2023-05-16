@@ -3,14 +3,15 @@ from dash import Dash, dcc, html, Input, Output, State
 import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
-from demo_crossfilter_scripts import yada
+from yada_scripts import yada
 
 df = pd.read_csv(
     "https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv"
 )
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME])
-
+app = Dash(
+    __name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME]
+)
 
 
 columnDefs = [
@@ -41,32 +42,50 @@ columnDefs = [
 ]
 
 grid = dag.AgGrid(
-    id="grid-interactivity",
+    id="grid",
     columnDefs=columnDefs,
     rowData=df.to_dict("records"),
-    dashGridOptions={"rowSelection": "multiple"},
-    columnSize="sizeToFit",
-    defaultColDef={"resizable": True, "sortable": True, "filter": True},
+    dashGridOptions={
+        "rowSelection": "multiple",
+        "undoRedoCellEditing": True,
+        "undoRedoCellEditingLimit": 20,
+    },
+    columnSize="responsiveSizeToFit",
+    defaultColDef={
+        "resizable": True,
+        "sortable": True,
+        "filter": True,
+        "editable": True,
+        "minWidth": 120,
+    },
 )
 
-title = html.Div("Gap Minder Data Explorer", className="text-center p-3 mb-3 bg-primary text-white", id="title")
-
+title = html.Div(
+    "Gap Minder Data Explorer",
+    className="text-center p-3 mb-3 bg-primary text-white",
+    id="title",
+)
+alert = dbc.Alert(
+    "This is a demo of the dash-yada component. To start click on the helpdesk icon -->",
+    dismissable=True,
+    id="alert",
+)
 app.layout = dbc.Container(
     [
         yada,
+        alert,
         title,
         dcc.Input(id="quick-filter-input", placeholder="filter...", className="mb-2"),
-
         grid,
-        html.Div(id="grid-interactivity-container"),
+        html.Div(id="interactivity-container"),
     ]
 )
 
 
 @app.callback(
-    Output("grid-interactivity-container", "children"),
-    Input("grid-interactivity", "virtualRowData"),
-    Input("grid-interactivity", "selectedRows"),
+    Output("interactivity-container", "children"),
+    Input("grid", "virtualRowData"),
+    Input("grid", "selectedRows"),
 )
 def update_graphs(rows, selected):
     dff = df if rows is None else pd.DataFrame(rows)
@@ -89,14 +108,16 @@ def update_graphs(rows, selected):
             graphs.append(dcc.Graph(id=column, figure=fig))
     return graphs
 
+
 @app.callback(
-    Output("grid-interactivity", "dashGridOptions"),
+    Output("grid", "dashGridOptions"),
     Input("quick-filter-input", "value"),
-    State("grid-interactivity", "dashGridOptions")
+    State("grid", "dashGridOptions"),
 )
 def update_filter(filter_value, grid_options):
-    grid_options["quickFilterText"]= filter_value
+    grid_options["quickFilterText"] = filter_value
     return grid_options
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
