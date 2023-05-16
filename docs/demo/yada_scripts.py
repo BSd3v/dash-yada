@@ -12,8 +12,7 @@ intro_script = [
                 First, a few housekeeping notes:
                 - Control the pace of the demo with the 'prev' and 'next' buttons
                 - You can close this dialogue box to see the whole screen, then click on me to continue
-                - Press the escape key to exit  
-                
+                - Press the escape key to exit                  
                 When you're ready click the 'next' button.  I'll close the alert, then we'll begin.
                 """,
         "action": "click",
@@ -96,14 +95,7 @@ edit_script = [
     },
     {
         "target": '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]',
-        "convo": "To undo a change type ctrl-z.  Now I'll undo the change we made to the population",
-        "action": "sendKeys",
-        "action_args": {
-            "ctrlKey": True,
-            "key": "z",
-            "code": "KeyZ",
-            "keyCode": 90,
-        },
+        "convo": "To undo a change type ctrl-z.  If you are on a desktop - give it a try!",
     },
 ]
 
