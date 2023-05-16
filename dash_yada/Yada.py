@@ -126,6 +126,7 @@ class Yada(html.Div):
         yada_class="",
         prev_button_props={},
         next_button_props={},
+        offcanvas_style={}
     ):
         if yada_id is None:
             yada_id = str(uuid.uuid4())
@@ -266,13 +267,6 @@ class Yada(html.Div):
             ),
             dbc.Offcanvas(
                 children=[
-                    dbc.Row([
-                        dbc.Col(
-                    dbc.Button(**prev_button_props), width=1),
-                        dbc.Col(width=10),
-                        dbc.Col(
-                    dbc.Button(**next_button_props), width=1),
-                    ], style={'maxWidth': '100%'}),
                     dcc.Markdown(
                         id=self.ids.convo(yada_id),
                         className="yada-convo",
@@ -284,6 +278,14 @@ class Yada(html.Div):
                 backdrop=False,
                 placement="bottom",
                 scrollable=True,
+                title=dbc.Row([
+                        dbc.Col(
+                    dbc.Button(**prev_button_props), width=1),
+                        dbc.Col(width=10),
+                        dbc.Col(
+                    dbc.Button(**next_button_props), width=1),
+                    ], style={'maxWidth': '100%'}),
+                style=offcanvas_style
             ),
         ]
 
@@ -352,7 +354,7 @@ class Yada(html.Div):
         function(c, v, d) {
             if (c) {
                 if (v != '') {
-                    window.dash_yada.close_statement = `Great job finishing ` + v + `  \rBe sure to come check out more tutorials!`
+                    window.dash_yada.close_statement = d[v][d[v].length-1].convo
                     play_script(d[v])
                     return false
                 }
@@ -369,7 +371,7 @@ class Yada(html.Div):
     clientside_callback(
         """
             function (p, s) {
-                return [true, s]
+                return [true, window.dash_clientside.no_update]
             }
         """,
         Output(ids.steps_canvas(MATCH), "is_open"),
