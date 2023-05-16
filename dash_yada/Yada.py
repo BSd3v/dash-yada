@@ -126,7 +126,7 @@ class Yada(html.Div):
         yada_class="",
         prev_button_props={},
         next_button_props={},
-        offcanvas_style={}
+        offcanvas_style={},
     ):
         if yada_id is None:
             yada_id = str(uuid.uuid4())
@@ -271,21 +271,21 @@ class Yada(html.Div):
                         id=self.ids.convo(yada_id),
                         className="yada-convo",
                     ),
-
                 ],
                 className="yada-info",
                 id=self.ids.steps_canvas(yada_id),
                 backdrop=False,
                 placement="bottom",
                 scrollable=True,
-                title=dbc.Row([
-                        dbc.Col(
-                    dbc.Button(**prev_button_props), width=1),
+                title=dbc.Row(
+                    [
+                        dbc.Col(dbc.Button(**prev_button_props), width=1),
                         dbc.Col(width=10),
-                        dbc.Col(
-                    dbc.Button(**next_button_props), width=1),
-                    ], style={'maxWidth': '100%'}),
-                style=offcanvas_style
+                        dbc.Col(dbc.Button(**next_button_props), width=1),
+                    ],
+                    style={"maxWidth": "100%"},
+                ),
+                style=offcanvas_style,
             ),
         ]
 
@@ -430,7 +430,7 @@ class Yada(html.Div):
         }""",
         Output(ids.convo(MATCH), "children", allow_duplicate=True),
         Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),
-        Output(ids.steps_canvas(MATCH),"placement"),
+        Output(ids.steps_canvas(MATCH), "placement"),
         Input(ids.canvas_button_open(MATCH), "n_clicks"),
         prevent_initial_call=True,
     )
