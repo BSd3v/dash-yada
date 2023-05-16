@@ -66,7 +66,7 @@ title = html.Div(
     id="title",
 )
 alert = dbc.Alert(
-    "This is a demo of the dash-yada component. To start click on the helpdesk icon -->",
+    "Welcome to the dash-yada demo. To start click on Yada, the helpdesk icon -->",
     dismissable=True,
     id="alert",
 )

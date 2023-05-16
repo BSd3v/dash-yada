@@ -9,10 +9,9 @@ intro_script = [
     {
         "target": "#alert .btn-close",
         "convo": """
-                First, a few housekeeping notes:
-                - Control the pace of the demo with the 'prev' and 'next' buttons
+                First, a few housekeeping notes:            
                 - You can close this dialogue box to see the whole screen, then click on me to continue
-                - Press the escape key to exit                  
+                - Press the escape key any time to exit the demo             
                 When you're ready click the 'next' button.  I'll close the alert, then we'll begin.
                 """,
         "action": "click",
@@ -21,7 +20,7 @@ intro_script = [
         "target": "#title",
         "convo": """
                 I navigate using [selectors](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector) so I can go to any element on the page.        
-                We are now at the `#title`.  Here you can describe the overview and purpose of the site.  
+                We are now at the `#title`.  Here you can describe the overview and purpose of your site.  
                 Next, I'll show how to filter the AG Grid component.
                 """,
     },
@@ -36,11 +35,11 @@ filter_scirpt = [
     },
     {
         "target": "#quick-filter-input",
-        "convo": "See!  It now only displays rows with both 'Rep' AND 'Africa' in them. ",
+        "convo": "See!  The grid now only displays rows with both 'Rep' AND 'Africa'. ",
     },
     {
         "target": "#pop",
-        "convo": "You can also explain other interactivity as well.  For example, note that the figures are updated when the grid is filtered.",
+        "convo": "Note that the figures are updated when the grid is filtered.",
     },
     {
         "target": "#title",
@@ -87,7 +86,7 @@ edit_script = [
     {
         "target": '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]',
         "action": "click",
-        "convo": "Note that the row you select is highlighted in the figures",
+        "convo": "Note that selected rows are a different color in the figures",
     },
     {
         "target": "#gdpPercap",
