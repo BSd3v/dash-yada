@@ -15,6 +15,14 @@
     display: none;
 }
 
+.yada-info .offcanvas-title {
+    width: 100%;
+}
+
+.yada-info .offcanvas-title .row {
+    flex-wrap: nowrap;
+}
+
 .yada-info {
     z-index: 10001;
 }
