@@ -72,198 +72,234 @@ async function play_script(data) {
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
 
-    dash_yada.reopen = false
+    dash_yada.reopen = false;
 
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
-        if (data[dash_yada.y].target) {
-            dash_yada.target = document.querySelector(data[dash_yada.y].target);
-            if (!dash_yada.target) {
-                await delay(500);
+        if (dash_yada.y === 0) {
+            if (document.querySelector('.yada-info')) {
+                document.querySelector('.yada-info .previous').style.display =
+                    '';
             }
-            dash_yada.target = document.querySelector(data[dash_yada.y].target);
-
-            if (dash_yada.target) {
-                if (document.querySelector('.yada-convo')) {
-                    simulateMouseClick(
-                            document.querySelector('.yada_canvas_button_open')
-                        );
+        }
+        if (data[dash_yada.y]) {
+            if (data[dash_yada.y].target) {
+                dash_yada.target = document.querySelector(
+                    data[dash_yada.y].target
+                );
+                if (!dash_yada.target) {
+                    await delay(500);
                 }
+                dash_yada.target = document.querySelector(
+                    data[dash_yada.y].target
+                );
 
-                try {
-                    dash_yada.target.select();
-                    dash_yada.target.focus();
-                } catch {
-                    dash_yada.target.focus();
-                }
-                dash_yada.target.classList.toggle('highlighting');
-                dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
-                if (!isInViewport(dash_yada.target)) {
-                    //                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
-                    await delay(100);
-                    dash_yada.tBounds = dash_yada.target.getBoundingClientRect();
-                    setTimeout(() => {
-                        window.scrollTo(
-                            dash_yada.yada.getBoundingClientRect().left,
-                            dash_yada.yada.getBoundingClientRect().top
-                        );
-                    }, 1100);
-                }
-
-                dash_yada.yada.style.top =
-                    dash_yada.tBounds.top +
-                    dash_yada.tBounds.height / 4 +
-                    window.scrollY +
-                    'px';
-                dash_yada.yada.style.left =
-                    dash_yada.tBounds.left +
-                    dash_yada.tBounds.width / 2.5 +
-                    window.scrollX +
-                    'px';
-                dash_yada.yada.setAttribute('convo', data[dash_yada.y].convo);
-                if (dash_yada.y > 0 || dash_yada.reopen) {
-                    dash_yada.offcanvas = document.querySelector('.yada-info');
-                    if (!dash_yada.offcanvas) {
+                if (dash_yada.target) {
+                    if (document.querySelector('.yada-convo')) {
                         simulateMouseClick(
                             document.querySelector('.yada_canvas_button_open')
                         );
-                        while (!dash_yada.offcanvas) {
-                            await delay(300);
-                            dash_yada.offcanvas =
-                                document.querySelector('.yada-info');
-                        }
                     }
-                }
-                try {
-                    if (dash_yada.y !== dash_yada.last) {
-                    if (
-                        document.querySelector('.yada-info').getBoundingClientRect()
-                            .top +
-                            window.scrollY <
-                            parseFloat(window.dash_yada.yada.style.top) +
-                                dash_yada.yada.getBoundingClientRect().height &&
-                        dash_yada.placement === 'bottom'
-                    ) {
-                        if (dash_yada.placement !== 'top') {
-                            dash_yada.placement = 'top';
-                            dash_yada.offcanvas.classList.add('offcanvas-top');
-                            dash_yada.offcanvas.classList.remove(
-                                'offcanvas-bottom'
-                            );
-                        }
-                    } else {
-                        if (dash_yada.placement !== 'bottom') {
-                            dash_yada.placement = 'bottom';
-                            dash_yada.offcanvas.classList.remove('offcanvas-top');
-                            dash_yada.offcanvas.classList.add('offcanvas-bottom');
-                        }
-                    }
-                        simulateMouseClick(
-                            document.querySelector('.yada_canvas_button_open')
-                        );
-                        dash_yada.last = dash_yada.y
-                    }
-                } catch (err) {
-                    console.log(err);
-                }
 
-                dash_yada.paused = true;
-                dash_yada.previous = false;
-                if (dash_yada.y !== 0) {
-                    document.querySelector('.yada-info .previous').style.display =
-                        'initial';
-                }
-
-                dash_yada.reopen = true
-                while (dash_yada.paused) {
-                    await delay(300);
-                }
-
-                if (dash_yada.escaped) {
-                    break;
-                }
-                if (!document.querySelector('.yada-info')) {
-                    dash_yada.previous = true;
-                    dash_yada.y--
-                }
-                if (!dash_yada.previous) {
-                    if ('action' in data[dash_yada.y]) {
+                    try {
+                        dash_yada.target.select();
                         dash_yada.target.focus();
-                        if (data[dash_yada.y].action === 'click') {
-                            simulateMouseClick(
-                                dash_yada.target,
-                                data[dash_yada.y].action_args
+                    } catch {
+                        dash_yada.target.focus();
+                    }
+                    dash_yada.target.classList.toggle('highlighting');
+                    dash_yada.tBounds =
+                        dash_yada.target.getBoundingClientRect();
+                    if (!isInViewport(dash_yada.target)) {
+                        //                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
+                        await delay(100);
+                        dash_yada.tBounds =
+                            dash_yada.target.getBoundingClientRect();
+                        setTimeout(() => {
+                            window.scrollTo(
+                                dash_yada.yada.getBoundingClientRect().left,
+                                dash_yada.yada.getBoundingClientRect().top
                             );
-                        }
-                        if (data[dash_yada.y].action === 'dblclick') {
-                            simulateMouseClick(
-                                dash_yada.target,
-                                data[dash_yada.y].action_args
-                            );
-                            setTimeout(
-                                () =>
-                                    simulateMouseClick(
-                                        dash_yada.target,
-                                        data[dash_yada.y].action_args
-                                    ),
-                                100
-                            );
-                            dash_yada.target.dispatchEvent(
-                                new Event('dblclick', {bubbles: true, view: window})
-                            );
-                        }
-                        if (data[dash_yada.y].action === 'sendKeys') {
-                            //                  This will trigger a new render with the component
-                            dash_yada.target.focus();
-                            dash_yada.target.dispatchEvent(
-                                new KeyboardEvent('keydown', {
-                                    bubbles: true,
-                                    keepValue: true,
-                                    view: window,
-                                    ...data[dash_yada.y].action_args,
-                                })
-                            );
-                            dash_yada.target.dispatchEvent(
-                                new KeyboardEvent('keyup', {
-                                    bubbles: true,
-                                    keepValue: true,
-                                    view: window,
-                                    ...data[dash_yada.y].action_args,
-                                })
-                            );
-                            await delay(100);
-                        }
-                        if (data[dash_yada.y].action === 'type') {
-                            // This will work by calling the native setter bypassing Reacts incorrect value change check
-                            dash_yada.typing = document.querySelector(
-                                data[dash_yada.y].target
-                            );
-                            Object.getOwnPropertyDescriptor(
-                                window.HTMLInputElement.prototype,
-                                'value'
-                            ).set.call(
-                                dash_yada.target,
-                                data[dash_yada.y].action_args
-                            );
+                        }, 1100);
+                    }
 
-                            //                  This will trigger a new render with the component
-                            dash_yada.typing.focus();
-                            dash_yada.typing.dispatchEvent(
-                                new KeyboardEvent('change', {
-                                    bubbles: true,
-                                    keepValue: true,
-                                })
+                    dash_yada.yada.style.top =
+                        dash_yada.tBounds.top +
+                        dash_yada.tBounds.height / 4 +
+                        window.scrollY +
+                        'px';
+                    dash_yada.yada.style.left =
+                        dash_yada.tBounds.left +
+                        dash_yada.tBounds.width / 2.5 +
+                        window.scrollX +
+                        'px';
+                    dash_yada.yada.setAttribute(
+                        'convo',
+                        data[dash_yada.y].convo
+                    );
+                    if (dash_yada.y > 0 || dash_yada.reopen) {
+                        dash_yada.offcanvas =
+                            document.querySelector('.yada-info');
+                        if (!dash_yada.offcanvas) {
+                            simulateMouseClick(
+                                document.querySelector(
+                                    '.yada_canvas_button_open'
+                                )
                             );
-                            dash_yada.typing.dispatchEvent(
-                                new KeyboardEvent('input', {
-                                    bubbles: true,
-                                    keepValue: true,
-                                })
-                            );
-                            await delay(100);
+                            while (!dash_yada.offcanvas) {
+                                await delay(300);
+                                dash_yada.offcanvas =
+                                    document.querySelector('.yada-info');
+                            }
                         }
                     }
+                    try {
+                        if (dash_yada.y !== dash_yada.last) {
+                            if (
+                                document
+                                    .querySelector('.yada-info')
+                                    .getBoundingClientRect().top +
+                                    window.scrollY <
+                                    parseFloat(
+                                        window.dash_yada.yada.style.top
+                                    ) +
+                                        dash_yada.yada.getBoundingClientRect()
+                                            .height &&
+                                dash_yada.placement === 'bottom'
+                            ) {
+                                if (dash_yada.placement !== 'top') {
+                                    dash_yada.placement = 'top';
+                                    dash_yada.offcanvas.classList.add(
+                                        'offcanvas-top'
+                                    );
+                                    dash_yada.offcanvas.classList.remove(
+                                        'offcanvas-bottom'
+                                    );
+                                }
+                            } else {
+                                if (dash_yada.placement !== 'bottom') {
+                                    dash_yada.placement = 'bottom';
+                                    dash_yada.offcanvas.classList.remove(
+                                        'offcanvas-top'
+                                    );
+                                    dash_yada.offcanvas.classList.add(
+                                        'offcanvas-bottom'
+                                    );
+                                }
+                            }
+                            simulateMouseClick(
+                                document.querySelector(
+                                    '.yada_canvas_button_open'
+                                )
+                            );
+                            dash_yada.last = dash_yada.y;
+                        }
+                    } catch (err) {
+                        console.log(err);
+                    }
+
+                    dash_yada.paused = true;
+                    dash_yada.previous = false;
+                    if (dash_yada.y !== 0) {
+                        document.querySelector(
+                            '.yada-info .previous'
+                        ).style.display = 'initial';
+                    }
+
+                    dash_yada.reopen = true;
+                    while (dash_yada.paused) {
+                        await delay(300);
+                    }
+
+                    if (dash_yada.escaped) {
+                        break;
+                    }
+                    if (!document.querySelector('.yada-info')) {
+                        dash_yada.previous = true;
+                        dash_yada.y--;
+                    }
+                    if (!dash_yada.previous) {
+                        if ('action' in data[dash_yada.y]) {
+                            dash_yada.target.focus();
+                            if (data[dash_yada.y].action === 'click') {
+                                simulateMouseClick(
+                                    dash_yada.target,
+                                    data[dash_yada.y].action_args
+                                );
+                            }
+                            if (data[dash_yada.y].action === 'dblclick') {
+                                simulateMouseClick(
+                                    dash_yada.target,
+                                    data[dash_yada.y].action_args
+                                );
+                                setTimeout(
+                                    () =>
+                                        simulateMouseClick(
+                                            dash_yada.target,
+                                            data[dash_yada.y].action_args
+                                        ),
+                                    100
+                                );
+                                dash_yada.target.dispatchEvent(
+                                    new Event('dblclick', {
+                                        bubbles: true,
+                                        view: window,
+                                    })
+                                );
+                            }
+                            if (data[dash_yada.y].action === 'sendKeys') {
+                                //                  This will trigger a new render with the component
+                                dash_yada.target.focus();
+                                dash_yada.target.dispatchEvent(
+                                    new KeyboardEvent('keydown', {
+                                        bubbles: true,
+                                        keepValue: true,
+                                        view: window,
+                                        ...data[dash_yada.y].action_args,
+                                    })
+                                );
+                                dash_yada.target.dispatchEvent(
+                                    new KeyboardEvent('keyup', {
+                                        bubbles: true,
+                                        keepValue: true,
+                                        view: window,
+                                        ...data[dash_yada.y].action_args,
+                                    })
+                                );
+                                await delay(100);
+                            }
+                            if (data[dash_yada.y].action === 'type') {
+                                // This will work by calling the native setter bypassing Reacts incorrect value change check
+                                dash_yada.typing = document.querySelector(
+                                    data[dash_yada.y].target
+                                );
+                                Object.getOwnPropertyDescriptor(
+                                    window.HTMLInputElement.prototype,
+                                    'value'
+                                ).set.call(
+                                    dash_yada.target,
+                                    data[dash_yada.y].action_args
+                                );
+
+                                //                  This will trigger a new render with the component
+                                dash_yada.typing.focus();
+                                dash_yada.typing.dispatchEvent(
+                                    new KeyboardEvent('change', {
+                                        bubbles: true,
+                                        keepValue: true,
+                                    })
+                                );
+                                dash_yada.typing.dispatchEvent(
+                                    new KeyboardEvent('input', {
+                                        bubbles: true,
+                                        keepValue: true,
+                                    })
+                                );
+                                await delay(100);
+                            }
+                        }
+                    }
+                    dash_yada.target.classList.toggle('highlighting');
                 }
-                dash_yada.target.classList.toggle('highlighting');
             }
         }
     }
