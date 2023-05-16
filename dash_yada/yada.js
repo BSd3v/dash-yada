@@ -28,18 +28,18 @@ function simulateMouseClick(element, args) {
             })
         )
     );
-    mouseClickEvents.forEach((mouseEventType) =>
-        element.dispatchEvent(
-            new PointerEvent(mouseEventType, {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-                buttons: 1,
-                target: element,
-                ...args,
-            })
-        )
-    );
+//    mouseClickEvents.forEach((mouseEventType) =>
+//        element.dispatchEvent(
+//            new PointerEvent(mouseEventType, {
+//                view: window,
+//                bubbles: true,
+//                cancelable: true,
+//                buttons: 1,
+//                target: element,
+//                ...args,
+//            })
+//        )
+//    );
 }
 
 function isInViewport(element) {
