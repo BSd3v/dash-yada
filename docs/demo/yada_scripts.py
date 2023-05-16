@@ -7,7 +7,7 @@ intro_script = [
         "convo": "##### I'll show you how to create a fun interactive demo so people can get the most out of your site.",
     },
     {
-        "target": ".btn-close",
+        "target": "#alert .btn-close",
         "convo": """
                 First, a few housekeeping notes:
                 - Control the pace of the demo with the 'prev' and 'next' buttons
