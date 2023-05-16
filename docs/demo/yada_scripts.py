@@ -41,17 +41,11 @@ filter_scirpt = [
     },
     {
         "target": "#pop",
-        "convo": "You can also explain other interactivity as well.  For example, in this app the figures are updated when the grid is filtered.",
+        "convo": "You can also explain other interactivity as well.  For example, note that the figures are updated when the grid is filtered.",
     },
     {
         "target": "#title",
         "convo": "Now try it yourself!  Go ahead and enter something into the input field.  I'll wait here.",
-    },
-    {
-        "target": "#quick-filter-input",
-        "convo": "Next, I'll clear the filter so you can see all the data again.",
-        "action": "type",
-        "action_args": "",
     },
     {
         "target": "#quick-filter-input",
