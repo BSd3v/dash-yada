@@ -16,30 +16,33 @@ function nextItem() {
 
 const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
 function simulateMouseClick(element, args) {
-    mouseClickEvents.forEach((mouseEventType) =>
-        element.dispatchEvent(
-            new MouseEvent(mouseEventType, {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-                buttons: 1,
-                target: element,
-                ...args,
-            })
-        )
-    );
-//    mouseClickEvents.forEach((mouseEventType) =>
-//        element.dispatchEvent(
-//            new PointerEvent(mouseEventType, {
-//                view: window,
-//                bubbles: true,
-//                cancelable: true,
-//                buttons: 1,
-//                target: element,
-//                ...args,
-//            })
-//        )
-//    );
+    if (!/Android|iPhone/i.test(navigator.userAgent)) {
+        mouseClickEvents.forEach((mouseEventType) =>
+            element.dispatchEvent(
+                new MouseEvent(mouseEventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    buttons: 1,
+                    target: element,
+                    ...args,
+                })
+            )
+        );
+    } else {
+        mouseClickEvents.forEach((mouseEventType) =>
+            element.dispatchEvent(
+                new PointerEvent(mouseEventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    buttons: 1,
+                    target: element,
+                    ...args,
+                })
+            )
+        );
+    }
 }
 
 function isInViewport(element) {
@@ -73,7 +76,6 @@ async function play_script(data) {
     dash_yada.yada.addEventListener('click', nextItem);
 
     dash_yada.reopen = false;
-
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
         if (dash_yada.y === 0) {
             if (document.querySelector('.yada-info')) {
@@ -298,6 +300,12 @@ async function play_script(data) {
                             }
                         }
                     }
+                    else {
+                        while (!document.querySelector(data[dash_yada.y+1].target) && dash_yada.y != -1) {
+                            dash_yada.y--
+                        }
+                    }
+
                     dash_yada.target.classList.toggle('highlighting');
                 }
             }

@@ -283,7 +283,7 @@ class Yada(html.Div):
                         dbc.Col(width=10),
                         dbc.Col(dbc.Button(**next_button_props), width=1),
                     ],
-                    style={"maxWidth": "100%"},
+                    style={"maxWidth": "95%"},
                 ),
                 style=offcanvas_style,
             ),
@@ -370,14 +370,12 @@ class Yada(html.Div):
     )
     clientside_callback(
         """
-            function (p, s) {
-                return [true, window.dash_clientside.no_update]
+            function (p) {
+                return true
             }
         """,
         Output(ids.steps_canvas(MATCH), "is_open"),
-        Output(ids.steps_canvas(MATCH), "title"),
         Input(ids.play_script(MATCH), "n_clicks"),
-        State(ids.script_choices(MATCH), "value"),
         prevent_initial_call=True,
     )
 
@@ -397,19 +395,23 @@ class Yada(html.Div):
     clientside_callback(
         """function (o) {
         if (o) {
-            document.querySelector(".yada-info .previous").addEventListener('click',
-                                                                            function()
-            {window.dash_yada.y = window.dash_yada.y - 2, window.dash_yada.previous = true, window.dash_yada.paused = false})
+            previous = () =>
+            { window.dash_yada.y = window.dash_yada.y - 2;
+             window.dash_yada.previous = true;
+              window.dash_yada.paused = false}
             
+            next = () => {window.dash_yada.yada.dispatchEvent(new Event('click'))}
+        
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             } else if (window.dash_yada.y < window.dash_yada.script_length) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             }
-            document.querySelector(".yada-info .next").addEventListener('click',
-                                                                        function()
-            {window.dash_yada.yada.dispatchEvent(new
-            Event('click'))})
+            if (!document.querySelector(".yada-info .previous").getAttribute('listener')) {
+                document.querySelector(".yada-info .previous").addEventListener('click', previous)
+                document.querySelector(".yada-info .previous").setAttribute('listener', true);
+                document.querySelector(".yada-info .next").addEventListener('click', next)
+            }
 
         }
         return window.dash_clientside.no_update
