@@ -370,14 +370,12 @@ class Yada(html.Div):
     )
     clientside_callback(
         """
-            function (p, s) {
-                return [true, window.dash_clientside.no_update]
+            function (p) {
+                return true
             }
         """,
         Output(ids.steps_canvas(MATCH), "is_open"),
-        Output(ids.steps_canvas(MATCH), "title"),
         Input(ids.play_script(MATCH), "n_clicks"),
-        State(ids.script_choices(MATCH), "value"),
         prevent_initial_call=True,
     )
 

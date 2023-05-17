@@ -84,10 +84,11 @@ app.layout = dbc.Container(
 
 @app.callback(
     Output("interactivity-container", "children"),
-    Input("grid", "virtualRowData"),
+    State("grid", "virtualRowData"),
     Input("grid", "selectedRows"),
+    Input('grid', 'cellValueChanged')
 )
-def update_graphs(rows, selected):
+def update_graphs(rows, selected, t):
     dff = df if rows is None else pd.DataFrame(rows)
     if dff.empty:
         return []

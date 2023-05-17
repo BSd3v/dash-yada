@@ -16,30 +16,33 @@ function nextItem() {
 
 const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
 function simulateMouseClick(element, args) {
-    mouseClickEvents.forEach((mouseEventType) =>
-        element.dispatchEvent(
-            new MouseEvent(mouseEventType, {
-                view: window,
-                bubbles: true,
-                cancelable: true,
-                buttons: 1,
-                target: element,
-                ...args,
-            })
-        )
-    );
-//    mouseClickEvents.forEach((mouseEventType) =>
-//        element.dispatchEvent(
-//            new PointerEvent(mouseEventType, {
-//                view: window,
-//                bubbles: true,
-//                cancelable: true,
-//                buttons: 1,
-//                target: element,
-//                ...args,
-//            })
-//        )
-//    );
+    if (!/Android|iPhone/i.test(navigator.userAgent)) {
+        mouseClickEvents.forEach((mouseEventType) =>
+            element.dispatchEvent(
+                new MouseEvent(mouseEventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    buttons: 1,
+                    target: element,
+                    ...args,
+                })
+            )
+        );
+    } else {
+        mouseClickEvents.forEach((mouseEventType) =>
+            element.dispatchEvent(
+                new PointerEvent(mouseEventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    buttons: 1,
+                    target: element,
+                    ...args,
+                })
+            )
+        );
+    }
 }
 
 function isInViewport(element) {
