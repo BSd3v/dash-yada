@@ -21,7 +21,7 @@ intro_script = [
         "target": "#title",
         "convo": """
                 I navigate using [selectors](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector) so I can go to any element on the page.        
-                We are now at the `#title`.  Here you can describe the overview and purpose of your site.  
+                We are now at the title.  Here you can describe the overview and purpose of your site.  
                 Next, I'll show how to filter the AG Grid component.
                 """,
     },
@@ -30,7 +30,7 @@ intro_script = [
 filter_scirpt = [
     {
         "target": "#quick-filter-input",
-        "convo": "I can interact with input boxes.  This input is a 'quick filter' for the grid.  \r\r Next I'll type 'Rep Africa'.",
+        "convo": "I can interact with input boxes.  This input is a 'quick filter' for the grid.  \r\r Click Next, and I'll type 'Rep Africa' for you.",
         "action": "type",
         "action_args": "Rep Africa",
     },
