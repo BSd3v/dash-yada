@@ -283,7 +283,7 @@ class Yada(html.Div):
                         dbc.Col(width=10),
                         dbc.Col(dbc.Button(**next_button_props), width=1),
                     ],
-                    style={"maxWidth": "100%"},
+                    style={"maxWidth": "95%"},
                 ),
                 style=offcanvas_style,
             ),
