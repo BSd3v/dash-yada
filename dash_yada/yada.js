@@ -323,17 +323,6 @@ async function play_script(data) {
         document.querySelector('.yada-info .exit').style.visibility = 'hidden';
     }
 
-    if (!dash_yada.escaped && document.querySelector('.yada-convo')) {
-        window.ReactDOM.render(
-            window.React.createElement(
-                window.dash_core_components.Markdown,
-                {},
-                dash_yada.close_statement
-            ),
-            document.querySelector('.yada-convo')
-        );
-    }
-
     document.removeEventListener('keydown', escaping);
     document
         .querySelectorAll('.highlighting')
