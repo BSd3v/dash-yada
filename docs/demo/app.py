@@ -69,6 +69,7 @@ alert = dbc.Alert(
     "Welcome to the dash-yada demo. To start click on Yada, the helpdesk icon -->",
     dismissable=True,
     id="alert",
+    className="mx-5 text-center"
 )
 app.layout = dbc.Container(
     [
