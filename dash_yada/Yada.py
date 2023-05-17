@@ -397,19 +397,23 @@ class Yada(html.Div):
     clientside_callback(
         """function (o) {
         if (o) {
-            document.querySelector(".yada-info .previous").addEventListener('click',
-                                                                            function()
-            {window.dash_yada.y = window.dash_yada.y - 2, window.dash_yada.previous = true, window.dash_yada.paused = false})
+            previous = () =>
+            { window.dash_yada.y = window.dash_yada.y - 2;
+             window.dash_yada.previous = true;
+              window.dash_yada.paused = false}
             
+            next = () => {window.dash_yada.yada.dispatchEvent(new Event('click'))}
+        
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             } else if (window.dash_yada.y < window.dash_yada.script_length) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             }
-            document.querySelector(".yada-info .next").addEventListener('click',
-                                                                        function()
-            {window.dash_yada.yada.dispatchEvent(new
-            Event('click'))})
+            if (!document.querySelector(".yada-info .previous").getAttribute('listener')) {
+                document.querySelector(".yada-info .previous").addEventListener('click', previous)
+                document.querySelector(".yada-info .previous").setAttribute('listener', true);
+                document.querySelector(".yada-info .next").addEventListener('click', next)
+            }
 
         }
         return window.dash_clientside.no_update

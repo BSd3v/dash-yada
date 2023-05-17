@@ -73,7 +73,6 @@ async function play_script(data) {
     dash_yada.yada.addEventListener('click', nextItem);
 
     dash_yada.reopen = false;
-
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
         if (dash_yada.y === 0) {
             if (document.querySelector('.yada-info')) {
@@ -298,6 +297,12 @@ async function play_script(data) {
                             }
                         }
                     }
+                    else {
+                        while (!document.querySelector(data[dash_yada.y+1].target) && dash_yada.y != -1) {
+                            dash_yada.y--
+                        }
+                    }
+
                     dash_yada.target.classList.toggle('highlighting');
                 }
             }
