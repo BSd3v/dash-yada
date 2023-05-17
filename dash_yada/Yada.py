@@ -242,7 +242,7 @@ class Yada(html.Div):
                                 html.Div(script_message["message"]),
                                 dcc.Dropdown(
                                     id=self.ids.script_choices(yada_id),
-                                    style={"minWidth": 350},
+                                    style={"minWidth": 250},
                                 ),
                                 dbc.Button(
                                     **play_script_props,
