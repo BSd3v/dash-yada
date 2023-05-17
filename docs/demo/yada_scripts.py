@@ -107,7 +107,7 @@ yada = Yada(
     },
     prev_button_props={
         "size": "sm",
-        "children": "Prev",
+        "children": "prev",
     },
     scripts={
         "Explore": intro_script

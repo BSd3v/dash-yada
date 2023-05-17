@@ -36,7 +36,15 @@
 }
 
 .yada-info.offcanvas-top,  .yada-info.offcanvas-bottom {
-    height: 200px;
+    max-height: 200px !important;
+}
+
+.yada-info .offcanvas-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 0;
+    padding: ""
 }
 
 .yada.sleeping {
