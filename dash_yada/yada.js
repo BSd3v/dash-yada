@@ -168,7 +168,7 @@ async function play_script(data) {
                                     .querySelector('.yada-info')
                                     .getBoundingClientRect().top < dash_yada.yada.getBoundingClientRect()
                                             .top + (dash_yada.yada.getBoundingClientRect()
-                                            .height/4*3) || document
+                                            .height/2) || document
                                     .querySelector('.yada-info')
                                     .getBoundingClientRect().top  <
                                     dash_yada.yada.getBoundingClientRect()
