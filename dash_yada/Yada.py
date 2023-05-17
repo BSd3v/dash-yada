@@ -467,11 +467,10 @@ class Yada(html.Div):
         """function (n) {
                 if (!document.querySelector(".yada > img").classList.contains("sleeping")) {
                     if (document.querySelector(".yada").getAttribute("convo")) {
-                        return [document.querySelector(".yada").getAttribute("convo"), true, 
-                        window.dash_yada.placement || "bottom"]
+                        return [document.querySelector(".yada").getAttribute("convo"), true, window.dash_yada.placement]
                     }
                 }
-                return [window.dash_clientside.no_update, true, window.dash_clientside.no_update]
+                return [window.dash_clientside.no_update, window.dash_clientside.no_update, window.dash_yada.placement]
         }""",
         Output(ids.convo(MATCH), "children", allow_duplicate=True),
         Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),

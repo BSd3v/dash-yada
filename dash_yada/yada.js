@@ -75,6 +75,7 @@ async function play_script(data) {
     dash_yada.escaped = false;
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
+    dash_yada.placement = 'bottom'
 
     dash_yada.reopen = false;
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
@@ -85,6 +86,11 @@ async function play_script(data) {
             }
         }
         if (data[dash_yada.y]) {
+            setTimeout(() => simulateMouseClick(
+                                document.querySelector(
+                                    '.yada_canvas_button_open'
+                                )
+                            ), 100);
             if (data[dash_yada.y].target) {
                 dash_yada.target = document.querySelector(
                     data[dash_yada.y].target
@@ -97,11 +103,6 @@ async function play_script(data) {
                 );
 
                 if (dash_yada.target) {
-                    if (document.querySelector('.yada-convo')) {
-                        simulateMouseClick(
-                            document.querySelector('.yada_canvas_button_open')
-                        );
-                    }
 
                     try {
                         dash_yada.target.select();
@@ -122,7 +123,7 @@ async function play_script(data) {
                                 dash_yada.yada.getBoundingClientRect().left,
                                 dash_yada.yada.getBoundingClientRect().top
                             );
-                        }, 1100);
+                        }, 1000);
                     }
 
                     dash_yada.yada.style.top =
@@ -157,48 +158,47 @@ async function play_script(data) {
                     }
                     try {
                         if (dash_yada.y !== dash_yada.last) {
+                        setTimeout(() => {
                             if (
-                                document
+                                (document
                                     .querySelector('.yada-info')
-                                    .getBoundingClientRect().top +
-                                    window.scrollY <
-                                    parseFloat(
-                                        window.dash_yada.yada.style.top
-                                    ) +
-                                        dash_yada.yada.getBoundingClientRect()
-                                            .height &&
+                                    .getBoundingClientRect().top  >
+                                    dash_yada.yada.getBoundingClientRect()
+                                            .top && document
+                                    .querySelector('.yada-info')
+                                    .getBoundingClientRect().top < dash_yada.yada.getBoundingClientRect()
+                                            .top + dash_yada.yada.getBoundingClientRect()
+                                            .height || document
+                                    .querySelector('.yada-info')
+                                    .getBoundingClientRect().top  <
+                                    dash_yada.yada.getBoundingClientRect()
+                                            .top) &&
                                 dash_yada.placement === 'bottom'
                             ) {
-                                if (dash_yada.placement !== 'top') {
-                                    dash_yada.placement = 'top';
-                                    dash_yada.offcanvas.classList.add(
-                                        'offcanvas-top'
-                                    );
-                                    dash_yada.offcanvas.classList.remove(
-                                        'offcanvas-bottom'
-                                    );
-                                }
-                            } else {
-                                if (dash_yada.placement !== 'bottom') {
-                                    dash_yada.placement = 'bottom';
-                                    dash_yada.offcanvas.classList.remove(
-                                        'offcanvas-top'
-                                    );
-                                    dash_yada.offcanvas.classList.add(
-                                        'offcanvas-bottom'
-                                    );
-                                }
+                                 dash_yada.placement = 'top';
+                            } else if (
+                                document
+                                    .querySelector('.yada-info')
+                                    .getBoundingClientRect().height  >
+                                    dash_yada.yada.getBoundingClientRect()
+                                            .top &&
+                                dash_yada.placement === 'top'
+                            ) {
+                                dash_yada.placement = 'bottom';
                             }
+                            setTimeout(() => {
                             simulateMouseClick(
                                 document.querySelector(
                                     '.yada_canvas_button_open'
-                                )
-                            );
+                                ))}
+                            , 100);
                             dash_yada.last = dash_yada.y;
-                        }
+                        }, 1300)}
                     } catch (err) {
                         console.log(err);
                     }
+
+
 
                     dash_yada.paused = true;
                     dash_yada.previous = false;
@@ -355,6 +355,14 @@ async function play_script(data) {
     dash_yada.yada.style.height = '';
     dash_yada.yada.style.top = '';
     dash_yada.yada.style.left = '';
+
+    //resetting placement
+    dash_yada.placement = 'bottom'
+    setTimeout(() => simulateMouseClick(
+                                document.querySelector(
+                                    '.yada_canvas_button_open'
+                                )
+                            ), 100);
 }
 /* eslint-enable no-magic-numbers */
 
