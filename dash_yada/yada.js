@@ -15,6 +15,7 @@ function nextItem() {
 }
 
 const mouseClickEvents = ['mousedown', 'click', 'mouseup'];
+const touchClickEvents = ['touchstart', 'touchend', 'click'];
 function simulateMouseClick(element, args) {
     if (!/Android|iPhone/i.test(navigator.userAgent)) {
         mouseClickEvents.forEach((mouseEventType) =>
@@ -30,9 +31,9 @@ function simulateMouseClick(element, args) {
             )
         );
     } else {
-        mouseClickEvents.forEach((mouseEventType) =>
+        touchClickEvents.forEach((mouseEventType) =>
             element.dispatchEvent(
-                new PointerEvent(mouseEventType, {
+                new TouchEvent(mouseEventType, {
                     view: window,
                     bubbles: true,
                     cancelable: true,
@@ -299,10 +300,14 @@ async function play_script(data) {
                                 await delay(100);
                             }
                         }
-                    }
-                    else {
-                        while (!document.querySelector(data[dash_yada.y+1].target) && dash_yada.y != -1) {
-                            dash_yada.y--
+                    } else {
+                        while (
+                            !document.querySelector(
+                                data[dash_yada.y + 1].target
+                            ) &&
+                            dash_yada.y !== -1
+                        ) {
+                            dash_yada.y--;
                         }
                     }
 
@@ -315,6 +320,7 @@ async function play_script(data) {
     if (document.querySelector('.yada-info')) {
         document.querySelector('.yada-info .next').style.display = 'none';
         document.querySelector('.yada-info .previous').style.display = '';
+        document.querySelector('.yada-info .exit').style.visibility = 'hidden';
     }
 
     if (!dash_yada.escaped && document.querySelector('.yada-convo')) {

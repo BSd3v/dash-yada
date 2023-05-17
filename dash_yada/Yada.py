@@ -126,6 +126,7 @@ class Yada(html.Div):
         yada_class="",
         prev_button_props={},
         next_button_props={},
+        mobile_end_button_props={},
         offcanvas_style={},
     ):
         if yada_id is None:
@@ -142,6 +143,7 @@ class Yada(html.Div):
         play_script_props = play_script_props.copy()
         prev_button_props = prev_button_props.copy()
         next_button_props = next_button_props.copy()
+        mobile_end_button_props = mobile_end_button_props.copy()
         if scripts is None:
             scripts = addScripts()
         if hover_message_props:
@@ -188,6 +190,24 @@ class Yada(html.Div):
             )
         if prev_button_props.get("style") is None:
             prev_button_props["style"] = {"left": "0px"}
+
+        if mobile_end_button_props.get("style"):
+            mobile_end_button_props["style"] = {
+                **mobile_end_button_props["style"],
+                "visibility": "hidden",
+            }
+        else:
+            mobile_end_button_props["style"] = {"visibility": "hidden"}
+        if mobile_end_button_props.get("size") is None:
+            mobile_end_button_props["size"] = "sm"
+        if mobile_end_button_props.get("class_name") is None:
+            mobile_end_button_props["class_name"] = "exit"
+        else:
+            mobile_end_button_props["class_name"] = (
+                mobile_end_button_props["class_name"] + " exit"
+            )
+        if mobile_end_button_props.get("children") is None:
+            mobile_end_button_props["children"] = "end"
 
         children = [
             html.Div(
@@ -279,9 +299,23 @@ class Yada(html.Div):
                 scrollable=True,
                 title=dbc.Row(
                     [
-                        dbc.Col(dbc.Button(**prev_button_props), width=1),
-                        dbc.Col(width=10),
-                        dbc.Col(dbc.Button(**next_button_props), width=1),
+                        dbc.Col(
+                            dbc.Button(**prev_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
+                        dbc.Col(width=3),
+                        dbc.Col(
+                            dbc.Button(**mobile_end_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
+                        dbc.Col(width=3),
+                        dbc.Col(
+                            dbc.Button(**next_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
                     ],
                     style={"maxWidth": "95%"},
                 ),
@@ -399,8 +433,15 @@ class Yada(html.Div):
             { window.dash_yada.y = window.dash_yada.y - 2;
              window.dash_yada.previous = true;
               window.dash_yada.paused = false}
+              
+            exit = () =>
+            {document.dispatchEvent(new KeyboardEvent('keydown', {bubbles: true, key: "Escape", code: "Escape", which: 27}))}
             
             next = () => {window.dash_yada.yada.dispatchEvent(new Event('click'))}
+            
+            if (/Android|iPhone/i.test(navigator.userAgent)) {
+                document.querySelector(".yada-info .exit").style.visibility = ""
+            }
         
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
@@ -411,6 +452,7 @@ class Yada(html.Div):
                 document.querySelector(".yada-info .previous").addEventListener('click', previous)
                 document.querySelector(".yada-info .previous").setAttribute('listener', true);
                 document.querySelector(".yada-info .next").addEventListener('click', next)
+                document.querySelector(".yada-info .exit").addEventListener('click', exit)
             }
 
         }
