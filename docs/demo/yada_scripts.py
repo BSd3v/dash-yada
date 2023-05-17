@@ -11,7 +11,8 @@ intro_script = [
         "convo": """
                 First, a few housekeeping notes:            
                 - You can close this dialogue box to see the whole screen, then click on me to continue
-                - Press the escape key any time to exit the demo             
+                - Press the escape key any time to exit the demo   
+                          
                 When you're ready click the 'next' button.  I'll close the alert, then we'll begin.
                 """,
         "action": "click",
@@ -107,7 +108,7 @@ yada = Yada(
     },
     prev_button_props={
         "size": "sm",
-        "children": "Prev",
+        "children": "prev",
     },
     scripts={
         "Explore": intro_script
