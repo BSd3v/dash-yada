@@ -290,6 +290,7 @@ class Yada(html.Div):
                     dcc.Markdown(
                         id=self.ids.convo(yada_id),
                         className="yada-convo",
+                        link_target="_blank"
                     ),
                 ],
                 className="yada-info",
