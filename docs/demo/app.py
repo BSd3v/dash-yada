@@ -84,7 +84,7 @@ app.layout = dbc.Container(
 
 @app.callback(
     Output("interactivity-container", "children"),
-    State("grid", "virtualRowData"),
+    Input("grid", "virtualRowData"),
     Input("grid", "selectedRows"),
     Input('grid', 'cellValueChanged')
 )
