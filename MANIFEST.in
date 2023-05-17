@@ -1,0 +1,9 @@
+include dash_yada/*.js
+include dash_yada/*.png
+include dash_yada/*.css
+include dash_yada/*.LICENSE.txt
+include dash_yada/metadata.json
+include dash_yada/package-info.json
+include README.md
+include LICENSE
+include package.json
