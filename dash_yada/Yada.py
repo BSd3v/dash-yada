@@ -281,7 +281,7 @@ class Yada(html.Div):
                     [
                         dbc.Col(dbc.Button(**prev_button_props), width=1),
                         dbc.Col(width=4),
-                        dbc.Col(dbc.Button('exit script', color='danger', class_name='exit',
+                        dbc.Col(dbc.Button('cancel', color='danger', class_name='exit',
                                            style={'visibility': 'hidden'}), width=2),
                         dbc.Col(width=4),
                         dbc.Col(dbc.Button(**next_button_props), width=1),
