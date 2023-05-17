@@ -167,8 +167,8 @@ async function play_script(data) {
                                             .top && document
                                     .querySelector('.yada-info')
                                     .getBoundingClientRect().top < dash_yada.yada.getBoundingClientRect()
-                                            .top + dash_yada.yada.getBoundingClientRect()
-                                            .height || document
+                                            .top + (dash_yada.yada.getBoundingClientRect()
+                                            .height/4*3) || document
                                     .querySelector('.yada-info')
                                     .getBoundingClientRect().top  <
                                     dash_yada.yada.getBoundingClientRect()
@@ -193,7 +193,7 @@ async function play_script(data) {
                                 ))}
                             , 100);
                             dash_yada.last = dash_yada.y;
-                        }, 1300)}
+                        }, 1500)}
                     } catch (err) {
                         console.log(err);
                     }
