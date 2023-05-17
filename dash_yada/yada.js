@@ -75,7 +75,7 @@ async function play_script(data) {
     dash_yada.escaped = false;
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
-    dash_yada.placement = 'bottom'
+    dash_yada.placement = 'bottom';
 
     dash_yada.reopen = false;
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
@@ -86,11 +86,13 @@ async function play_script(data) {
             }
         }
         if (data[dash_yada.y]) {
-            setTimeout(() => simulateMouseClick(
-                                document.querySelector(
-                                    '.yada_canvas_button_open'
-                                )
-                            ), 100);
+            setTimeout(
+                () =>
+                    simulateMouseClick(
+                        document.querySelector('.yada_canvas_button_open')
+                    ),
+                100
+            );
             if (data[dash_yada.y].target) {
                 dash_yada.target = document.querySelector(
                     data[dash_yada.y].target
@@ -103,7 +105,6 @@ async function play_script(data) {
                 );
 
                 if (dash_yada.target) {
-
                     try {
                         dash_yada.target.select();
                         dash_yada.target.focus();
@@ -158,47 +159,52 @@ async function play_script(data) {
                     }
                     try {
                         if (dash_yada.y !== dash_yada.last) {
-                        setTimeout(() => {
-                            if (
-                                (document
-                                    .querySelector('.yada-info')
-                                    .getBoundingClientRect().top  >
-                                    dash_yada.yada.getBoundingClientRect()
-                                            .top && document
-                                    .querySelector('.yada-info')
-                                    .getBoundingClientRect().top < dash_yada.yada.getBoundingClientRect()
-                                            .top + dash_yada.yada.getBoundingClientRect()
-                                            .height || document
-                                    .querySelector('.yada-info')
-                                    .getBoundingClientRect().top  <
-                                    dash_yada.yada.getBoundingClientRect()
-                                            .top) &&
-                                dash_yada.placement === 'bottom'
-                            ) {
-                                 dash_yada.placement = 'top';
-                            } else if (
-                                document
-                                    .querySelector('.yada-info')
-                                    .getBoundingClientRect().height  >
-                                    dash_yada.yada.getBoundingClientRect()
-                                            .top &&
-                                dash_yada.placement === 'top'
-                            ) {
-                                dash_yada.placement = 'bottom';
-                            }
                             setTimeout(() => {
-                            simulateMouseClick(
-                                document.querySelector(
-                                    '.yada_canvas_button_open'
-                                ))}
-                            , 100);
-                            dash_yada.last = dash_yada.y;
-                        }, 1300)}
+                                if (
+                                    ((document
+                                        .querySelector('.yada-info')
+                                        .getBoundingClientRect().top >
+                                        dash_yada.yada.getBoundingClientRect()
+                                            .top &&
+                                        document
+                                            .querySelector('.yada-info')
+                                            .getBoundingClientRect().top <
+                                            dash_yada.yada.getBoundingClientRect()
+                                                .top +
+                                                dash_yada.yada.getBoundingClientRect()
+                                                    .height /
+                                                    2) ||
+                                        document
+                                            .querySelector('.yada-info')
+                                            .getBoundingClientRect().top <
+                                            dash_yada.yada.getBoundingClientRect()
+                                                .top) &&
+                                    dash_yada.placement === 'bottom'
+                                ) {
+                                    dash_yada.placement = 'top';
+                                } else if (
+                                    document
+                                        .querySelector('.yada-info')
+                                        .getBoundingClientRect().height >
+                                        dash_yada.yada.getBoundingClientRect()
+                                            .top &&
+                                    dash_yada.placement === 'top'
+                                ) {
+                                    dash_yada.placement = 'bottom';
+                                }
+                                setTimeout(() => {
+                                    simulateMouseClick(
+                                        document.querySelector(
+                                            '.yada_canvas_button_open'
+                                        )
+                                    );
+                                }, 100);
+                                dash_yada.last = dash_yada.y;
+                            }, 1500);
+                        }
                     } catch (err) {
                         console.log(err);
                     }
-
-
 
                     dash_yada.paused = true;
                     dash_yada.previous = false;
@@ -323,17 +329,6 @@ async function play_script(data) {
         document.querySelector('.yada-info .exit').style.visibility = 'hidden';
     }
 
-    if (!dash_yada.escaped && document.querySelector('.yada-convo')) {
-        window.ReactDOM.render(
-            window.React.createElement(
-                window.dash_core_components.Markdown,
-                {},
-                dash_yada.close_statement
-            ),
-            document.querySelector('.yada-convo')
-        );
-    }
-
     document.removeEventListener('keydown', escaping);
     document
         .querySelectorAll('.highlighting')
@@ -356,13 +351,15 @@ async function play_script(data) {
     dash_yada.yada.style.top = '';
     dash_yada.yada.style.left = '';
 
-    //resetting placement
-    dash_yada.placement = 'bottom'
-    setTimeout(() => simulateMouseClick(
-                                document.querySelector(
-                                    '.yada_canvas_button_open'
-                                )
-                            ), 100);
+    // resetting placement
+    dash_yada.placement = 'bottom';
+    setTimeout(
+        () =>
+            simulateMouseClick(
+                document.querySelector('.yada_canvas_button_open')
+            ),
+        100
+    );
 }
 /* eslint-enable no-magic-numbers */
 
