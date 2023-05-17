@@ -69,7 +69,7 @@ alert = dbc.Alert(
     "Welcome to the dash-yada demo. To start click on Yada, the helpdesk icon -->",
     dismissable=True,
     id="alert",
-    className="mx-5 text-center"
+    className="mx-5 text-center",
 )
 app.layout = dbc.Container(
     [
@@ -87,7 +87,7 @@ app.layout = dbc.Container(
     Output("interactivity-container", "children"),
     Input("grid", "virtualRowData"),
     Input("grid", "selectedRows"),
-    Input('grid', 'cellValueChanged')
+    Input("grid", "cellValueChanged"),
 )
 def update_graphs(rows, selected, t):
     dff = df if rows is None else pd.DataFrame(rows)

@@ -126,6 +126,7 @@ class Yada(html.Div):
         yada_class="",
         prev_button_props={},
         next_button_props={},
+        mobile_end_button_props={},
         offcanvas_style={},
     ):
         if yada_id is None:
@@ -142,6 +143,7 @@ class Yada(html.Div):
         play_script_props = play_script_props.copy()
         prev_button_props = prev_button_props.copy()
         next_button_props = next_button_props.copy()
+        mobile_end_button_props = mobile_end_button_props.copy()
         if scripts is None:
             scripts = addScripts()
         if hover_message_props:
@@ -188,6 +190,24 @@ class Yada(html.Div):
             )
         if prev_button_props.get("style") is None:
             prev_button_props["style"] = {"left": "0px"}
+
+        if mobile_end_button_props.get("style"):
+            mobile_end_button_props["style"] = {
+                **mobile_end_button_props["style"],
+                "visibility": "hidden",
+            }
+        else:
+            mobile_end_button_props["style"] = {"visibility": "hidden"}
+        if mobile_end_button_props.get("size") is None:
+            mobile_end_button_props["size"] = "sm"
+        if mobile_end_button_props.get("class_name") is None:
+            mobile_end_button_props["class_name"] = "exit"
+        else:
+            mobile_end_button_props["class_name"] = (
+                mobile_end_button_props["class_name"] + " exit"
+            )
+        if mobile_end_button_props.get("children") is None:
+            mobile_end_button_props["children"] = "end"
 
         children = [
             html.Div(
@@ -279,12 +299,23 @@ class Yada(html.Div):
                 scrollable=True,
                 title=dbc.Row(
                     [
-                        dbc.Col(dbc.Button(**prev_button_props), width=1),
-                        dbc.Col(width=4),
-                        dbc.Col(dbc.Button('cancel', color='danger', class_name='exit',
-                                           style={'visibility': 'hidden'}), width=2),
-                        dbc.Col(width=4),
-                        dbc.Col(dbc.Button(**next_button_props), width=1),
+                        dbc.Col(
+                            dbc.Button(**prev_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
+                        dbc.Col(width=3),
+                        dbc.Col(
+                            dbc.Button(**mobile_end_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
+                        dbc.Col(width=3),
+                        dbc.Col(
+                            dbc.Button(**next_button_props),
+                            width=2,
+                            style={"justifyContent": "center", "display": "flex"},
+                        ),
                     ],
                     style={"maxWidth": "95%"},
                 ),

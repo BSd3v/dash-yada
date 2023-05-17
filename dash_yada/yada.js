@@ -300,10 +300,14 @@ async function play_script(data) {
                                 await delay(100);
                             }
                         }
-                    }
-                    else {
-                        while (!document.querySelector(data[dash_yada.y+1].target) && dash_yada.y != -1) {
-                            dash_yada.y--
+                    } else {
+                        while (
+                            !document.querySelector(
+                                data[dash_yada.y + 1].target
+                            ) &&
+                            dash_yada.y !== -1
+                        ) {
+                            dash_yada.y--;
                         }
                     }
 
