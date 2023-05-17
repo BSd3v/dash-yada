@@ -280,7 +280,10 @@ class Yada(html.Div):
                 title=dbc.Row(
                     [
                         dbc.Col(dbc.Button(**prev_button_props), width=1),
-                        dbc.Col(width=10),
+                        dbc.Col(width=4),
+                        dbc.Col(dbc.Button('exit script', color='danger', class_name='exit',
+                                           style={'visibility': 'hidden'}), width=2),
+                        dbc.Col(width=4),
                         dbc.Col(dbc.Button(**next_button_props), width=1),
                     ],
                     style={"maxWidth": "95%"},
@@ -399,8 +402,15 @@ class Yada(html.Div):
             { window.dash_yada.y = window.dash_yada.y - 2;
              window.dash_yada.previous = true;
               window.dash_yada.paused = false}
+              
+            exit = () =>
+            {document.dispatchEvent(new KeyboardEvent('keydown', {bubbles: true, key: "Escape", code: "Escape", which: 27}))}
             
             next = () => {window.dash_yada.yada.dispatchEvent(new Event('click'))}
+            
+            if (/Android|iPhone/i.test(navigator.userAgent)) {
+                document.querySelector(".yada-info .exit").style.visibility = ""
+            }
         
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
@@ -411,6 +421,7 @@ class Yada(html.Div):
                 document.querySelector(".yada-info .previous").addEventListener('click', previous)
                 document.querySelector(".yada-info .previous").setAttribute('listener', true);
                 document.querySelector(".yada-info .next").addEventListener('click', next)
+                document.querySelector(".yada-info .exit").addEventListener('click', exit)
             }
 
         }
