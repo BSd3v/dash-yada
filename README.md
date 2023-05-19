@@ -21,17 +21,18 @@ $ pip install dash-yada
 
 Check out the [Live Demo](https://dashyada.pythonanywhere.com/) to see dash-yada in action!
 
-![yada_live_demo](https://github.com/BSd3v/dash-yada/assets/72614349/41039446-a460-425c-acd6-68a34749368f)
+See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this demo in the /docs folder.
 
-See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this demo in the docs folder.
+
+![yada_live_demo](https://github.com/BSd3v/dash-yada/assets/72614349/41039446-a460-425c-acd6-68a34749368f)
 
 
 ### Quickstart  
 
 ---
 
-Add yada to the app layout.  By default, the yada icon is a helpdesk, located in the top right corner of the site.  It displays a helpful welcome message on hover.
-Everything is customizable, we'll show how later.
+To get started, simply add the `Yada()` component to the app's layout. 
+You will see the Yada icon, a helpdesk, in the top right corner.  On hover, it displays a default welcome message.
 
 ![yada_quickstart](https://github.com/BSd3v/dash-yada/assets/72614349/effe2931-b274-4e75-8ffe-03724b05d55c)
 
@@ -53,7 +54,52 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     app.run_server(debug=True)
+
 ```
+
+### Customizing the Yada Icon
+
+-----
+
+Use the following props to change the icon and the hover message:
+
+- `yada_src` (string; optional): Location src of the image that you want to display for yada.
+
+- `hover_message_props` (dict; optional):
+        Props to display for the message when yada is not clicked and not playing a script.
+        If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
+        {name (string; optional), greeting (string; optional)}
+
+- Set the position and size with CSS:
+
+For this example, place the following in the .css file in the /assets folder
+
+```css
+.yada .sleeping {
+    left: 75px;
+    top: auto;
+    bottom: 5px;
+    height: 60px;
+}
+```
+
+![yada_custom_icon](https://github.com/BSd3v/dash-yada/assets/72614349/14793b1e-9db4-4fd5-9fa3-bddaed0fa006)
+
+
+```python
+
+yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
+hover_message_props = {
+    "name": "Hedwig",
+    "greeting": "Let's explore! Just pick a tour and we'll get started"
+}
+
+yada = Yada(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
+
+
+```
+
+ 
 
 
 ### Adding scripts  
@@ -65,16 +111,13 @@ You can add one or more scripts for the user to select the tour.
 Yada navigates by CSS selector, so it can go to any element on a page.  Learn more about selectors at [Mozilla web-docs](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector)
 For example you could use a component's id like this:  `"#component_id"`.  You can use a class selector like this: `".close-btn"`
 
-```
-    - scripts (dict of list of dicts; optional):
-        Dictionary of keys to scripts:
-            - each key will have an array of a directory:
-            {target (string; required), convo (string; required), action (string; optional),
-            action_args (string; optional)}
-```
 
-Here is a simple example of one script that navigates to the header and gives an introduction.
-You can find more script examples in the demo app.  The Yada component and the scripts are defined in a [yada_scripts.py file](https://github.com/BSd3v/dash-yada/blob/dev/docs/demo/yada_scripts.py), then imported in the app.
+- `scripts` (dict of list of dicts; optional):  Dictionary of keys to scripts:
+    - each key will have an array of:
+    {target (string; required), convo (string; required), action (string; optional), action_args (string; optional)}
+
+
+Here is a simple example of one script with one step. You can find more script examples in the demo app: [yada_scripts.py file](https://github.com/BSd3v/dash-yada/blob/dev/docs/demo/yada_scripts.py)
 
 ![yada_quickstart_script](https://github.com/BSd3v/dash-yada/assets/72614349/6971c5c7-cddb-4418-8853-64951384b7af)
 
@@ -114,39 +157,6 @@ app.layout = dbc.Container(
 
 if __name__ == "__main__":
     app.run_server(debug=True)
-```
-
-
-### Customizing the Yada Icon
-
-You can change the icon by supplying another image to the `yada_src` prop
-Change the welcome message and the name you see on hover when the script is not running with the `hover_message_props`
-Set the position and size with CSS.  
-
-For this example, place the followin in the .css file in the /assets folder
-
-```css
-.yada .sleeping {
-    left: 75px;
-    top: auto;
-    bottom: 5px;
-    height: 60px;
-}
-```
-
-![yada_custom_icon](https://github.com/BSd3v/dash-yada/assets/72614349/14793b1e-9db4-4fd5-9fa3-bddaed0fa006)
-
-
-```python
-
-yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
-hover_message_props = {
-    "name": "Hedwig",
-    "greeting": "Let's explore! Just pick a tour and we'll get started"
-}
-
-yada = Yada(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
-
 ```
 
 

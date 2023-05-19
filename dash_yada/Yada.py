@@ -25,7 +25,6 @@ class Yada(html.Div):
     - hover_message_props (dict; optional):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
-        If greeting or name is a component, it must be wrapped in [ ], for example {"greeting": [html.Div("Hi")]
         {name (string; optional), greeting (string; optional)}
 
     - script_message (dict; optional):
