@@ -36,7 +36,8 @@
 }
 
 .yada-info.offcanvas-top,  .yada-info.offcanvas-bottom {
-    max-height: 200px !important;
+    height: fit-content;
+    max-height: 50vh;
 }
 
 .yada-info .offcanvas-header {

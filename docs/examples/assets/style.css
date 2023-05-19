@@ -1,7 +1,6 @@
-.yada.testing.sleeping {
+.yada .sleeping {
     left: 75px;
     top: auto;
     bottom: 5px;
-    height: 40px;
-    width: 30px;
+    height: 60px;
 }

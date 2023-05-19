@@ -1,24 +1,18 @@
 import dash
-import numpy as np
-from dash import Input, Output, dcc, html
-import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash_yada import Yada
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-yada = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
+yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
+hover_message_props = {
+    "name": "Hedwig",
+    "greeting": "Let's explore! Just pick a tour and we'll get started"
+}
 
+yada = Yada(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
 
-yada = Yada(yada_id="my_yada", yada_src=yada, yada_class="testing")
-
-app.layout = dbc.Container(
-    [
-        yada,
-        # dbc.Row(dbc.Col(yada, width=1), justify="end"),
-    ],
-    fluid=True,
-)
+app.layout = dbc.Container(yada)
 
 
 if __name__ == "__main__":
