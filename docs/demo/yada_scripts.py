@@ -101,6 +101,16 @@ edit_script = [
 
 conclusion_script = [{"target": "#title", "convo": "I hope you enjoyed the tour!"}]
 
+
+off_canvas_style = {
+    "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+    "margin": "auto",
+    "padding": "0px 24px 5px",
+    "backgroundColor": "var(--bs-gray-200)",
+    "borderRadius": 12,
+    "maxWidth":800
+}
+
 yada = Yada(
     yada_id="demo",
     next_button_props={
@@ -110,6 +120,7 @@ yada = Yada(
         "size": "sm",
         "children": "prev",
     },
+    offcanvas_style=off_canvas_style,
     scripts={
         "Explore": intro_script
         + filter_scirpt
