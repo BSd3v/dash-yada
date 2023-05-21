@@ -104,9 +104,10 @@ conclusion_script = [{"target": "#title", "convo": "I hope you enjoyed the tour!
 
 off_canvas_style = {
     "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-    "margin": "auto",
+    "margin": "0px auto",
     "padding": "0px 24px 5px",
-    "backgroundColor": "var(--bs-gray-200)",
+    "backgroundColor": "var(--bs-gray-600)",
+    "color": "white",
     "borderRadius": 12,
     "maxWidth":800
 }
