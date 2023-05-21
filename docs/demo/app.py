@@ -9,13 +9,18 @@ df = pd.read_csv(
     "https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv"
 )
 
-df.rename(columns={'pop':'Population', "lifeExp": "Life Expectancy", "gdpPercap":"GDP Per Capita"}, inplace=True)
+df.rename(
+    columns={
+        "pop": "Population",
+        "lifeExp": "Life Expectancy",
+        "gdpPercap": "GDP Per Capita",
+    },
+    inplace=True,
+)
 
 app = Dash(
     __name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME]
 )
-
-
 
 
 columnDefs = [
@@ -28,17 +33,19 @@ columnDefs = [
     {
         "field": "Population",
         "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
         "valueFormatter": {"function": "d3.format(',.0f')(params.value)"},
     },
     {
         "field": "Life Expectancy",
         "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
         "valueFormatter": {"function": "d3.format('.1f')(params.value)"},
     },
-
     {
         "field": "GDP Per Capita",
         "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
         "valueFormatter": {"function": "d3.format('$,.1f')(params.value)"},
     },
 ]
