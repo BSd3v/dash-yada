@@ -1,7 +1,7 @@
 from dash_yada import Yada
 
 
-intro_script = [
+dev_intro_script = [
     {
         "target": "#title",
         "convo": "##### I'll show you how to create a fun interactive demo so people can get the most out of your site.",
@@ -27,7 +27,7 @@ intro_script = [
     },
 ]
 
-filter_scirpt = [
+filter_script = [
     {
         "target": "#quick-filter-input",
         "convo": "I can interact with input boxes.  This input is a 'quick filter' for the grid.  \r\r Click Next, and I'll type 'Rep Africa' for you.",
@@ -39,7 +39,7 @@ filter_scirpt = [
         "convo": "See!  The grid now only displays rows with both 'Rep' AND 'Africa'. ",
     },
     {
-        "target": "#pop",
+        "target": "#Population",
         "convo": "Note that the figures are updated when the grid is filtered.",
     },
     {
@@ -61,7 +61,7 @@ sort_script = [
         "action": "click",
     },
     {
-        "target": "#grid .ag-header-cell:nth-child(4) .ag-header-cell-label",
+        "target": "#grid .ag-header-cell:nth-child(3) .ag-header-cell-label",
         "convo": "You can multi-sort grids by holding down the shift key while clicking the header.",
         "action": "click",
         "action_args": {"shiftKey": True},
@@ -74,28 +74,26 @@ sort_script = [
 
 edit_script = [
     {
-        "target": '.ag-row[row-index="2"] .ag-cell[aria-colindex="4"]',
+        "target": '.ag-row[row-index="2"] .ag-cell[aria-colindex="3"]',
         "action": "dblclick",
         "convo": "You can edit the grid by double clicking on the cell",
     },
     {
-        "target": '.ag-row[row-index="2"] .ag-cell[aria-colindex="4"] input',
+        "target": '.ag-row[row-index="2"] .ag-cell[aria-colindex="3"] input',
         "action": "type",
         "convo": "Let's update the population",
         "action_args": "900000000",
     },
     {
-        "target": '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]',
+        "target": '.ag-row[row-index="0"] .ag-cell[aria-colindex="3"]',
         "action": "click",
-        "convo": "Note that selected rows are a different color in the figures",
-    },
-    {
-        "target": "#gdpPercap",
         "convo": "",
     },
+
     {
-        "target": '.ag-row[row-index="1"] .ag-cell[aria-colindex="3"]',
+        "target": '.ag-row[row-index="2"] .ag-cell[aria-colindex="3"]',
         "convo": "To undo a change type ctrl-z.  If you are on a desktop - give it a try!",
+        "action": "click",
     },
 ]
 
@@ -123,12 +121,12 @@ yada = Yada(
     },
     offcanvas_style=off_canvas_style,
     scripts={
-        "Explore": intro_script
-        + filter_scirpt
+        "Developer Demo": dev_intro_script
+        + filter_script
         + sort_script
         + edit_script
         + conclusion_script,
-        "Filter": filter_scirpt,
+        "Filter": filter_script,
         "Sort": sort_script,
         "Edit": edit_script,
     },
