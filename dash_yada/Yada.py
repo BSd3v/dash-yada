@@ -13,7 +13,7 @@ def addScripts():
     return scripts
 
 
-class Yada(html.Div):
+class YadaAIO(html.Div):
     """A html.Div All-in-One component.
 
 
@@ -52,62 +52,62 @@ class Yada(html.Div):
 
     class ids:
         sleep_message = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "sleep_message",
             "yada_id": yada_id,
         }
         sleep_message_greeting = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "sleep_message_greeting",
             "yada_id": yada_id,
         }
         convo = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "convo",
             "yada_id": yada_id,
         }
         active_message = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "active_message",
             "yada_id": yada_id,
         }
         active_body = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "active_body",
             "yada_id": yada_id,
         }
         scripts = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "scripts",
             "yada_id": yada_id,
         }
         script_choices = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "script_choices",
             "yada_id": yada_id,
         }
         dummy_div = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "dummy_div",
             "yada_id": yada_id,
         }
         sleepy_div = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "sleepy_div",
             "yada_id": yada_id,
         }
         play_script = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "play_script",
             "yada_id": yada_id,
         }
         steps_canvas = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "steps_canvas",
             "yada_id": yada_id,
         }
         canvas_button_open = lambda yada_id: {
-            "component": "yada",
+            "component": "YadaAIO",
             "subcomponent": "canvas_button_open",
             "yada_id": yada_id,
         }
@@ -323,7 +323,7 @@ class Yada(html.Div):
             ),
         ]
 
-        super(Yada, self).__init__(children)
+        super(YadaAIO, self).__init__(children)
 
     clientside_callback(
         """

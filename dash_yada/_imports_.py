@@ -1,3 +1,3 @@
-from .Yada import Yada
+from .Yada import YadaAIO
 
-__all__ = ["Yada"]
+__all__ = ["YadaAIO"]
