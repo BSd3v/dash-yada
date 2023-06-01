@@ -15,6 +15,9 @@ __`dash-yada` lets you easily create interactive tutorials for your Dash app.__
 $ pip install dash-yada
 ```
 
+<br>
+<br>
+
 ### Live Demo
 
 ---
@@ -23,8 +26,11 @@ Check out the [Live Demo](https://dashyada.pythonanywhere.com/) to see dash-yada
 
 See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this demo in the /docs folder.
 
+![yada_demo_dev_intro](https://github.com/BSd3v/dash-yada/assets/72614349/bdb46af3-26df-49b7-be8b-a035eebb169c)
 
-![yada_live_demo](https://github.com/BSd3v/dash-yada/assets/72614349/41039446-a460-425c-acd6-68a34749368f)
+
+<br>
+<br>
 
 
 ### Quickstart  
@@ -40,13 +46,13 @@ You will see the Yada icon, a helpdesk, in the top right corner.  On hover, it d
 import dash
 from dash import html
 import dash_bootstrap_components as dbc
-from dash_yada import Yada
+from dash_yada import YadaAIO
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = dbc.Container(
     [
-        Yada(yada_id="yada"),
+        YadaAIO(yada_id="yada"),
         html.H4("My Dashboard", className="p-3 bg-primary text-white text center"),
     ],
     fluid=True,
@@ -56,6 +62,9 @@ if __name__ == "__main__":
     app.run_server(debug=True)
 
 ```
+
+<br>
+<br>
 
 ### Customizing the Yada Icon
 
@@ -94,12 +103,15 @@ hover_message_props = {
     "greeting": "Let's explore! Just pick a tour and we'll get started"
 }
 
-yada = Yada(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
+yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
 
 
 ```
 
  
+<br>
+<br>
+
 
 
 ### Adding scripts  
@@ -127,11 +139,11 @@ Here is a simple example of one script with one step. You can find more script e
 import dash
 from dash import html
 import dash_bootstrap_components as dbc
-from dash_yada import Yada
+from dash_yada import YadaAIO
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-yada = Yada(
+yada = YadaAIO(
     yada_id="yada",
     scripts={
         "Intro": [
@@ -159,13 +171,15 @@ if __name__ == "__main__":
     app.run_server(debug=True)
 ```
 
+<br>
+<br>
 
 
 ### Reference
 
 ---
 
-dash-yada is an All-In-One component.  Learn more about AIO components in the [Dash documentation](https://dash.plotly.com/all-in-one-components).
+dash-yada.YadaAIO is an All-In-One component.  Learn more about AIO components in the [Dash documentation](https://dash.plotly.com/all-in-one-components).
 
 ```
     Keyword arguments:

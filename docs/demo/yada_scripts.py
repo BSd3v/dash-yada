@@ -1,11 +1,12 @@
-from dash_yada import Yada
+from dash_yada import YadaAIO
+from dash import callback, Input, Output
 
 
 off_canvas_style = {
-    "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+    "boxShadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     "margin": "8px auto",
     "padding": "0px 24px 5px",
-    "backgroundColor": "var(--bs-gray-600)",
+    "backgroundColor": "var(--bs-gray-500)",
     "color": "white",
     "borderRadius": 12,
     "maxWidth": 800,
@@ -126,6 +127,17 @@ dev_edit_script = [
     },
 ]
 
+dev_conclusion_script = [
+    {
+        "target": "#title",
+        "convo": """
+        Be sure to check out my [Github](https://github.com/BSd3v/dash-yada) for more information on how to customize me, including my icon, scripts and style.  
+        
+        I hope you enjoyed the tour.  Happy exploring!!
+        """
+     }
+]
+
 conclusion_script = [
     {"target": "#title", "convo": "I hope you enjoyed the tour.  Happy exploring!!"}
 ]
@@ -139,7 +151,7 @@ user_intro_script = (
         This site has information about the population, life expectancy and GDP per capita in different countries
          of the world.  The data is from 2007.  
          
-         On this tour,  I'll give you a holistic overview to help you get started exploring the data.
+         On this tour,  I'll give you a overview to help you get started exploring the data.
          """,
         },
     ]
@@ -190,7 +202,7 @@ user_sort_script = [
     },
 ]
 
-yada = Yada(
+yada = YadaAIO(
     yada_id="demo",
     next_button_props={
         "size": "sm",
@@ -205,7 +217,7 @@ yada = Yada(
         + filter_script
         + dev_sort_script
         + dev_edit_script
-        + conclusion_script,
+        + dev_conclusion_script,
         "Intro tour for users": user_intro_script
         + user_sort_script
         + filter_script
