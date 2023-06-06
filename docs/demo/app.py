@@ -91,6 +91,14 @@ app.layout = dbc.Container(
     ]
 )
 
+app.clientside_callback(
+    """function (n) {
+        return true
+    }""",
+    Output(yada.ids.sleep_message('demo'), 'is_open'),
+    Input(yada.ids.dummy_div('demo'), 'id')
+)
+
 
 @app.callback(
     Output("interactivity-container", "children"),

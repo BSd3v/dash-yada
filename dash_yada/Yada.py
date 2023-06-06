@@ -337,7 +337,7 @@ class YadaAIO(html.Div):
             return window.dash_clientside.no_update
         }
         """,
-        Output(ids.sleep_message(MATCH), "is_open"),
+        Output(ids.sleep_message(MATCH), "is_open", allow_duplicate=True),
         Input(ids.dummy_div(MATCH), "n_clicks"),
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.script_choices(MATCH), "is_open"),
