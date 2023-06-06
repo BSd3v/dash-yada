@@ -74,16 +74,10 @@ title = html.Div(
     className="text-center p-3 mb-3 bg-primary text-white",
     id="title",
 )
-alert = dbc.Alert(
-    "Welcome to the dash-yada demo. To start click on Yada, the helpdesk icon -->",
-    dismissable=True,
-    id="alert",
-    className="mx-5 text-center",
-)
+
 app.layout = dbc.Container(
     [
         yada,
-        alert,
         title,
         dcc.Input(id="quick-filter-input", placeholder="filter...", className="mb-2"),
         grid,

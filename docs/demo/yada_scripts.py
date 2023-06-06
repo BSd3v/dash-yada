@@ -15,15 +15,13 @@ off_canvas_style = {
 
 housekeeping_script = [
     {
-        "target": ".alert .btn-close",
+        "target": ".title",
         "convo": """
                 First, a few housekeeping notes:            
                 - You can close this dialogue box to see the whole screen, then click on me to continue
-                - Press the escape key any time to exit the tour   
-
-                When you click the 'next' button,  I'll close the welcome message, then we'll begin.
+                - Press the escape key any time to exit the tour                   
                 """,
-        "action": "click",
+
     },
 ]
 

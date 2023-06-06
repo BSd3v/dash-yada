@@ -135,7 +135,9 @@ class YadaAIO(html.Div):
 
         default_greet = """
         Hello! I am Your Automated Dashboard Assistant.  
-        But you can call me, Y.A.D.A!
+        But you can call me, Y.A.D.A!  
+        
+        ##### Click on me to get started ↗️
         """
 
         hover_message_props = hover_message_props.copy()
