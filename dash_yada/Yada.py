@@ -134,8 +134,11 @@ class YadaAIO(html.Div):
             yada_src = "/_dash-component-suites/dash_yada/tech-support.png"
 
         default_greet = """
-        Hello! I am Your Automated Dashboard Assistant.  
-        But you can call me, Y.A.D.A!
+        Hello!  \r         
+        I'm Your Automated Dashboard Assistant.  
+        But you can call me Y.A.D.A!  
+        
+        ##### Click on me to get started ↗️
         """
 
         hover_message_props = hover_message_props.copy()
