@@ -209,7 +209,7 @@ yada = YadaAIO(
         "size": "sm",
         "children": "prev",
     },
-    offcanvas_style=off_canvas_style,
+    steps_offcanvas_style=off_canvas_style,
     scripts={
         "Intro tour for developers": dev_intro_script
         + filter_script

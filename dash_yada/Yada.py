@@ -16,13 +16,12 @@ def addScripts():
 class YadaAIO(html.Div):
     """A html.Div All-in-One component.
 
-
     Keyword arguments:
 
     - yada_id (string; optional):
         The ID used to identify this component in Dash callbacks.
 
-    - hover_message_props (dict; optional):
+    - hover_message_dict (dict; optional {name, greeting, style}):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
         {name (string; optional), greeting (string; optional)}
@@ -47,18 +46,24 @@ class YadaAIO(html.Div):
 
     - prev_button_props (dict; optional):
         Props to control the options for the previous button. dbc.Button props.
+        
+    - end_button_props (dict; optional):
+        Props to control the options for the end button. dbc.Button props.
+        
+    - steps_offcanvas_style (dict; optional):
+        Style to control the offcanvas style while playing a script.
 
     """
 
     class ids:
-        sleep_message = lambda yada_id: {
+        hover_message = lambda yada_id: {
             "component": "YadaAIO",
-            "subcomponent": "sleep_message",
+            "subcomponent": "hover_message",
             "yada_id": yada_id,
         }
-        sleep_message_greeting = lambda yada_id: {
+        hover_message_greeting = lambda yada_id: {
             "component": "YadaAIO",
-            "subcomponent": "sleep_message_greeting",
+            "subcomponent": "hover_message_greeting",
             "yada_id": yada_id,
         }
         convo = lambda yada_id: {
@@ -86,9 +91,9 @@ class YadaAIO(html.Div):
             "subcomponent": "script_choices",
             "yada_id": yada_id,
         }
-        dummy_div = lambda yada_id: {
+        _dummy_div = lambda yada_id: {
             "component": "YadaAIO",
-            "subcomponent": "dummy_div",
+            "subcomponent": "_dummy_div",
             "yada_id": yada_id,
         }
         sleepy_div = lambda yada_id: {
@@ -101,9 +106,9 @@ class YadaAIO(html.Div):
             "subcomponent": "play_script",
             "yada_id": yada_id,
         }
-        steps_canvas = lambda yada_id: {
+        _steps_offcanvas = lambda yada_id: { ## <- internal use with children/title/className, do not update children/title/className, or break scripts
             "component": "YadaAIO",
-            "subcomponent": "steps_canvas",
+            "subcomponent": "_steps_offcanvas",
             "yada_id": yada_id,
         }
         canvas_button_open = lambda yada_id: {
@@ -116,7 +121,7 @@ class YadaAIO(html.Div):
 
     def __init__(
         self,
-        hover_message_props={},
+        hover_message_dict={},
         script_message={},
         play_script_props={},
         yada_src=None,
@@ -125,8 +130,8 @@ class YadaAIO(html.Div):
         yada_class="",
         prev_button_props={},
         next_button_props={},
-        mobile_end_button_props={},
-        offcanvas_style={},
+        end_button_props={},
+        steps_offcanvas_style={},
     ):
         if yada_id is None:
             yada_id = str(uuid.uuid4())
@@ -141,24 +146,30 @@ class YadaAIO(html.Div):
         ##### Click on me to get started ↗️
         """
 
-        hover_message_props = hover_message_props.copy()
+        default_steps_offcanvas_style = {'flexDirection': 'column-reverse'}
+        if steps_offcanvas_style:
+            steps_offcanvas_style={**default_steps_offcanvas_style, **steps_offcanvas_style}
+        else:
+            steps_offcanvas_style = default_steps_offcanvas_style
+
+        hover_message_dict = hover_message_dict.copy()
         play_script_props = play_script_props.copy()
         prev_button_props = prev_button_props.copy()
         next_button_props = next_button_props.copy()
-        mobile_end_button_props = mobile_end_button_props.copy()
+        end_button_props = end_button_props.copy()
         if scripts is None:
             scripts = addScripts()
-        if hover_message_props:
-            if hover_message_props.get("name") is None:
-                hover_message_props["name"] = "yada"
-            if hover_message_props.get("greeting") is None:
-                hover_message_props["greeting"] = default_greet
-            if hover_message_props.get("style") is None:
-                hover_message_props["style"] = {}
+        if hover_message_dict:
+            if hover_message_dict.get("name") is None:
+                hover_message_dict["name"] = "yada"
+            if hover_message_dict.get("greeting") is None:
+                hover_message_dict["greeting"] = default_greet
+            if hover_message_dict.get("style") is None:
+                hover_message_dict["style"] = {}
         else:
-            hover_message_props["name"] = "yada"
-            hover_message_props["greeting"] = default_greet
-            hover_message_props["style"] = {}
+            hover_message_dict["name"] = "yada"
+            hover_message_dict["greeting"] = default_greet
+            hover_message_dict["style"] = {}
         if play_script_props:
             if play_script_props.get("children") is None:
                 play_script_props["children"] = "play selected"
@@ -193,23 +204,16 @@ class YadaAIO(html.Div):
         if prev_button_props.get("style") is None:
             prev_button_props["style"] = {"left": "0px"}
 
-        if mobile_end_button_props.get("style"):
-            mobile_end_button_props["style"] = {
-                **mobile_end_button_props["style"],
-                "visibility": "hidden",
-            }
+        if end_button_props.get("size") is None:
+            end_button_props["size"] = "sm"
+        if end_button_props.get("class_name") is None:
+            end_button_props["class_name"] = "exit"
         else:
-            mobile_end_button_props["style"] = {"visibility": "hidden"}
-        if mobile_end_button_props.get("size") is None:
-            mobile_end_button_props["size"] = "sm"
-        if mobile_end_button_props.get("class_name") is None:
-            mobile_end_button_props["class_name"] = "exit"
-        else:
-            mobile_end_button_props["class_name"] = (
-                mobile_end_button_props["class_name"] + " exit"
+            end_button_props["class_name"] = (
+                end_button_props["class_name"] + " exit"
             )
-        if mobile_end_button_props.get("children") is None:
-            mobile_end_button_props["children"] = "end"
+        if end_button_props.get("children") is None:
+            end_button_props["children"] = "end"
 
         children = [
             html.Div(
@@ -225,7 +229,7 @@ class YadaAIO(html.Div):
                     ),
                     html.Img(src=yada_src, className="sleeping"),
                 ],
-                id=self.ids.dummy_div(yada_id),
+                id=self.ids._dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
             ),
             html.Button(
@@ -236,25 +240,25 @@ class YadaAIO(html.Div):
             ),
             dcc.Store(id=self.ids.scripts(yada_id), data=scripts),
             dcc.Store(
-                id=self.ids.sleep_message_greeting(yada_id),
-                data=hover_message_props["greeting"],
+                id=self.ids.hover_message_greeting(yada_id),
+                data=hover_message_dict["greeting"],
             ),
             dbc.Popover(
                 [
-                    dbc.PopoverHeader(hover_message_props["name"]),
+                    dbc.PopoverHeader(hover_message_dict["name"]),
                     dbc.PopoverBody(
                         [
                             dcc.Markdown(
-                                hover_message_props["greeting"],
+                                hover_message_dict["greeting"],
                             ),
                         ],
-                        style=hover_message_props["style"],
+                        style=hover_message_dict["style"],
                     ),
                 ],
                 style={"zIndex": 9999},
                 target=self.ids.sleepy_div(yada_id),
                 trigger="hover",
-                id=self.ids.sleep_message(yada_id),
+                id=self.ids.hover_message(yada_id),
             ),
             dbc.Popover(
                 dbc.PopoverBody(
@@ -296,7 +300,7 @@ class YadaAIO(html.Div):
                     ),
                 ],
                 className="yada-info",
-                id=self.ids.steps_canvas(yada_id),
+                id=self.ids._steps_offcanvas(yada_id), ## <- internal use with children/title/className, do not update children/title/className, or break scripts
                 backdrop=False,
                 placement="bottom",
                 scrollable=True,
@@ -309,7 +313,7 @@ class YadaAIO(html.Div):
                         ),
                         dbc.Col(width=3),
                         dbc.Col(
-                            dbc.Button(**mobile_end_button_props),
+                            dbc.Button(**end_button_props),
                             width=2,
                             style={"justifyContent": "center", "display": "flex"},
                         ),
@@ -322,7 +326,7 @@ class YadaAIO(html.Div):
                     ],
                     style={"maxWidth": "95%"},
                 ),
-                style=offcanvas_style,
+                style=steps_offcanvas_style,
             ),
         ]
 
@@ -340,8 +344,8 @@ class YadaAIO(html.Div):
             return window.dash_clientside.no_update
         }
         """,
-        Output(ids.sleep_message(MATCH), "is_open", allow_duplicate=True),
-        Input(ids.dummy_div(MATCH), "n_clicks"),
+        Output(ids.hover_message(MATCH), "is_open", allow_duplicate=True),
+        Input(ids._dummy_div(MATCH), "n_clicks"),
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.script_choices(MATCH), "is_open"),
         prevent_initial_call=True,
@@ -411,7 +415,7 @@ class YadaAIO(html.Div):
                 return true
             }
         """,
-        Output(ids.steps_canvas(MATCH), "is_open"),
+        Output(ids._steps_offcanvas(MATCH), "is_open"),
         Input(ids.play_script(MATCH), "n_clicks"),
         prevent_initial_call=True,
     )
@@ -426,7 +430,7 @@ class YadaAIO(html.Div):
                 return window.dash_clientside.no_update
         }""",
         Output(ids.convo(MATCH), "children"),
-        Input(ids.steps_canvas(MATCH), "is_open"),
+        Input(ids._steps_offcanvas(MATCH), "is_open"),
     )
 
     clientside_callback(
@@ -461,8 +465,8 @@ class YadaAIO(html.Div):
         }
         return window.dash_clientside.no_update
     }""",
-        Output(ids.steps_canvas(MATCH), "id"),
-        Input(ids.steps_canvas(MATCH), "is_open"),
+        Output(ids._steps_offcanvas(MATCH), "id"),
+        Input(ids._steps_offcanvas(MATCH), "is_open"),
     )
 
     clientside_callback(
@@ -475,8 +479,8 @@ class YadaAIO(html.Div):
                 return [window.dash_clientside.no_update, window.dash_clientside.no_update, window.dash_yada.placement]
         }""",
         Output(ids.convo(MATCH), "children", allow_duplicate=True),
-        Output(ids.steps_canvas(MATCH), "is_open", allow_duplicate=True),
-        Output(ids.steps_canvas(MATCH), "placement"),
+        Output(ids._steps_offcanvas(MATCH), "is_open", allow_duplicate=True),
+        Output(ids._steps_offcanvas(MATCH), "placement"),
         Input(ids.canvas_button_open(MATCH), "n_clicks"),
         prevent_initial_call=True,
     )
