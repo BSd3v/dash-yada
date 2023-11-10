@@ -7,10 +7,12 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
 hover_message_props = {
     "name": "Hedwig",
-    "greeting": "Let's explore! Just pick a tour and we'll get started"
+    "greeting": "Let's explore! Just pick a tour and we'll get started",
 }
 
-yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
+yada = YadaAIO(
+    yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props
+)
 
 app.layout = dbc.Container(yada)
 

@@ -89,8 +89,8 @@ app.clientside_callback(
     """function (n) {
         return true
     }""",
-    Output(yada.ids.hover_message('demo'), 'is_open'),
-    Input(yada.ids._dummy_div('demo'), 'id')
+    Output(yada.ids.hover_message("demo"), "is_open"),
+    Input(yada.ids._dummy_div("demo"), "id"),
 )
 
 

@@ -46,10 +46,10 @@ class YadaAIO(html.Div):
 
     - prev_button_props (dict; optional):
         Props to control the options for the previous button. dbc.Button props.
-        
+
     - end_button_props (dict; optional):
         Props to control the options for the end button. dbc.Button props.
-        
+
     - steps_offcanvas_style (dict; optional):
         Style to control the offcanvas style while playing a script.
 
@@ -106,7 +106,7 @@ class YadaAIO(html.Div):
             "subcomponent": "play_script",
             "yada_id": yada_id,
         }
-        _steps_offcanvas = lambda yada_id: { ## <- internal use with children/title/className, do not update children/title/className, or break scripts
+        _steps_offcanvas = lambda yada_id: {  ## <- internal use with children/title/className, do not update children/title/className, or break scripts
             "component": "YadaAIO",
             "subcomponent": "_steps_offcanvas",
             "yada_id": yada_id,
@@ -146,9 +146,12 @@ class YadaAIO(html.Div):
         ##### Click on me to get started ↗️
         """
 
-        default_steps_offcanvas_style = {'flexDirection': 'column-reverse'}
+        default_steps_offcanvas_style = {"flexDirection": "column-reverse"}
         if steps_offcanvas_style:
-            steps_offcanvas_style={**default_steps_offcanvas_style, **steps_offcanvas_style}
+            steps_offcanvas_style = {
+                **default_steps_offcanvas_style,
+                **steps_offcanvas_style,
+            }
         else:
             steps_offcanvas_style = default_steps_offcanvas_style
 
@@ -209,9 +212,7 @@ class YadaAIO(html.Div):
         if end_button_props.get("class_name") is None:
             end_button_props["class_name"] = "exit"
         else:
-            end_button_props["class_name"] = (
-                end_button_props["class_name"] + " exit"
-            )
+            end_button_props["class_name"] = end_button_props["class_name"] + " exit"
         if end_button_props.get("children") is None:
             end_button_props["children"] = "end"
 
@@ -300,7 +301,9 @@ class YadaAIO(html.Div):
                     ),
                 ],
                 className="yada-info",
-                id=self.ids._steps_offcanvas(yada_id), ## <- internal use with children/title/className, do not update children/title/className, or break scripts
+                id=self.ids._steps_offcanvas(
+                    yada_id
+                ),  ## <- internal use with children/title/className, do not update children/title/className, or break scripts
                 backdrop=False,
                 placement="bottom",
                 scrollable=True,

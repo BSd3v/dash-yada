@@ -21,7 +21,6 @@ housekeeping_script = [
                 - You can close this dialogue box to see the whole screen, then click on me to continue
                 - Press the escape key any time to exit the tour                   
                 """,
-
     },
 ]
 
@@ -132,8 +131,8 @@ dev_conclusion_script = [
         Be sure to check out my [Github](https://github.com/BSd3v/dash-yada) for more information on how to customize me, including my icon, scripts and style.  
         
         I hope you enjoyed the tour.  Happy exploring!!
-        """
-     }
+        """,
+    }
 ]
 
 conclusion_script = [
