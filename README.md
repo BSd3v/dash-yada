@@ -28,6 +28,14 @@ See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this d
 
 ![yada_demo_dev_intro](https://github.com/BSd3v/dash-yada/assets/72614349/bdb46af3-26df-49b7-be8b-a035eebb169c)
 
+<br>
+<br>
+
+### More Examples
+
+---
+
+See more examples in the [/examples](https://github.com/BSd3v/dash-yada/tree/dev/docs/examples) folder
 
 <br>
 <br>
@@ -66,7 +74,7 @@ if __name__ == "__main__":
 <br>
 <br>
 
-### Customizing the Yada Icon
+### Customizing the Yada image
 
 -----
 
@@ -74,21 +82,20 @@ Use the following props to change the icon and the hover message:
 
 - `yada_src` (string; optional): Location src of the image that you want to display for yada.
 
-- `hover_message_props` (dict; optional):
+- `hover_message_dict` (dict; optional):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
-        {name (string; optional), greeting (string; optional)}
+        {name (string; optional), greeting (string; optional), style (dict; optional}
 
 - Set the position and size with CSS:
 
-For this example, place the following in the .css file in the /assets folder
-
+The default CSS for the Yada image when the app starts is:
 ```css
-.yada .sleeping {
-    left: 75px;
-    top: auto;
-    bottom: 5px;
-    height: 60px;
+.yada.sleeping {
+    right: 30px;
+    top: 5px;
+    height: 50px;
+    width: 35px;
 }
 ```
 
@@ -98,12 +105,13 @@ For this example, place the following in the .css file in the /assets folder
 ```python
 
 yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
-hover_message_props = {
+hover_message_dict = {
     "name": "Hedwig",
-    "greeting": "Let's explore! Just pick a tour and we'll get started"
+    "greeting": "Let's explore! Just pick a tour and we'll get started",
+    "style": {"backgroundColor": "lightgreen"}
 }
 
-yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
+yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_dict=hover_message_dict)
 
 
 ```
@@ -174,6 +182,72 @@ if __name__ == "__main__":
 <br>
 <br>
 
+### Styling the tour steps
+
+---
+
+The steps in the script are displayed in a `dbc.Offcanvas` component.  You can change the style using the `steps_offcanvas_style` prop.
+Note that in the `scripts` prop you can also use Markdown in the `convo`
+
+```python
+import dash
+from dash import html
+import dash_bootstrap_components as dbc
+from dash_yada import YadaAIO
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+
+steps_offcanvas_style = {
+    "boxShadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+    "margin": "8px auto",
+    "padding": "0px 24px 5px",
+    "backgroundColor": "var(--bs-gray-500)",
+    "color": "white",
+    "borderRadius": 12,
+    "maxWidth": 800,
+}
+
+
+yada = YadaAIO(
+    yada_id="yada",
+    steps_offcanvas_style=steps_offcanvas_style,
+    scripts={
+        "Intro": [
+            {
+                "target": "#title",
+                "convo": """
+                ### Welcome to My Dashboard tour!  
+                The tour steps are are displayed in an offcanvas component and can be styled with the `steps_offcanvas_style` prop. 
+                 
+                Note that you can use Markdown in the "convo" prop.
+                """,
+            },
+        ]
+    },
+)
+
+
+app.layout = dbc.Container(
+    [
+        yada,
+        html.H4(
+            "My Dashboard",
+            className="p-3 bg-primary text-white text center",
+            id="title",
+        ),
+    ],
+    fluid=True,
+)
+
+if __name__ == "__main__":
+    app.run_server(debug=True)
+
+```
+
+
+<br>
+<br>
 
 ### Reference
 
@@ -182,16 +256,15 @@ if __name__ == "__main__":
 dash-yada.YadaAIO is an All-In-One component.  Learn more about AIO components in the [Dash documentation](https://dash.plotly.com/all-in-one-components).
 
 ```
-    Keyword arguments:
+   Keyword arguments:
 
     - yada_id (string; optional):
         The ID used to identify this component in Dash callbacks.
 
-    - hover_message_props (dict; optional):
+    - hover_message_dict (dict; optional {name, greeting, style}):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
-        If greeting or name is a component, it must be wrapped in [ ], for example {"greeting": [html.Div("Hi")]
-        {name (string; optional), greeting (string; optional)}
+        {name (string; optional), greeting (string; optional), style (dict; optional}
 
     - script_message (dict; optional):
         String to display for the message when yada is clicked and not playing a script.
@@ -213,4 +286,11 @@ dash-yada.YadaAIO is an All-In-One component.  Learn more about AIO components i
 
     - prev_button_props (dict; optional):
         Props to control the options for the previous button. dbc.Button props.
+
+    - end_button_props (dict; optional):
+        Props to control the options for the end button. dbc.Button props.
+
+    - steps_offcanvas_style (dict; optional):
+        Style to control the offcanvas style while playing a script.
+
 ```

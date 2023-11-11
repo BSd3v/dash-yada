@@ -24,7 +24,7 @@ class YadaAIO(html.Div):
     - hover_message_dict (dict; optional {name, greeting, style}):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
-        {name (string; optional), greeting (string; optional)}
+        {name (string; optional), greeting (string; optional), style (dict; optional}
 
     - script_message (dict; optional):
         String to display for the message when yada is clicked and not playing a script.

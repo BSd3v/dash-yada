@@ -1,8 +1,8 @@
 from dash_yada import YadaAIO
-from dash import callback, Input, Output
+from dash import clientside_callback, Input, Output
 
 
-off_canvas_style = {
+steps_offcanvas_style = {
     "boxShadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     "margin": "8px auto",
     "padding": "0px 24px 5px",
@@ -208,7 +208,7 @@ yada = YadaAIO(
         "size": "sm",
         "children": "prev",
     },
-    steps_offcanvas_style=off_canvas_style,
+    steps_offcanvas_style=steps_offcanvas_style,
     scripts={
         "Intro tour for developers": dev_intro_script
         + filter_script
@@ -223,4 +223,13 @@ yada = YadaAIO(
         "Sort": dev_sort_script + conclusion_script,
         "Edit": dev_edit_script + conclusion_script,
     },
+)
+
+# This will open the yada welcome message when the app starts
+clientside_callback(
+    """function () {
+        return true
+    }""",
+    Output(yada.ids.hover_message("demo"), "is_open"),
+    Input(yada.ids._dummy_div("demo"), "id"),
 )
