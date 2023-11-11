@@ -82,7 +82,7 @@ Use the following props to change the icon and the hover message:
 
 - `yada_src` (string; optional): Location src of the image that you want to display for yada.
 
-- `hover_message_props` (dict; optional):
+- `hover_message_dict` (dict; optional):
         Props to display for the message when yada is not clicked and not playing a script.
         If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
         {name (string; optional), greeting (string; optional), style (dict; optional}
@@ -105,13 +105,13 @@ The default CSS for the Yada image when the app starts is:
 ```python
 
 yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
-hover_message_props = {
+hover_message_dict = {
     "name": "Hedwig",
     "greeting": "Let's explore! Just pick a tour and we'll get started",
     "style": {"backgroundColor": "lightgreen"}
 }
 
-yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_props=hover_message_props)
+yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_dict=hover_message_dict)
 
 
 ```
