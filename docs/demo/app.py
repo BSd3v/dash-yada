@@ -85,14 +85,6 @@ app.layout = dbc.Container(
     ]
 )
 
-app.clientside_callback(
-    """function (n) {
-        return true
-    }""",
-    Output(yada.ids.hover_message("demo"), "is_open"),
-    Input(yada.ids._dummy_div("demo"), "id"),
-)
-
 
 @app.callback(
     Output("interactivity-container", "children"),
