@@ -351,6 +351,7 @@ async function play_script(data) {
     dash_yada.yada.style.height = '';
     dash_yada.yada.style.top = '';
     dash_yada.yada.style.left = '';
+    dash_yada.yada.style.width = '';
 
     // resetting placement
     dash_yada.placement = 'bottom';
