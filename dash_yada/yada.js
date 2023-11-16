@@ -339,6 +339,7 @@ async function play_script(data) {
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px';
+    dash_yada.yada.style.width = dash_yada.initialYada.width + 'px';
     await delay(1000);
 
     document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));

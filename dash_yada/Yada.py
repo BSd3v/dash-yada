@@ -124,7 +124,8 @@ class YadaAIO(html.Div):
         hover_message_dict={},
         script_message={},
         play_script_props={},
-        yada_src=None,
+        yada_sleep_src=None,
+        yada_active_src=None,
         scripts=None,
         yada_id=None,
         yada_class="",
@@ -135,8 +136,8 @@ class YadaAIO(html.Div):
     ):
         if yada_id is None:
             yada_id = str(uuid.uuid4())
-        if yada_src is None:
-            yada_src = "/_dash-component-suites/dash_yada/tech-support.png"
+        if yada_sleep_src is None:
+            yada_sleep_src = "/_dash-component-suites/dash_yada/yada.png"
 
         default_greet = """
         Hello!  \r         
@@ -228,7 +229,8 @@ class YadaAIO(html.Div):
                         },
                         className="sleepy_yada",
                     ),
-                    html.Img(src=yada_src, className="sleeping"),
+                    html.Img(src=yada_sleep_src, className="yada-img sleep sleeping"),
+                    html.Img(src=yada_active_src or yada_sleep_src, className="yada-img active"),
                 ],
                 id=self.ids._dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
@@ -259,6 +261,7 @@ class YadaAIO(html.Div):
                 style={"zIndex": 9999},
                 target=self.ids.sleepy_div(yada_id),
                 trigger="hover",
+                className="yada-hover-message",
                 id=self.ids.hover_message(yada_id),
             ),
             dbc.Popover(
@@ -290,6 +293,7 @@ class YadaAIO(html.Div):
                 target=self.ids.sleepy_div(yada_id),
                 delay={"show": 5},
                 trigger="legacy",
+                className="yada-active-message",
                 id=self.ids.active_message(yada_id),
             ),
             dbc.Offcanvas(
@@ -327,7 +331,6 @@ class YadaAIO(html.Div):
                             style={"justifyContent": "center", "display": "flex"},
                         ),
                     ],
-                    style={"maxWidth": "95%"},
                 ),
                 style=steps_offcanvas_style,
             ),

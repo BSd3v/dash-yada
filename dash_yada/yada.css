@@ -1,14 +1,33 @@
 .yada {
     position: absolute;
     z-index: 9999;
-    transition: all 1s ease-out;
+    transition: left 1s ease-out, top 1s ease-out, bottom 1s ease-out, right 1s ease-out, height 1s ease, width 1s ease;
     height: 120px;
-    width: 80px;
+    width: 120px;
     cursor: pointer;
 }
 
 .yada > img {
     height: 100%;
+    width: 100%;
+}
+
+.yada.sleeping {
+    .active {
+        display: none;
+    }
+    .sleep {
+        display: initial;
+    }
+}
+
+.yada {
+    .active {
+        display: initial;
+    }
+    .sleep {
+        display: none;
+    }
 }
 
 .yada:not(.sleeping) .sleepy_yada {
@@ -21,6 +40,8 @@
 
 .yada-info .offcanvas-title .row {
     flex-wrap: nowrap;
+    margin: auto;
+    justify-content: center;
 }
 
 .yada-info {
@@ -52,7 +73,7 @@
     right: 30px;
     top: 5px;
     height: 50px;
-    width: 35px;
+    width: 50px;
 }
 
 .highlighting {
