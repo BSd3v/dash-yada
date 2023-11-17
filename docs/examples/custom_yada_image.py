@@ -13,7 +13,7 @@ hover_message_dict = {
 }
 
 yada = YadaAIO(
-    yada_id="my-yada", yada_src=yada_img, hover_message_dict=hover_message_dict
+    yada_id="my-yada", yada_sleep_src=yada_img, hover_message_dict=hover_message_dict
 )
 
 content = dcc.Markdown(
