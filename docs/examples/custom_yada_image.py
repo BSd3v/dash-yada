@@ -9,14 +9,15 @@ yada_img = "https://user-images.githubusercontent.com/72614349/236646464-1471e59
 hover_message_dict = {
     "name": "Hedwig",
     "greeting": "Let's explore! Just pick a tour and we'll get started",
-    "style": {"backgroundColor": "lightgreen"}
+    "style": {"backgroundColor": "lightgreen"},
 }
 
 yada = YadaAIO(
     yada_id="my-yada", yada_src=yada_img, hover_message_dict=hover_message_dict
 )
 
-content = dcc.Markdown("""
+content = dcc.Markdown(
+    """
 
 This example shows how to customize and style the yada image and the hover message.  
 
@@ -69,7 +70,9 @@ clientside_callback(
 )
 ```
 
-""", className="mt-5")
+""",
+    className="mt-5",
+)
 
 app.layout = dbc.Container([yada, content])
 

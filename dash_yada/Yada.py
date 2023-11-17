@@ -230,7 +230,10 @@ class YadaAIO(html.Div):
                         className="sleepy_yada",
                     ),
                     html.Img(src=yada_sleep_src, className="yada-img sleep sleeping"),
-                    html.Img(src=yada_active_src or yada_sleep_src, className="yada-img active"),
+                    html.Img(
+                        src=yada_active_src or yada_sleep_src,
+                        className="yada-img active",
+                    ),
                 ],
                 id=self.ids._dummy_div(yada_id),
                 className=("yada sleeping " + yada_class).strip(),
