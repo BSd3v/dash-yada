@@ -264,7 +264,7 @@ class YadaAIO(html.Div):
                 style={"zIndex": 9999},
                 target=self.ids.sleepy_div(yada_id),
                 trigger="hover",
-                className="yada-hover-message",
+                class_name="yada-hover-message",
                 id=self.ids.hover_message(yada_id),
             ),
             dbc.Popover(
@@ -296,7 +296,7 @@ class YadaAIO(html.Div):
                 target=self.ids.sleepy_div(yada_id),
                 delay={"show": 5},
                 trigger="legacy",
-                className="yada-active-message",
+                class_name="yada-active-message",
                 id=self.ids.active_message(yada_id),
             ),
             dbc.Offcanvas(
