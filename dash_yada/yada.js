@@ -61,6 +61,20 @@ function isInViewport(element) {
     );
 }
 
+function isInViewportFunc(rect) {
+    if (!rect) {
+        return true;
+    }
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
 /* eslint-disable no-magic-numbers, no-unused-vars*/
 async function play_script(data) {
     /* eslint-enable no-unused-vars*/
@@ -142,16 +156,32 @@ async function play_script(data) {
                         }, 1000);
                     }
 
-                    dash_yada.yada.style.top =
-                        dash_yada.tBounds.top +
+                    newLocation = {'top': (dash_yada.tBounds.top +
                         dash_yada.tBounds.height / 4 +
-                        window.scrollY +
-                        'px';
-                    dash_yada.yada.style.left =
-                        dash_yada.tBounds.left +
+                        window.scrollY), 'left': (dash_yada.tBounds.left +
                         dash_yada.tBounds.width / 2.5 +
-                        window.scrollX +
-                        'px';
+                        window.scrollX), 'bottom': (dash_yada.tBounds.top +
+                        dash_yada.tBounds.height / 4 +
+                        window.scrollY) + dash_yada.yada.getBoundingClientRect().height, 'right': (dash_yada.tBounds.left +
+                        dash_yada.tBounds.width / 2.5 +
+                        window.scrollX) + dash_yada.yada.getBoundingClientRect().width}
+
+                    if (!isInViewportFunc(newLocation)) {
+                        newTop = newLocation.top
+                        newLeft = newLocation.left
+
+                        if (newLocation.top > dash_yada.target.getBoundingClientRect().top && (newLocation.top + dash_yada.yada.getBoundingClientRect().height) > window.innerHeight) {
+                            newTop = (dash_yada.target.getBoundingClientRect().top - dash_yada.yada.getBoundingClientRect().height) + (dash_yada.target.getBoundingClientRect().top - newLocation.top)
+                        }
+                        if (newLocation.left > dash_yada.target.getBoundingClientRect().left && (newLocation.left + dash_yada.yada.getBoundingClientRect().width) > window.innerWidth) {
+                            newLeft = (dash_yada.target.getBoundingClientRect().left - dash_yada.yada.getBoundingClientRect().width) + (dash_yada.target.getBoundingClientRect().left - newLocation.left)
+                        }
+                        newLocation.top = newTop
+                        newLocation.left = newLeft
+                    }
+                    dash_yada.yada.style.top = newLocation.top + 'px'
+                    dash_yada.yada.style.left = newLocation.left + 'px'
+
                     dash_yada.yada.setAttribute(
                         'convo',
                         data[dash_yada.y].convo
