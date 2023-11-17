@@ -59,6 +59,10 @@ filter_script = [
         "target": "#Population",
         "convo": "Note that the figures are updated when the grid is filtered.",
     },
+    {"target": ".dash-graph:nth-child(3)",
+     "convo": "Even this figure as well"},
+{"target": ".dash-graph:nth-child(4)",
+     "convo": "This one too"},
     {
         "target": "#title",
         "convo": "Now try it yourself!  Go ahead and enter something into the input field.  I'll wait here.",

@@ -150,8 +150,8 @@ async function play_script(data) {
                             dash_yada.target.getBoundingClientRect();
                         setTimeout(() => {
                             window.scrollTo(
-                                dash_yada.yada.getBoundingClientRect().left,
-                                dash_yada.yada.getBoundingClientRect().top
+                                dash_yada.tBounds.left-20,
+                                dash_yada.tBounds.top-20
                             );
                         }, 1000);
                     }
@@ -170,11 +170,11 @@ async function play_script(data) {
                         newTop = newLocation.top
                         newLeft = newLocation.left
 
-                        if (newLocation.top > dash_yada.target.getBoundingClientRect().top && (newLocation.top + dash_yada.yada.getBoundingClientRect().height) > window.innerHeight) {
-                            newTop = (dash_yada.target.getBoundingClientRect().top - dash_yada.yada.getBoundingClientRect().height) + (dash_yada.target.getBoundingClientRect().top - newLocation.top)
+                        if (newLocation.top > dash_yada.tBounds.top && (newLocation.top + dash_yada.tBounds.height) > window.innerHeight) {
+                            newTop = (dash_yada.tBounds.top + window.scrollY - dash_yada.yada.getBoundingClientRect().height) + (dash_yada.tBounds.top + window.scrollY - newLocation.top)
                         }
-                        if (newLocation.left > dash_yada.target.getBoundingClientRect().left && (newLocation.left + dash_yada.yada.getBoundingClientRect().width) > window.innerWidth) {
-                            newLeft = (dash_yada.target.getBoundingClientRect().left - dash_yada.yada.getBoundingClientRect().width) + (dash_yada.target.getBoundingClientRect().left - newLocation.left)
+                        if (newLocation.left > dash_yada.tBounds.left && (newLocation.left + dash_yada.yada.getBoundingClientRect().width) > window.innerWidth) {
+                            newLeft = (dash_yada.tBounds.left + window.scrollX - dash_yada.yada.getBoundingClientRect().width) + (dash_yada.tBounds.left + window.scrollX - newLocation.left)
                         }
                         newLocation.top = newTop
                         newLocation.left = newLeft

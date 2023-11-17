@@ -101,7 +101,7 @@ def update_graphs(rows, selected, t):
     colors = ["#7FDBFF" if i in selected else "#0074D9" for i in dff.country]
 
     graphs = []
-    for column in ["Population", "Life Expectancy", "GDP Per Capita"]:
+    for column in ["Population", "Life Expectancy", "GDP Per Capita", "Life Expectancy"]:
         if column in dff:
             fig = px.bar(dff, x="country", y=column, height=250)
             fig.update_traces(marker={"color": colors})
