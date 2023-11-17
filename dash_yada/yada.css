@@ -108,3 +108,33 @@ button.hightlighting {
   max-width: 350px;
   padding-bottom: 10px
 }
+
+body:has(.yada.sleeping.activated) {
+    .yada-hover-message {
+        display: none;
+    }
+    .yada-active-message {
+        opacity: 1;
+    }
+}
+
+body:has(.yada.sleeping) {
+    .yada-hover-message, .yada-active-message {
+        display: initial;
+    }
+    .yada-active-message {
+        opacity: 0;
+    }
+}
+
+.yada-hover-message, .yada-active-message {
+    display: none;
+}
+
+body:has(.yada.script-running) .yada-active-message {
+    opacity: 0 !important;
+}
+
+body:has(.yada.script-ended) .yada-info {
+    display: none !important;
+}

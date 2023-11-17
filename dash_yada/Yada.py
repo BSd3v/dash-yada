@@ -344,11 +344,15 @@ class YadaAIO(html.Div):
     clientside_callback(
         """
         async function (n, s, o) {
-            if (s) {return false}
+            if (s) {
+                document.querySelector('.yada').classList.add('activated')
+                return false
+            }
+            document.querySelector('.yada').classList.remove('activated')
             trig = JSON.parse(window.dash_clientside.callback_context.triggered[0].prop_id.split('.')[0])
             if (trig.subcomponent === 'active_message') {return window.dash_clientside.no_update}
             if (document.querySelector('.yada > img').classList.contains('sleeping')) {
-                return !o
+                return true
             }
             return window.dash_clientside.no_update
         }
@@ -357,6 +361,24 @@ class YadaAIO(html.Div):
         Input(ids._dummy_div(MATCH), "n_clicks"),
         Input(ids.active_message(MATCH), "is_open"),
         State(ids.script_choices(MATCH), "is_open"),
+        prevent_initial_call=True,
+    )
+
+    clientside_callback(
+        """
+        async function (s, o) {
+            if (o) {
+                return false
+            }
+            if (document.querySelector('.yada > img').classList.contains('sleeping')) {
+                return s
+            }
+            return false
+        }
+        """,
+        Output(ids.hover_message(MATCH), "is_open", allow_duplicate=True),
+        Input(ids.hover_message(MATCH), "is_open"),
+        State(ids.active_message(MATCH), "is_open"),
         prevent_initial_call=True,
     )
 
@@ -454,14 +476,10 @@ class YadaAIO(html.Div):
             {document.dispatchEvent(new KeyboardEvent('keydown', {bubbles: true, key: "Escape", code: "Escape", which: 27}))}
             
             next = () => {window.dash_yada.yada.dispatchEvent(new Event('click'))}
-            
-            if (/Android|iPhone/i.test(navigator.userAgent)) {
-                document.querySelector(".yada-info .exit").style.visibility = ""
-            }
         
             if (!window.dash_yada.y) {
                 document.querySelector(".yada-info .next").style.display = "initial"
-            } else if (window.dash_yada.y < window.dash_yada.script_length) {
+            } else if (window.dash_yada.y < window.dash_yada.script_length-1) {
                 document.querySelector(".yada-info .next").style.display = "initial"
             }
             if (!document.querySelector(".yada-info .previous").getAttribute('listener')) {

@@ -76,6 +76,9 @@ async function play_script(data) {
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
     dash_yada.placement = 'bottom';
+    dash_yada.yada.classList.remove('activated');
+    dash_yada.yada.classList.add('script-running');
+    dash_yada.yada.classList.remove('script-ended')
 
     dash_yada.reopen = false;
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
@@ -83,6 +86,18 @@ async function play_script(data) {
             if (document.querySelector('.yada-info')) {
                 document.querySelector('.yada-info .previous').style.display =
                     '';
+            }
+        }
+        if (dash_yada.y >= dash_yada.script_length -1) {
+            if (document.querySelector('.yada-info')) {
+                document.querySelector('.yada-info .next').style.display =
+                    'none';
+            }
+        }
+        if (dash_yada.y < dash_yada.script_length -1) {
+            if (document.querySelector('.yada-info')) {
+                document.querySelector('.yada-info .next').style.display =
+                    'initial';
             }
         }
         if (data[dash_yada.y]) {
@@ -208,10 +223,17 @@ async function play_script(data) {
 
                     dash_yada.paused = true;
                     dash_yada.previous = false;
-                    if (dash_yada.y !== 0) {
-                        document.querySelector(
-                            '.yada-info .previous'
-                        ).style.display = 'initial';
+                    if (document.querySelector('.yada-info')) {
+                        if (dash_yada.y !== 0) {
+                            document.querySelector(
+                                '.yada-info .previous'
+                            ).style.display = 'initial';
+                        }
+                        if (dash_yada.y < dash_yada.script_length-1) {
+                            document.querySelector(
+                                '.yada-info .next'
+                            ).style.display = 'initial';
+                        }
                     }
 
                     dash_yada.reopen = true;
@@ -323,10 +345,11 @@ async function play_script(data) {
         }
     }
 
+    dash_yada.yada.classList.add('script-ended');
+
     if (document.querySelector('.yada-info')) {
         document.querySelector('.yada-info .next').style.display = 'none';
         document.querySelector('.yada-info .previous').style.display = '';
-        document.querySelector('.yada-info .exit').style.visibility = 'hidden';
     }
 
     document.removeEventListener('keydown', escaping);
@@ -357,10 +380,12 @@ async function play_script(data) {
     dash_yada.placement = 'bottom';
     setTimeout(
         () =>
-            simulateMouseClick(
+            {simulateMouseClick(
                 document.querySelector('.yada_canvas_button_open')
-            ),
-        100
+            )
+                dash_yada.yada.classList.remove('script-running');
+            },
+        1000
     );
 }
 /* eslint-enable no-magic-numbers */
