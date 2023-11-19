@@ -104,7 +104,8 @@ The default CSS for the Yada image when the app starts is:
     width: 35px;
 }
 ```
-![yada-custom-img](https://github.com/BSd3v/dash-yada/assets/72614349/f1ee5fa1-3e55-4bf7-b29c-afd57c8cc828)
+<img src="https://github.com/BSd3v/dash-yada/assets/72614349/f1ee5fa1-3e55-4bf7-b29c-afd57c8cc828"  height="150px" />
+
 
 
 ```python
