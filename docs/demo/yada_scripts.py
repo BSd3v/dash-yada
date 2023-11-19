@@ -137,7 +137,7 @@ dev_conclusion_script = [
         "target": "#title",
         "convo": """
         Be sure to check out my [Github](https://github.com/BSd3v/dash-yada) for more information on how to customize me,
-         including my [icon]("https://www.flaticon.com/free-animated-icons/robot"), scripts and style.  
+         including my [image]("https://www.flaticon.com/free-animated-icons/robot"), scripts and style.  
         
         
         I hope you enjoyed the tour.  Happy exploring!!
