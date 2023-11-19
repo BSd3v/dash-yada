@@ -1,5 +1,5 @@
 
-<img src="dash_yada/tech-support.png" align="right" height="150px" />
+<img src="dash_yada/yada.gif" align="right" height="150px" />
 
 # dash-yada  
 
@@ -26,7 +26,7 @@ Check out the [Live Demo](https://dashyada.pythonanywhere.com/) to see dash-yada
 
 See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this demo in the /docs folder.
 
-![yada_demo_dev_intro](https://github.com/BSd3v/dash-yada/assets/72614349/bdb46af3-26df-49b7-be8b-a035eebb169c)
+![yada-demo](https://github.com/BSd3v/dash-yada/assets/72614349/b8ef7b64-6426-4fac-8c5a-77a523d8dbe2)
 
 <br>
 <br>
@@ -46,9 +46,12 @@ See more examples in the [/examples](https://github.com/BSd3v/dash-yada/tree/dev
 ---
 
 To get started, simply add the `Yada()` component to the app's layout. 
-You will see the Yada icon, a helpdesk, in the top right corner.  On hover, it displays a default welcome message.
+You will see the Yada image, in the top right corner.  On hover, it displays a default welcome message.
 
-![yada_quickstart](https://github.com/BSd3v/dash-yada/assets/72614349/effe2931-b274-4e75-8ffe-03724b05d55c)
+
+![yada-quickstart](https://github.com/BSd3v/dash-yada/assets/72614349/a9920d24-3c01-4a99-856e-e61ec419f44b)
+
+
 
 ```python
 import dash
@@ -71,6 +74,8 @@ if __name__ == "__main__":
 
 ```
 
+The default yada image is from [Flaticon.com](flaticon.com).  If you use this image, please include an [attribution.](https://www.flaticon.com/free-animated-icon/robot_9066203?term=robot&page=1&position=2&origin=search&related_id=9066203)
+
 <br>
 <br>
 
@@ -78,16 +83,17 @@ if __name__ == "__main__":
 
 -----
 
-Use the following props to change the icon and the hover message:
+Use the following props to change the yada image and the hover message:
 
-- `yada_src` (string; optional): Location src of the image that you want to display for yada.
+- `yada_src` (string; optional): Location src of the yada image.
 
-- `hover_message_dict` (dict; optional):
-        Props to display for the message when yada is not clicked and not playing a script.
-        If not defined, the default name is "yada".  Set name to "" to not display a header.  Set message to "" to not display a greeting
-        {name (string; optional), greeting (string; optional), style (dict; optional}
-
-- Set the position and size with CSS:
+- `hover_message_dict` (dict; optional): Props to display for the message when yada is not clicked and not playing a script.
+    - The `hover_message_dict` has keys:
+    - `name` (string; optional) The default name is "yada".  If `name` is `""` a header is not displayed.
+    - `greeting` (string; optional) If `greeting` is `""` the default greeting is not displayed.
+    - `style` (dict; optional) Sets the style of the hover message card.
+        
+- Set the initial position and size with CSS:
 
 The default CSS for the Yada image when the app starts is:
 ```css
@@ -98,20 +104,20 @@ The default CSS for the Yada image when the app starts is:
     width: 35px;
 }
 ```
+<img src="https://github.com/BSd3v/dash-yada/assets/72614349/f1ee5fa1-3e55-4bf7-b29c-afd57c8cc828"  height="150px" />
 
-![yada_custom_icon](https://github.com/BSd3v/dash-yada/assets/72614349/14793b1e-9db4-4fd5-9fa3-bddaed0fa006)
 
 
 ```python
 
-yada_icon = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
+yada_img = "https://user-images.githubusercontent.com/72614349/236646464-1471e596-b234-490d-bf84-e2ef7a63b233.png"
 hover_message_dict = {
     "name": "Hedwig",
     "greeting": "Let's explore! Just pick a tour and we'll get started",
     "style": {"backgroundColor": "lightgreen"}
 }
 
-yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_dict=hover_message_dict)
+yada = YadaAIO(yada_id="my_yada", yada_src=yada_img, hover_message_dict=hover_message_dict)
 
 
 ```
@@ -129,7 +135,7 @@ yada = YadaAIO(yada_id="my_yada", yada_src=yada_icon, hover_message_dict=hover_m
 You can add one or more scripts for the user to select the tour.
 
 Yada navigates by CSS selector, so it can go to any element on a page.  Learn more about selectors at [Mozilla web-docs](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector)
-For example you could use a component's id like this:  `"#component_id"`.  You can use a class selector like this: `".close-btn"`
+For example you could use a component's `id` prop like this:  `"#component_id"`.  You can use a CSS class selector like this: `".close-btn"`
 
 
 - `scripts` (dict of list of dicts; optional):  Dictionary of keys to scripts:
@@ -187,7 +193,10 @@ if __name__ == "__main__":
 ---
 
 The steps in the script are displayed in a `dbc.Offcanvas` component.  You can change the style using the `steps_offcanvas_style` prop.
+
 Note that in the `scripts` prop you can also use Markdown in the `convo`
+
+This example shows how to style the `dbc.Offcanvas` component like in the live demo. 
 
 ```python
 import dash
