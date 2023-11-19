@@ -28,7 +28,11 @@ dev_intro_script = (
     [
         {
             "target": "#title",
-            "convo": "##### I'll show you how to create a fun interactive demo so people can get the most out of your site.",
+            "convo": """
+            ##### I'll show you how to create a fun interactive demo so people can get the most out of your site.  
+            For more information about adding this component to your app, see [Dash Yada Github](https://github.com/BSd3v/dash-yada)
+            
+            """,
         }
     ]
     + housekeeping_script
@@ -132,7 +136,9 @@ dev_conclusion_script = [
     {
         "target": "#title",
         "convo": """
-        Be sure to check out my [Github](https://github.com/BSd3v/dash-yada) for more information on how to customize me, including my icon, scripts and style.  
+        Be sure to check out my [Github](https://github.com/BSd3v/dash-yada) for more information on how to customize me,
+         including my [icon]("https://www.flaticon.com/free-animated-icons/robot"), scripts and style.  
+        
         
         I hope you enjoyed the tour.  Happy exploring!!
         """,

@@ -1,5 +1,5 @@
 
-<img src="dash_yada/tech-support.png" align="right" height="150px" />
+<img src="dash_yada/yada.gif" align="right" height="150px" />
 
 # dash-yada  
 
@@ -26,7 +26,7 @@ Check out the [Live Demo](https://dashyada.pythonanywhere.com/) to see dash-yada
 
 See the [code](https://github.com/BSd3v/dash-yada/tree/dev/docs/demo) for this demo in the /docs folder.
 
-![yada_demo_dev_intro](https://github.com/BSd3v/dash-yada/assets/72614349/bdb46af3-26df-49b7-be8b-a035eebb169c)
+![yada-demo](https://github.com/BSd3v/dash-yada/assets/72614349/b8ef7b64-6426-4fac-8c5a-77a523d8dbe2)
 
 <br>
 <br>
@@ -46,9 +46,12 @@ See more examples in the [/examples](https://github.com/BSd3v/dash-yada/tree/dev
 ---
 
 To get started, simply add the `Yada()` component to the app's layout. 
-You will see the Yada icon, a helpdesk, in the top right corner.  On hover, it displays a default welcome message.
+You will see the Yada icon, in the top right corner.  On hover, it displays a default welcome message.
 
-![yada_quickstart](https://github.com/BSd3v/dash-yada/assets/72614349/effe2931-b274-4e75-8ffe-03724b05d55c)
+
+![yada-quickstart](https://github.com/BSd3v/dash-yada/assets/72614349/a9920d24-3c01-4a99-856e-e61ec419f44b)
+
+
 
 ```python
 import dash
@@ -70,6 +73,8 @@ if __name__ == "__main__":
     app.run_server(debug=True)
 
 ```
+
+The default yada image is from [Flaticon.com](flaticon.com).  If you use this icon, please include an [attribution.](https://www.flaticon.com/free-animated-icon/robot_9066203?term=robot&page=1&position=2&origin=search&related_id=9066203)
 
 <br>
 <br>

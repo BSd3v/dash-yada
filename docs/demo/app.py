@@ -82,7 +82,7 @@ app.layout = dbc.Container(
         dcc.Input(id="quick-filter-input", placeholder="filter...", className="mb-2"),
         grid,
         html.Div(id="interactivity-container"),
-    ]
+    ],
 )
 
 
