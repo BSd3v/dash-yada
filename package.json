@@ -1,6 +1,6 @@
 {
   "name": "dash-yada",
-    "version": "0.0.1a1",
+    "version": "0.0.1",
     "description": "Dash Yada, an interactive dashboard assistant",
     "repository": {
         "type": "git",
@@ -33,7 +33,8 @@
     "private::format.black": "black .",
     "private::format.eslint": "eslint --quiet --fix dash_yada",
     "private::format.prettier": "prettier --write \"dash_yada/**/*.{js,jsx,ts,tsx}\"",
-    "format": "run-s private::format.*"
+    "format": "run-s private::format.*",
+    "publish": "run-s package && twine upload dist/*"
   },
   "engines": {
         "node": ">=8.11.0",

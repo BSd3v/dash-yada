@@ -1,6 +1,6 @@
-from dash_yada import Yada
+from dash_yada import YadaAIO
 
-yada_test = Yada(
+yada_test = YadaAIO(
     yada_id="test",
     hover_message_props={
         "greeting": """

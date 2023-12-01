@@ -1,14 +1,33 @@
 .yada {
     position: absolute;
     z-index: 9999;
-    transition: all 1s ease-out;
-    height: 120px;
-    width: 80px;
+    transition: left 1s ease-out, top 1s ease-out, bottom 1s ease-out, right 1s ease-out, height 1s ease, width 1s ease;
+    height: 90px;
+    width: 90px;
     cursor: pointer;
 }
 
 .yada > img {
     height: 100%;
+    width: 100%;
+}
+
+.yada.sleeping {
+    .active {
+        display: none;
+    }
+    .sleep {
+        display: initial;
+    }
+}
+
+.yada {
+    .active {
+        display: initial;
+    }
+    .sleep {
+        display: none;
+    }
 }
 
 .yada:not(.sleeping) .sleepy_yada {
@@ -21,6 +40,8 @@
 
 .yada-info .offcanvas-title .row {
     flex-wrap: nowrap;
+    margin: auto;
+    justify-content: center;
 }
 
 .yada-info {
@@ -36,7 +57,8 @@
 }
 
 .yada-info.offcanvas-top,  .yada-info.offcanvas-bottom {
-    max-height: 200px !important;
+    height: fit-content;
+    max-height: 50vh;
 }
 
 .yada-info .offcanvas-header {
@@ -51,7 +73,7 @@
     right: 30px;
     top: 5px;
     height: 50px;
-    width: 35px;
+    width: 50px;
 }
 
 .highlighting {
@@ -83,6 +105,36 @@ button.hightlighting {
 
 
 .popover {
-  max-width: 400px;
+  max-width: 350px;
   padding-bottom: 10px
+}
+
+body:has(.yada.sleeping.activated) {
+    .yada-hover-message {
+        display: none;
+    }
+    .yada-active-message {
+        opacity: 1;
+    }
+}
+
+body:has(.yada.sleeping) {
+    .yada-hover-message, .yada-active-message {
+        display: initial;
+    }
+    .yada-active-message {
+        opacity: 0;
+    }
+}
+
+.yada-hover-message, .yada-active-message {
+    display: none;
+}
+
+body:has(.yada.script-running) .yada-active-message {
+    opacity: 0 !important;
+}
+
+body:has(.yada.script-ended) .yada-info {
+    display: none !important;
 }

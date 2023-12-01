@@ -9,6 +9,15 @@ df = pd.read_csv(
     "https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv"
 )
 
+df.rename(
+    columns={
+        "pop": "Population",
+        "lifeExp": "Life Expectancy",
+        "gdpPercap": "GDP Per Capita",
+    },
+    inplace=True,
+)
+
 app = Dash(
     __name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME]
 )
@@ -22,21 +31,21 @@ columnDefs = [
     },
     {"headerName": "Continent", "field": "continent"},
     {
-        "headerName": "Life Expectancy",
-        "field": "lifeExp",
+        "field": "Population",
         "type": "rightAligned",
-        "valueFormatter": {"function": "d3.format('.1f')(params.value)"},
-    },
-    {
-        "headerName": "Population",
-        "field": "pop",
-        "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
         "valueFormatter": {"function": "d3.format(',.0f')(params.value)"},
     },
     {
-        "headerName": "GDP per Capita",
-        "field": "gdpPercap",
+        "field": "Life Expectancy",
         "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
+        "valueFormatter": {"function": "d3.format('.1f')(params.value)"},
+    },
+    {
+        "field": "GDP Per Capita",
+        "type": "rightAligned",
+        "filter": "agNumberColumnFilter",
         "valueFormatter": {"function": "d3.format('$,.1f')(params.value)"},
     },
 ]
@@ -61,25 +70,19 @@ grid = dag.AgGrid(
 )
 
 title = html.Div(
-    "Gap Minder Data Explorer",
+    "2007 Population, Life Expectancy & GDP",
     className="text-center p-3 mb-3 bg-primary text-white",
     id="title",
 )
-alert = dbc.Alert(
-    "Welcome to the dash-yada demo. To start click on Yada, the helpdesk icon -->",
-    dismissable=True,
-    id="alert",
-    className="mx-5 text-center",
-)
+
 app.layout = dbc.Container(
     [
         yada,
-        alert,
         title,
         dcc.Input(id="quick-filter-input", placeholder="filter...", className="mb-2"),
         grid,
         html.Div(id="interactivity-container"),
-    ]
+    ],
 )
 
 
@@ -98,7 +101,7 @@ def update_graphs(rows, selected, t):
     colors = ["#7FDBFF" if i in selected else "#0074D9" for i in dff.country]
 
     graphs = []
-    for column in ["pop", "lifeExp", "gdpPercap"]:
+    for column in ["Population", "Life Expectancy", "GDP Per Capita", "Life Expectancy"]:
         if column in dff:
             fig = px.bar(dff, x="country", y=column, height=250)
             fig.update_traces(marker={"color": colors})

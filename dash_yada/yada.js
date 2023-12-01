@@ -61,6 +61,20 @@ function isInViewport(element) {
     );
 }
 
+function isInViewportFunc(rect) {
+    if (!rect) {
+        return true;
+    }
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
 /* eslint-disable no-magic-numbers, no-unused-vars*/
 async function play_script(data) {
     /* eslint-enable no-unused-vars*/
@@ -76,6 +90,9 @@ async function play_script(data) {
     document.addEventListener('keydown', escaping);
     dash_yada.yada.addEventListener('click', nextItem);
     dash_yada.placement = 'bottom';
+    dash_yada.yada.classList.remove('activated');
+    dash_yada.yada.classList.add('script-running');
+    dash_yada.yada.classList.remove('script-ended');
 
     dash_yada.reopen = false;
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
@@ -83,6 +100,18 @@ async function play_script(data) {
             if (document.querySelector('.yada-info')) {
                 document.querySelector('.yada-info .previous').style.display =
                     '';
+            }
+        }
+        if (dash_yada.y >= dash_yada.script_length - 1) {
+            if (document.querySelector('.yada-info')) {
+                document.querySelector('.yada-info .next').style.display =
+                    'none';
+            }
+        }
+        if (dash_yada.y < dash_yada.script_length - 1) {
+            if (document.querySelector('.yada-info')) {
+                document.querySelector('.yada-info .next').style.display =
+                    'initial';
             }
         }
         if (data[dash_yada.y]) {
@@ -111,7 +140,7 @@ async function play_script(data) {
                     } catch {
                         dash_yada.target.focus();
                     }
-                    dash_yada.target.classList.toggle('highlighting');
+                    dash_yada.target.classList.add('highlighting');
                     dash_yada.tBounds =
                         dash_yada.target.getBoundingClientRect();
                     if (!isInViewport(dash_yada.target)) {
@@ -121,22 +150,70 @@ async function play_script(data) {
                             dash_yada.target.getBoundingClientRect();
                         setTimeout(() => {
                             window.scrollTo(
-                                dash_yada.yada.getBoundingClientRect().left,
-                                dash_yada.yada.getBoundingClientRect().top
+                                dash_yada.tBounds.left - 20,
+                                dash_yada.tBounds.top - 20
                             );
                         }, 1000);
                     }
 
-                    dash_yada.yada.style.top =
-                        dash_yada.tBounds.top +
-                        dash_yada.tBounds.height / 4 +
-                        window.scrollY +
-                        'px';
-                    dash_yada.yada.style.left =
-                        dash_yada.tBounds.left +
-                        dash_yada.tBounds.width / 2.5 +
-                        window.scrollX +
-                        'px';
+                    var newLocation = {
+                        top:
+                            dash_yada.tBounds.top +
+                            dash_yada.tBounds.height / 4 +
+                            window.scrollY,
+                        left:
+                            dash_yada.tBounds.left +
+                            dash_yada.tBounds.width / 2.5 +
+                            window.scrollX,
+                        bottom:
+                            dash_yada.tBounds.top +
+                            dash_yada.tBounds.height / 4 +
+                            window.scrollY +
+                            dash_yada.yada.getBoundingClientRect().height,
+                        right:
+                            dash_yada.tBounds.left +
+                            dash_yada.tBounds.width / 2.5 +
+                            window.scrollX +
+                            dash_yada.yada.getBoundingClientRect().width,
+                    };
+
+                    if (!isInViewportFunc(newLocation)) {
+                        var newTop = newLocation.top;
+                        var newLeft = newLocation.left;
+
+                        if (
+                            newLocation.top > dash_yada.tBounds.top &&
+                            newLocation.top + dash_yada.tBounds.height >
+                                window.innerHeight
+                        ) {
+                            newTop =
+                                dash_yada.tBounds.top +
+                                window.scrollY -
+                                dash_yada.yada.getBoundingClientRect().height +
+                                (dash_yada.tBounds.top +
+                                    window.scrollY -
+                                    newLocation.top);
+                        }
+                        if (
+                            newLocation.left > dash_yada.tBounds.left &&
+                            newLocation.left +
+                                dash_yada.yada.getBoundingClientRect().width >
+                                window.innerWidth
+                        ) {
+                            newLeft =
+                                dash_yada.tBounds.left +
+                                window.scrollX -
+                                dash_yada.yada.getBoundingClientRect().width +
+                                (dash_yada.tBounds.left +
+                                    window.scrollX -
+                                    newLocation.left);
+                        }
+                        newLocation.top = newTop;
+                        newLocation.left = newLeft;
+                    }
+                    dash_yada.yada.style.top = newLocation.top + 'px';
+                    dash_yada.yada.style.left = newLocation.left + 'px';
+
                     dash_yada.yada.setAttribute(
                         'convo',
                         data[dash_yada.y].convo
@@ -208,10 +285,17 @@ async function play_script(data) {
 
                     dash_yada.paused = true;
                     dash_yada.previous = false;
-                    if (dash_yada.y !== 0) {
-                        document.querySelector(
-                            '.yada-info .previous'
-                        ).style.display = 'initial';
+                    if (document.querySelector('.yada-info')) {
+                        if (dash_yada.y !== 0) {
+                            document.querySelector(
+                                '.yada-info .previous'
+                            ).style.display = 'initial';
+                        }
+                        if (dash_yada.y < dash_yada.script_length - 1) {
+                            document.querySelector(
+                                '.yada-info .next'
+                            ).style.display = 'initial';
+                        }
                     }
 
                     dash_yada.reopen = true;
@@ -317,16 +401,17 @@ async function play_script(data) {
                         }
                     }
 
-                    dash_yada.target.classList.toggle('highlighting');
+                    dash_yada.target.classList.remove('highlighting');
                 }
             }
         }
     }
 
+    dash_yada.yada.classList.add('script-ended');
+
     if (document.querySelector('.yada-info')) {
         document.querySelector('.yada-info .next').style.display = 'none';
         document.querySelector('.yada-info .previous').style.display = '';
-        document.querySelector('.yada-info .exit').style.visibility = 'hidden';
     }
 
     document.removeEventListener('keydown', escaping);
@@ -339,6 +424,7 @@ async function play_script(data) {
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada.style.height = dash_yada.initialYada.height + 'px';
+    dash_yada.yada.style.width = dash_yada.initialYada.width + 'px';
     await delay(1000);
 
     document.querySelector('.sleepy_yada').dispatchEvent(new Event('click'));
@@ -350,16 +436,14 @@ async function play_script(data) {
     dash_yada.yada.style.height = '';
     dash_yada.yada.style.top = '';
     dash_yada.yada.style.left = '';
+    dash_yada.yada.style.width = '';
 
     // resetting placement
     dash_yada.placement = 'bottom';
-    setTimeout(
-        () =>
-            simulateMouseClick(
-                document.querySelector('.yada_canvas_button_open')
-            ),
-        100
-    );
+    setTimeout(() => {
+        simulateMouseClick(document.querySelector('.yada_canvas_button_open'));
+        dash_yada.yada.classList.remove('script-running');
+    }, 1000);
 }
 /* eslint-enable no-magic-numbers */
 

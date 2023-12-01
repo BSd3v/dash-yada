@@ -38,6 +38,21 @@ _css_dist = [
         "external_url": f"{_unpkg}tech-support.png",
         "namespace": package_name,
     },
+    {
+        "relative_package_path": "yada.png",
+        "external_url": f"{_unpkg}yada.png",
+        "namespace": package_name,
+    },
+    {
+        "relative_package_path": "yada_headshot.png",
+        "external_url": f"{_unpkg}yada_headshot.png",
+        "namespace": package_name,
+    },
+    {
+        "relative_package_path": "yada.gif",
+        "external_url": f"{_unpkg}yada.gif",
+        "namespace": package_name,
+    },
 ]
 
 
