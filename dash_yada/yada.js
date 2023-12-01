@@ -140,7 +140,7 @@ async function play_script(data) {
                     } catch {
                         dash_yada.target.focus();
                     }
-                    dash_yada.target.classList.toggle('highlighting');
+                    dash_yada.target.classList.add('highlighting');
                     dash_yada.tBounds =
                         dash_yada.target.getBoundingClientRect();
                     if (!isInViewport(dash_yada.target)) {
@@ -369,7 +369,7 @@ async function play_script(data) {
                         }
                     }
 
-                    dash_yada.target.classList.toggle('highlighting');
+                    dash_yada.target.classList.remove('highlighting');
                 }
             }
         }
