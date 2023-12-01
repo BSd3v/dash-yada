@@ -92,7 +92,7 @@ async function play_script(data) {
     dash_yada.placement = 'bottom';
     dash_yada.yada.classList.remove('activated');
     dash_yada.yada.classList.add('script-running');
-    dash_yada.yada.classList.remove('script-ended')
+    dash_yada.yada.classList.remove('script-ended');
 
     dash_yada.reopen = false;
     for (dash_yada.y = 0; dash_yada.y < data.length; dash_yada.y++) {
@@ -102,13 +102,13 @@ async function play_script(data) {
                     '';
             }
         }
-        if (dash_yada.y >= dash_yada.script_length -1) {
+        if (dash_yada.y >= dash_yada.script_length - 1) {
             if (document.querySelector('.yada-info')) {
                 document.querySelector('.yada-info .next').style.display =
                     'none';
             }
         }
-        if (dash_yada.y < dash_yada.script_length -1) {
+        if (dash_yada.y < dash_yada.script_length - 1) {
             if (document.querySelector('.yada-info')) {
                 document.querySelector('.yada-info .next').style.display =
                     'initial';
@@ -150,37 +150,69 @@ async function play_script(data) {
                             dash_yada.target.getBoundingClientRect();
                         setTimeout(() => {
                             window.scrollTo(
-                                dash_yada.tBounds.left-20,
-                                dash_yada.tBounds.top-20
+                                dash_yada.tBounds.left - 20,
+                                dash_yada.tBounds.top - 20
                             );
                         }, 1000);
                     }
 
-                    newLocation = {'top': (dash_yada.tBounds.top +
-                        dash_yada.tBounds.height / 4 +
-                        window.scrollY), 'left': (dash_yada.tBounds.left +
-                        dash_yada.tBounds.width / 2.5 +
-                        window.scrollX), 'bottom': (dash_yada.tBounds.top +
-                        dash_yada.tBounds.height / 4 +
-                        window.scrollY) + dash_yada.yada.getBoundingClientRect().height, 'right': (dash_yada.tBounds.left +
-                        dash_yada.tBounds.width / 2.5 +
-                        window.scrollX) + dash_yada.yada.getBoundingClientRect().width}
+                    var newLocation = {
+                        top:
+                            dash_yada.tBounds.top +
+                            dash_yada.tBounds.height / 4 +
+                            window.scrollY,
+                        left:
+                            dash_yada.tBounds.left +
+                            dash_yada.tBounds.width / 2.5 +
+                            window.scrollX,
+                        bottom:
+                            dash_yada.tBounds.top +
+                            dash_yada.tBounds.height / 4 +
+                            window.scrollY +
+                            dash_yada.yada.getBoundingClientRect().height,
+                        right:
+                            dash_yada.tBounds.left +
+                            dash_yada.tBounds.width / 2.5 +
+                            window.scrollX +
+                            dash_yada.yada.getBoundingClientRect().width,
+                    };
 
                     if (!isInViewportFunc(newLocation)) {
-                        newTop = newLocation.top
-                        newLeft = newLocation.left
+                        var newTop = newLocation.top;
+                        var newLeft = newLocation.left;
 
-                        if (newLocation.top > dash_yada.tBounds.top && (newLocation.top + dash_yada.tBounds.height) > window.innerHeight) {
-                            newTop = (dash_yada.tBounds.top + window.scrollY - dash_yada.yada.getBoundingClientRect().height) + (dash_yada.tBounds.top + window.scrollY - newLocation.top)
+                        if (
+                            newLocation.top > dash_yada.tBounds.top &&
+                            newLocation.top + dash_yada.tBounds.height >
+                                window.innerHeight
+                        ) {
+                            newTop =
+                                dash_yada.tBounds.top +
+                                window.scrollY -
+                                dash_yada.yada.getBoundingClientRect().height +
+                                (dash_yada.tBounds.top +
+                                    window.scrollY -
+                                    newLocation.top);
                         }
-                        if (newLocation.left > dash_yada.tBounds.left && (newLocation.left + dash_yada.yada.getBoundingClientRect().width) > window.innerWidth) {
-                            newLeft = (dash_yada.tBounds.left + window.scrollX - dash_yada.yada.getBoundingClientRect().width) + (dash_yada.tBounds.left + window.scrollX - newLocation.left)
+                        if (
+                            newLocation.left > dash_yada.tBounds.left &&
+                            newLocation.left +
+                                dash_yada.yada.getBoundingClientRect().width >
+                                window.innerWidth
+                        ) {
+                            newLeft =
+                                dash_yada.tBounds.left +
+                                window.scrollX -
+                                dash_yada.yada.getBoundingClientRect().width +
+                                (dash_yada.tBounds.left +
+                                    window.scrollX -
+                                    newLocation.left);
                         }
-                        newLocation.top = newTop
-                        newLocation.left = newLeft
+                        newLocation.top = newTop;
+                        newLocation.left = newLeft;
                     }
-                    dash_yada.yada.style.top = newLocation.top + 'px'
-                    dash_yada.yada.style.left = newLocation.left + 'px'
+                    dash_yada.yada.style.top = newLocation.top + 'px';
+                    dash_yada.yada.style.left = newLocation.left + 'px';
 
                     dash_yada.yada.setAttribute(
                         'convo',
@@ -259,7 +291,7 @@ async function play_script(data) {
                                 '.yada-info .previous'
                             ).style.display = 'initial';
                         }
-                        if (dash_yada.y < dash_yada.script_length-1) {
+                        if (dash_yada.y < dash_yada.script_length - 1) {
                             document.querySelector(
                                 '.yada-info .next'
                             ).style.display = 'initial';
@@ -408,15 +440,10 @@ async function play_script(data) {
 
     // resetting placement
     dash_yada.placement = 'bottom';
-    setTimeout(
-        () =>
-            {simulateMouseClick(
-                document.querySelector('.yada_canvas_button_open')
-            )
-                dash_yada.yada.classList.remove('script-running');
-            },
-        1000
-    );
+    setTimeout(() => {
+        simulateMouseClick(document.querySelector('.yada_canvas_button_open'));
+        dash_yada.yada.classList.remove('script-running');
+    }, 1000);
 }
 /* eslint-enable no-magic-numbers */
 
