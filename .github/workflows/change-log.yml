@@ -1,0 +1,59 @@
+name: Check changelog entry
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+    branches:
+      - main
+    paths:
+      - "dash_yada/**"
+      - "tests/**"
+      - "setup.py"
+      - "package.json"
+      - "package-lock.json"
+      - "MANIFEST.in"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  check-changelog:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed files and require changelog update
+        env:
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref || '' }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$PR_BASE_REF" ]; then
+            echo "Pull request base ref not provided."
+            exit 1
+          fi
+
+          git fetch origin "$PR_BASE_REF":refs/remotes/origin/"$PR_BASE_REF"
+          changed=$(git diff --name-only "origin/$PR_BASE_REF...HEAD")
+
+          echo "Changed files:"
+          echo "$changed" | sed 's/^/ - /'
+
+          echo "$changed" | grep -E '^CHANGELOG\.md$' >/dev/null 2>&1 || {
+            echo "::error::No changelog changes detected."
+            echo "Please update CHANGELOG.md when source or workflow files are changed."
+            exit 1
+          }
+
+          echo "Changelog change detected. OK."

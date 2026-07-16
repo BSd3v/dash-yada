@@ -2,9 +2,28 @@ name: Build
 
 on:
   pull_request:
+    branches:
+      - main
+    paths:
+      - "dash_yada/**"
+      - "tests/**"
+      - "setup.py"
+      - "package.json"
+      - "package-lock.json"
+      - "MANIFEST.in"
+      - ".github/workflows/build.yml"
   push:
     branches:
       - main
+    paths:
+      - "dash_yada/**"
+      - "tests/**"
+      - "setup.py"
+      - "package.json"
+      - "package-lock.json"
+      - "MANIFEST.in"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
 
 jobs:
   build:
