@@ -38,8 +38,12 @@ class YadaAIO(html.Div):
     - scripts (dict of list of dicts; optional):
         Dictionary of keys to scripts:
             - each key will have an array of a directory:
-            {target (string; required), convo (string; required), action (string; optional),
-            action_args (string; optional)}
+            {target (string; required), convo (string; optional), show_text (bool; optional),
+            action (string; optional), action_args (string|dict; optional)}
+            - when show_text is False (or convo is blank), action steps run without showing text
+            - set_props action_args supports either:
+                {"id": "<component-id>", "props": {"<prop>": <value>}}
+              or a direct prop mapping when target is an id selector (for example "#my-input")
 
     - next_button_props (dict; optional):
         Props to control the options for the next button. dbc.Button props.
