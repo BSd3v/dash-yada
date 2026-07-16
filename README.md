@@ -140,7 +140,11 @@ For example you could use a component's `id` prop like this:  `"#component_id"`.
 
 - `scripts` (dict of list of dicts; optional):  Dictionary of keys to scripts:
     - each key will have an array of:
-    {target (string; required), convo (string; required), action (string; optional), action_args (string; optional)}
+    {target (string; required), convo (string; optional), show_text (bool; optional), action (string; optional), action_args (string|dict; optional)}
+    - If `show_text=False` (or `convo=""`), the step runs as an automation and won't show step text.
+    - `set_props` action supports:
+      - `action_args={"id": "<component-id>", "props": {"value": "new value"}}`
+      - or direct props in `action_args` when `target` is an id selector (for example `"#my-input"`).
 
 
 Here is a simple example of one script with one step. You can find more script examples in the demo app: [yada_scripts.py file](https://github.com/BSd3v/dash-yada/blob/dev/docs/demo/yada_scripts.py)
@@ -287,8 +291,8 @@ dash-yada.YadaAIO is an All-In-One component.  Learn more about AIO components i
     - scripts (dict of list of dicts; optional):
         Dictionary of keys to scripts:
             - each key will have an array of a directory:
-            {target (string; required), convo (string; required), action (string; optional),
-            action_args (string; optional)}
+            {target (string; required), convo (string; optional), show_text (bool; optional),
+            action (string; optional), action_args (string|dict; optional)}
 
     - next_button_props (dict; optional):
         Props to control the options for the next button. dbc.Button props.

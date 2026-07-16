@@ -75,6 +75,101 @@ function isInViewportFunc(rect) {
     );
 }
 
+function hasVisibleConvo(step) {
+    return (
+        step &&
+        typeof step.convo === 'string' &&
+        step.convo.trim() !== '' &&
+        step.show_text !== false
+    );
+}
+
+async function runScriptAction(step, target) {
+    if (!step || !('action' in step)) {
+        return;
+    }
+
+    if (step.action === 'click') {
+        simulateMouseClick(target, step.action_args);
+    }
+    if (step.action === 'dblclick') {
+        simulateMouseClick(target, step.action_args);
+        setTimeout(() => simulateMouseClick(target, step.action_args), 100);
+        target.dispatchEvent(
+            new Event('dblclick', {
+                bubbles: true,
+                view: window,
+            })
+        );
+    }
+    if (step.action === 'sendKeys') {
+        target.focus();
+        target.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                bubbles: true,
+                keepValue: true,
+                view: window,
+                ...step.action_args,
+            })
+        );
+        target.dispatchEvent(
+            new KeyboardEvent('keyup', {
+                bubbles: true,
+                keepValue: true,
+                view: window,
+                ...step.action_args,
+            })
+        );
+        await delay(100);
+    }
+    if (step.action === 'type') {
+        const typingElement = document.querySelector(step.target);
+        Object.getOwnPropertyDescriptor(
+            window.HTMLInputElement.prototype,
+            'value'
+        ).set.call(target, step.action_args);
+        typingElement.focus();
+        typingElement.dispatchEvent(
+            new KeyboardEvent('change', {
+                bubbles: true,
+                keepValue: true,
+            })
+        );
+        typingElement.dispatchEvent(
+            new KeyboardEvent('input', {
+                bubbles: true,
+                keepValue: true,
+            })
+        );
+        await delay(100);
+    }
+    if (step.action === 'set_props') {
+        const actionArgs = step.action_args || {};
+        let setPropsId = actionArgs.id || step.set_props_id || step.target;
+        if (typeof setPropsId === 'string' && setPropsId.startsWith('#')) {
+            setPropsId = setPropsId.slice(1);
+        }
+        const setPropsPayload =
+            actionArgs.props && typeof actionArgs.props === 'object'
+                ? actionArgs.props
+                : Object.fromEntries(
+                      Object.entries(actionArgs).filter(
+                          ([key]) => key !== 'id'
+                      )
+                  );
+
+        if (
+            setPropsId &&
+            Object.keys(setPropsPayload).length > 0 &&
+            window.dash_clientside &&
+            window.dash_clientside.set_props
+        ) {
+            window.dash_clientside.set_props(setPropsId, setPropsPayload);
+            await delay(100);
+        }
+    }
+}
+
 /* eslint-disable no-magic-numbers, no-unused-vars*/
 async function play_script(data) {
     /* eslint-enable no-unused-vars*/
@@ -115,23 +210,22 @@ async function play_script(data) {
             }
         }
         if (data[dash_yada.y]) {
-            setTimeout(
-                () =>
-                    simulateMouseClick(
-                        document.querySelector('.yada_canvas_button_open')
-                    ),
-                100
-            );
-            if (data[dash_yada.y].target) {
-                dash_yada.target = document.querySelector(
-                    data[dash_yada.y].target
+            const currentStep = data[dash_yada.y];
+            if (hasVisibleConvo(currentStep)) {
+                setTimeout(
+                    () =>
+                        simulateMouseClick(
+                            document.querySelector('.yada_canvas_button_open')
+                        ),
+                    100
                 );
+            }
+            if (currentStep.target) {
+                dash_yada.target = document.querySelector(currentStep.target);
                 if (!dash_yada.target) {
                     await delay(500);
                 }
-                dash_yada.target = document.querySelector(
-                    data[dash_yada.y].target
-                );
+                dash_yada.target = document.querySelector(currentStep.target);
 
                 if (dash_yada.target) {
                     try {
@@ -214,182 +308,111 @@ async function play_script(data) {
                     dash_yada.yada.style.top = newLocation.top + 'px';
                     dash_yada.yada.style.left = newLocation.left + 'px';
 
-                    dash_yada.yada.setAttribute(
-                        'convo',
-                        data[dash_yada.y].convo
-                    );
-                    if (dash_yada.y > 0 || dash_yada.reopen) {
-                        dash_yada.offcanvas =
-                            document.querySelector('.yada-info');
-                        if (!dash_yada.offcanvas) {
-                            simulateMouseClick(
-                                document.querySelector(
-                                    '.yada_canvas_button_open'
-                                )
-                            );
-                            while (!dash_yada.offcanvas) {
-                                await delay(300);
-                                dash_yada.offcanvas =
-                                    document.querySelector('.yada-info');
+                    if (hasVisibleConvo(currentStep)) {
+                        dash_yada.yada.setAttribute(
+                            'convo',
+                            currentStep.convo
+                        );
+                        if (dash_yada.y > 0 || dash_yada.reopen) {
+                            dash_yada.offcanvas =
+                                document.querySelector('.yada-info');
+                            if (!dash_yada.offcanvas) {
+                                simulateMouseClick(
+                                    document.querySelector(
+                                        '.yada_canvas_button_open'
+                                    )
+                                );
+                                while (!dash_yada.offcanvas) {
+                                    await delay(300);
+                                    dash_yada.offcanvas =
+                                        document.querySelector('.yada-info');
+                                }
                             }
                         }
-                    }
-                    try {
-                        if (dash_yada.y !== dash_yada.last) {
-                            setTimeout(() => {
-                                if (
-                                    ((document
-                                        .querySelector('.yada-info')
-                                        .getBoundingClientRect().top >
-                                        dash_yada.yada.getBoundingClientRect()
-                                            .top &&
-                                        document
-                                            .querySelector('.yada-info')
-                                            .getBoundingClientRect().top <
-                                            dash_yada.yada.getBoundingClientRect()
-                                                .top +
-                                                dash_yada.yada.getBoundingClientRect()
-                                                    .height /
-                                                    2) ||
-                                        document
-                                            .querySelector('.yada-info')
-                                            .getBoundingClientRect().top <
-                                            dash_yada.yada.getBoundingClientRect()
-                                                .top) &&
-                                    dash_yada.placement === 'bottom'
-                                ) {
-                                    dash_yada.placement = 'top';
-                                } else if (
-                                    document
-                                        .querySelector('.yada-info')
-                                        .getBoundingClientRect().height >
-                                        dash_yada.yada.getBoundingClientRect()
-                                            .top &&
-                                    dash_yada.placement === 'top'
-                                ) {
-                                    dash_yada.placement = 'bottom';
-                                }
+                        try {
+                            if (dash_yada.y !== dash_yada.last) {
                                 setTimeout(() => {
-                                    simulateMouseClick(
-                                        document.querySelector(
-                                            '.yada_canvas_button_open'
-                                        )
-                                    );
-                                }, 100);
-                                dash_yada.last = dash_yada.y;
-                            }, 1500);
+                                    if (
+                                        ((document
+                                            .querySelector('.yada-info')
+                                            .getBoundingClientRect().top >
+                                            dash_yada.yada.getBoundingClientRect()
+                                                .top &&
+                                            document
+                                                .querySelector('.yada-info')
+                                                .getBoundingClientRect().top <
+                                                dash_yada.yada.getBoundingClientRect()
+                                                    .top +
+                                                    dash_yada.yada.getBoundingClientRect()
+                                                        .height /
+                                                        2) ||
+                                            document
+                                                .querySelector('.yada-info')
+                                                .getBoundingClientRect().top <
+                                                dash_yada.yada.getBoundingClientRect()
+                                                    .top) &&
+                                        dash_yada.placement === 'bottom'
+                                    ) {
+                                        dash_yada.placement = 'top';
+                                    } else if (
+                                        document
+                                            .querySelector('.yada-info')
+                                            .getBoundingClientRect().height >
+                                            dash_yada.yada.getBoundingClientRect()
+                                                .top &&
+                                        dash_yada.placement === 'top'
+                                    ) {
+                                        dash_yada.placement = 'bottom';
+                                    }
+                                    setTimeout(() => {
+                                        simulateMouseClick(
+                                            document.querySelector(
+                                                '.yada_canvas_button_open'
+                                            )
+                                        );
+                                    }, 100);
+                                    dash_yada.last = dash_yada.y;
+                                }, 1500);
+                            }
+                        } catch (err) {
+                            console.log(err);
                         }
-                    } catch (err) {
-                        console.log(err);
-                    }
 
-                    dash_yada.paused = true;
-                    dash_yada.previous = false;
-                    if (document.querySelector('.yada-info')) {
-                        if (dash_yada.y !== 0) {
-                            document.querySelector(
-                                '.yada-info .previous'
-                            ).style.display = 'initial';
+                        dash_yada.paused = true;
+                        dash_yada.previous = false;
+                        if (document.querySelector('.yada-info')) {
+                            if (dash_yada.y !== 0) {
+                                document.querySelector(
+                                    '.yada-info .previous'
+                                ).style.display = 'initial';
+                            }
+                            if (dash_yada.y < dash_yada.script_length - 1) {
+                                document.querySelector(
+                                    '.yada-info .next'
+                                ).style.display = 'initial';
+                            }
                         }
-                        if (dash_yada.y < dash_yada.script_length - 1) {
-                            document.querySelector(
-                                '.yada-info .next'
-                            ).style.display = 'initial';
+
+                        dash_yada.reopen = true;
+                        while (dash_yada.paused) {
+                            await delay(300);
                         }
-                    }
 
-                    dash_yada.reopen = true;
-                    while (dash_yada.paused) {
-                        await delay(300);
-                    }
-
-                    if (dash_yada.escaped) {
-                        break;
-                    }
-                    if (!document.querySelector('.yada-info')) {
-                        dash_yada.previous = true;
-                        dash_yada.y--;
+                        if (dash_yada.escaped) {
+                            break;
+                        }
+                        if (!document.querySelector('.yada-info')) {
+                            dash_yada.previous = true;
+                            dash_yada.y--;
+                        }
+                    } else {
+                        dash_yada.yada.removeAttribute('convo');
+                        dash_yada.paused = false;
+                        dash_yada.previous = false;
                     }
                     if (!dash_yada.previous) {
-                        if ('action' in data[dash_yada.y]) {
-                            dash_yada.target.focus();
-                            if (data[dash_yada.y].action === 'click') {
-                                simulateMouseClick(
-                                    dash_yada.target,
-                                    data[dash_yada.y].action_args
-                                );
-                            }
-                            if (data[dash_yada.y].action === 'dblclick') {
-                                simulateMouseClick(
-                                    dash_yada.target,
-                                    data[dash_yada.y].action_args
-                                );
-                                setTimeout(
-                                    () =>
-                                        simulateMouseClick(
-                                            dash_yada.target,
-                                            data[dash_yada.y].action_args
-                                        ),
-                                    100
-                                );
-                                dash_yada.target.dispatchEvent(
-                                    new Event('dblclick', {
-                                        bubbles: true,
-                                        view: window,
-                                    })
-                                );
-                            }
-                            if (data[dash_yada.y].action === 'sendKeys') {
-                                //                  This will trigger a new render with the component
-                                dash_yada.target.focus();
-                                dash_yada.target.dispatchEvent(
-                                    new KeyboardEvent('keydown', {
-                                        bubbles: true,
-                                        keepValue: true,
-                                        view: window,
-                                        ...data[dash_yada.y].action_args,
-                                    })
-                                );
-                                dash_yada.target.dispatchEvent(
-                                    new KeyboardEvent('keyup', {
-                                        bubbles: true,
-                                        keepValue: true,
-                                        view: window,
-                                        ...data[dash_yada.y].action_args,
-                                    })
-                                );
-                                await delay(100);
-                            }
-                            if (data[dash_yada.y].action === 'type') {
-                                // This will work by calling the native setter bypassing Reacts incorrect value change check
-                                dash_yada.typing = document.querySelector(
-                                    data[dash_yada.y].target
-                                );
-                                Object.getOwnPropertyDescriptor(
-                                    window.HTMLInputElement.prototype,
-                                    'value'
-                                ).set.call(
-                                    dash_yada.target,
-                                    data[dash_yada.y].action_args
-                                );
-
-                                //                  This will trigger a new render with the component
-                                dash_yada.typing.focus();
-                                dash_yada.typing.dispatchEvent(
-                                    new KeyboardEvent('change', {
-                                        bubbles: true,
-                                        keepValue: true,
-                                    })
-                                );
-                                dash_yada.typing.dispatchEvent(
-                                    new KeyboardEvent('input', {
-                                        bubbles: true,
-                                        keepValue: true,
-                                    })
-                                );
-                                await delay(100);
-                            }
-                        }
+                        dash_yada.target.focus();
+                        await runScriptAction(currentStep, dash_yada.target);
                     } else {
                         while (
                             !document.querySelector(
@@ -403,6 +426,8 @@ async function play_script(data) {
 
                     dash_yada.target.classList.remove('highlighting');
                 }
+            } else if (currentStep.action === 'set_props') {
+                await runScriptAction(currentStep, null);
             }
         }
     }
