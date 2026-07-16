@@ -125,4 +125,4 @@ def update_filter(filter_value, grid_options):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run(debug=True)
