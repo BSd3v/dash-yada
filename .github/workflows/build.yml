@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "dash_yada/**"
+      - "tests/**"
+      - "setup.py"
+      - "package.json"
+      - "package-lock.json"
+      - "MANIFEST.in"
+      - ".github/workflows/build.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "dash_yada/**"
+      - "tests/**"
+      - "setup.py"
+      - "package.json"
+      - "package-lock.json"
+      - "MANIFEST.in"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Python dependencies
+        run: pip install -e .
+
+      - name: Lint JavaScript bundle
+        run: npx eslint dash_yada/yada.js
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -p "test*.py"
+
+      - name: Build package
+        run: npm run package
