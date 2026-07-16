@@ -13,3 +13,4 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Switch PyPI publishing workflow to trusted publishing (OIDC).
+- Update npm lockfile dependencies to resolve Dependabot security alerts.
