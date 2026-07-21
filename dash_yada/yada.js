@@ -84,6 +84,307 @@ function hasVisibleConvo(step) {
     );
 }
 
+function deepClone(value) {
+    if (value === undefined) {
+        return undefined;
+    }
+    try {
+        return JSON.parse(JSON.stringify(value));
+    } catch {
+        return value;
+    }
+}
+
+function normalizePath(path) {
+    if (Array.isArray(path)) {
+        return path;
+    }
+    if (typeof path === 'number') {
+        return [path];
+    }
+    if (typeof path === 'string') {
+        const trimmed = path.trim();
+        if (trimmed === '') {
+            return [];
+        }
+
+        // Prefer Dash-style list paths, including stringified JSON lists.
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            try {
+                const parsed = JSON.parse(trimmed);
+                if (Array.isArray(parsed)) {
+                    return parsed;
+                }
+            } catch {
+                // Fall back to dot-path parsing below.
+            }
+        }
+
+        return trimmed
+            .split('.')
+            .filter((p) => p !== '')
+            .map((p) => {
+                const n = Number(p);
+                return Number.isInteger(n) && String(n) === p ? n : p;
+            });
+    }
+    return [];
+}
+
+function getByPath(root, path) {
+    return normalizePath(path).reduce((acc, key) => {
+        if (acc === null || acc === undefined) {
+            return undefined;
+        }
+        return acc[key];
+    }, root);
+}
+
+function getPathParent(root, path) {
+    const parts = normalizePath(path);
+    if (parts.length === 0) {
+        return [null, null];
+    }
+    const parent = parts.slice(0, -1).reduce((acc, key) => {
+        if (acc === null || acc === undefined) {
+            return undefined;
+        }
+        return acc[key];
+    }, root);
+    return [parent, parts[parts.length - 1]];
+}
+
+function getCurrentComponentProps(componentId) {
+    if (
+        window.dash_component_api &&
+        typeof window.dash_component_api.getComponentLayout === 'function'
+    ) {
+        const layout = window.dash_component_api.getComponentLayout(componentId);
+        if (layout && layout.props && typeof layout.props === 'object') {
+            return layout.props;
+        }
+    }
+    return {};
+}
+
+function buildPatchPayload(componentId, actionArgs) {
+    actionArgs = actionArgs || {};
+    const patchSpec = actionArgs.patch || actionArgs.patches;
+    if (!patchSpec) {
+        return {};
+    }
+
+    if (!window.dash_clientside || typeof window.dash_clientside.Patch !== 'function') {
+        return {};
+    }
+
+    const currentProps = getCurrentComponentProps(componentId);
+    const payload = {};
+
+    const applyToProp = (propName, spec) => {
+        if (!propName) {
+            return;
+        }
+        const patch = new window.dash_clientside.Patch();
+        let working = deepClone(currentProps[propName]);
+
+        const applyOps = (ops) => {
+            (ops || []).forEach((operation) => {
+                const op = operation.op || operation.type || 'set';
+                const path = normalizePath(operation.path || operation.key || []);
+                const opValue = deepClone(operation.value);
+
+                if (op === 'replace') {
+                    if (path.length === 0) {
+                        payload[propName] = opValue;
+                        working = deepClone(opValue);
+                        return;
+                    }
+                    patch.assign(path, opValue);
+                    if (working === null || typeof working !== 'object') {
+                        working = {};
+                    }
+                    const [parent, leaf] = getPathParent(working, path);
+                    if (parent && typeof parent === 'object') {
+                        parent[leaf] = deepClone(opValue);
+                    }
+                    return;
+                }
+
+                if (op === 'set') {
+                    if (path.length === 0) {
+                        payload[propName] = opValue;
+                        working = deepClone(opValue);
+                        return;
+                    }
+                    patch.assign(path, opValue);
+                    if (working === null || typeof working !== 'object') {
+                        working = {};
+                    }
+                    const [parent, leaf] = getPathParent(working, path);
+                    if (parent && typeof parent === 'object') {
+                        parent[leaf] = deepClone(opValue);
+                    }
+                    return;
+                }
+
+                if (op === 'merge') {
+                    const mergeValue =
+                        opValue && typeof opValue === 'object' ? opValue : {};
+                    const current =
+                        path.length > 0 ? getByPath(working, path) : working;
+                    const merged = {
+                        ...(current && typeof current === 'object' ? current : {}),
+                        ...mergeValue,
+                    };
+                    patch.assign(path, merged);
+                    if (path.length === 0) {
+                        working = deepClone(merged);
+                    } else if (working && typeof working === 'object') {
+                        const [parent, leaf] = getPathParent(working, path);
+                        if (parent && typeof parent === 'object') {
+                            parent[leaf] = deepClone(merged);
+                        }
+                    }
+                    return;
+                }
+
+                if (op === 'append') {
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current) ? [...current, opValue] : [opValue];
+                    patch.assign(path, next);
+                    if (path.length === 0) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'prepend') {
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current) ? [opValue, ...current] : [opValue];
+                    patch.assign(path, next);
+                    if (path.length === 0) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'extend') {
+                    const values = Array.isArray(opValue) ? opValue : [opValue];
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current) ? [...current, ...values] : [...values];
+                    patch.assign(path, next);
+                    if (path.length === 0) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'insert') {
+                    const index = Number.isInteger(operation.index)
+                        ? operation.index
+                        : 0;
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current) ? [...current] : [];
+                    next.splice(index, 0, opValue);
+                    patch.assign(path, next);
+                    if (path.length === 0) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'clear') {
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current)
+                        ? []
+                        : current && typeof current === 'object'
+                          ? {}
+                          : null;
+                    patch.assign(path, next);
+                    if (path.length === 0) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'reverse') {
+                    const current = path.length > 0 ? getByPath(working, path) : working;
+                    const next = Array.isArray(current) ? [...current].reverse() : current;
+                    patch.assign(path, next);
+                    if (path.length === 0 && Array.isArray(next)) {
+                        working = deepClone(next);
+                    }
+                    return;
+                }
+
+                if (op === 'remove' || op === 'delete') {
+                    if (path.length === 0) {
+                        return;
+                    }
+                    const parentPath = path.slice(0, -1);
+                    const leaf = path[path.length - 1];
+                    const parentCurrent =
+                        parentPath.length > 0 ? getByPath(working, parentPath) : working;
+                    if (Array.isArray(parentCurrent) && typeof leaf === 'number') {
+                        const next = [...parentCurrent];
+                        next.splice(leaf, 1);
+                        patch.assign(parentPath, next);
+                    } else if (parentCurrent && typeof parentCurrent === 'object') {
+                        const next = { ...parentCurrent };
+                        delete next[leaf];
+                        patch.assign(parentPath, next);
+                    }
+                }
+            });
+        };
+
+        if (Array.isArray(spec)) {
+            applyOps(spec);
+            if (!(propName in payload)) {
+                payload[propName] = patch.build();
+            }
+            return;
+        }
+        if (spec && typeof spec === 'object') {
+            if (Array.isArray(spec.ops || spec.operations)) {
+                applyOps(spec.ops || spec.operations);
+                if (!(propName in payload)) {
+                    payload[propName] = patch.build();
+                }
+                return;
+            }
+            if ('value' in spec) {
+                payload[propName] = deepClone(spec.value);
+                return;
+            }
+            payload[propName] = patch.build();
+        }
+    };
+
+    if (Array.isArray(patchSpec)) {
+        const propName = actionArgs.prop || actionArgs.property;
+        applyToProp(propName, patchSpec);
+        return payload;
+    }
+
+    if (patchSpec && typeof patchSpec === 'object') {
+        if (patchSpec.props && typeof patchSpec.props === 'object') {
+            Object.entries(patchSpec.props).forEach(([propName, spec]) => {
+                applyToProp(propName, spec);
+            });
+        }
+        if (patchSpec.prop || patchSpec.property) {
+            applyToProp(
+                patchSpec.prop || patchSpec.property,
+                patchSpec.ops || patchSpec.operations || patchSpec
+            );
+        }
+    }
+
+    return payload;
+}
+
 async function runScriptAction(step, target) {
     if (!step || !('action' in step)) {
         return;
@@ -94,30 +395,88 @@ async function runScriptAction(step, target) {
     }
     if (step.action === 'dblclick') {
         simulateMouseClick(target, step.action_args);
-        setTimeout(() => simulateMouseClick(target, step.action_args), 100);
-        target.dispatchEvent(
-            new Event('dblclick', {
-                bubbles: true,
-                view: window,
-            })
-        );
+        setTimeout(() => {
+            simulateMouseClick(target, step.action_args);
+            target.dispatchEvent(
+                new MouseEvent('dblclick', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true,
+                    detail: 2,
+                    button: 0,
+                    buttons: 1,
+                    view: window,
+                    ...step.action_args,
+                })
+            );
+        }, 100);
     }
     if (step.action === 'sendKeys') {
+        const actionArgs = step.action_args || {};
+        const keyValue =
+            typeof actionArgs.key === 'string'
+                ? actionArgs.key
+                : typeof actionArgs.text === 'string'
+                  ? actionArgs.text
+                  : typeof actionArgs.value === 'string'
+                    ? actionArgs.value
+                    : '';
+        const isEditableTarget =
+            target &&
+            (target instanceof HTMLInputElement ||
+                target instanceof HTMLTextAreaElement ||
+                target.isContentEditable);
+
         target.focus();
+        const keydownEvent = new KeyboardEvent('keydown', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            ...actionArgs,
+        });
+        const shouldApplyDefault = target.dispatchEvent(keydownEvent);
+
+        if (shouldApplyDefault && isEditableTarget && keyValue) {
+            if (
+                target instanceof HTMLInputElement ||
+                target instanceof HTMLTextAreaElement
+            ) {
+                const prototype =
+                    target instanceof HTMLInputElement
+                        ? window.HTMLInputElement.prototype
+                        : window.HTMLTextAreaElement.prototype;
+                Object.getOwnPropertyDescriptor(prototype, 'value').set.call(
+                    target,
+                    target.value + keyValue
+                );
+            } else if (target.isContentEditable) {
+                target.textContent = `${target.textContent || ''}${keyValue}`;
+            }
+
+            target.dispatchEvent(
+                new InputEvent('input', {
+                    bubbles: true,
+                    data: keyValue,
+                    inputType: 'insertText',
+                })
+            );
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
         target.dispatchEvent(
-            new KeyboardEvent('keydown', {
+            new KeyboardEvent('keypress', {
                 bubbles: true,
-                keepValue: true,
+                cancelable: true,
                 view: window,
-                ...step.action_args,
+                ...actionArgs,
             })
         );
         target.dispatchEvent(
             new KeyboardEvent('keyup', {
                 bubbles: true,
-                keepValue: true,
+                cancelable: true,
                 view: window,
-                ...step.action_args,
+                ...actionArgs,
             })
         );
         await delay(100);
@@ -154,17 +513,24 @@ async function runScriptAction(step, target) {
                 ? actionArgs.props
                 : Object.fromEntries(
                       Object.entries(actionArgs).filter(
-                          ([key]) => key !== 'id'
+                          ([key]) =>
+                              key !== 'id' &&
+                              key !== 'patch' &&
+                              key !== 'patches' &&
+                              key !== 'prop' &&
+                              key !== 'property'
                       )
                   );
+        const patchPayload = buildPatchPayload(setPropsId, actionArgs);
+        const finalPayload = { ...setPropsPayload, ...patchPayload };
 
         if (
             setPropsId &&
-            Object.keys(setPropsPayload).length > 0 &&
+            Object.keys(finalPayload).length > 0 &&
             window.dash_clientside &&
             window.dash_clientside.set_props
         ) {
-            window.dash_clientside.set_props(setPropsId, setPropsPayload);
+            window.dash_clientside.set_props(setPropsId, finalPayload);
             await delay(100);
         }
     }

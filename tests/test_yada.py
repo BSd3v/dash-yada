@@ -12,6 +12,28 @@ def _get_child_by_subcomponent(component, subcomponent):
     raise AssertionError(f"Could not find child with subcomponent={subcomponent}")
 
 
+def _find_nested_child_by_subcomponent(component, subcomponent):
+    child_id = getattr(component, "id", None)
+    if isinstance(child_id, dict) and child_id.get("subcomponent") == subcomponent:
+        return component
+
+    children = getattr(component, "children", None)
+    if children is None:
+        return None
+
+    if isinstance(children, (list, tuple)):
+        child_items = children
+    else:
+        child_items = [children]
+
+    for child in child_items:
+        found = _find_nested_child_by_subcomponent(child, subcomponent)
+        if found is not None:
+            return found
+
+    return None
+
+
 class TestYada(unittest.TestCase):
     def test_add_scripts_collects_entries_from_pages(self):
         with mock.patch(

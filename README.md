@@ -151,6 +151,84 @@ Here is a simple example of one script with one step. You can find more script e
 
 ![yada_quickstart_script](https://github.com/BSd3v/dash-yada/assets/72614349/6971c5c7-cddb-4418-8853-64951384b7af)
 
+#### Script Action Examples
+
+Use the `action` field on a step to automate interactions:
+
+- `click` to click an element
+- `dblclick` to double click an element
+- `type` to set an input value
+- `sendKeys` to dispatch keyboard events
+- `set_props` to update Dash component props directly
+
+```python
+scripts = {
+    "Action Examples": [
+        {
+            "target": "#save-btn",
+            "convo": "Click a button",
+            "action": "click",
+        },
+        {
+            "target": "#name-input",
+            "convo": "Type into an input",
+            "action": "type",
+            "action_args": "Alice",
+        },
+        {
+            "target": "#rows-grid .ag-row[row-index=\"2\"] .ag-cell[aria-colindex=\"3\"]",
+            "convo": "Double-click to open inline edit",
+            "action": "dblclick",
+        },
+        {
+            "target": "#rows-grid .ag-cell-editor input",
+            "convo": "Send Enter key to commit edit",
+            "action": "sendKeys",
+            "action_args": {
+                "key": "Enter",
+                "code": "Enter",
+                "keyCode": 13,
+            },
+        },
+        {
+            "target": "#search-input",
+            "convo": "Use keyboard modifiers (Ctrl+A)",
+            "action": "sendKeys",
+            "action_args": {
+                "ctrlKey": True,
+                "key": "a",
+                "code": "KeyA",
+                "keyCode": 65,
+            },
+        },
+        {
+            "target": "#status-message",
+            "convo": "Update component props directly",
+            "action": "set_props",
+            "action_args": {
+                "props": {
+                    "children": "Saved successfully",
+                    "style": {"color": "green", "fontWeight": 700},
+                }
+            },
+            "show_text": False,
+        },
+        {
+            "target": "#search-input",
+            "convo": "You can also pass direct props when target is an id selector",
+            "action": "set_props",
+            "action_args": {
+                "value": "Africa",
+                "placeholder": "Filter by region",
+            },
+            "show_text": False,
+        },
+    ]
+}
+```
+
+For `click` and `dblclick`, optional `action_args` can include event flags such as `shiftKey`, `ctrlKey`, `altKey`, and `metaKey`.
+
 
 
 ```python

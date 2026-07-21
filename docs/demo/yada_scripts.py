@@ -209,6 +209,22 @@ user_sort_script = [
     },
 ]
 
+SCRIPTS = {
+    "Intro tour for developers": dev_intro_script
+    + filter_script
+    + dev_sort_script
+    + dev_edit_script
+    + dev_conclusion_script,
+    "Intro tour for users": user_intro_script
+    + user_sort_script
+    + filter_script
+    + conclusion_script,
+    "Filter": filter_script + conclusion_script,
+    "Sort": dev_sort_script + conclusion_script,
+    "Edit": dev_edit_script + conclusion_script,
+}
+
+
 yada = YadaAIO(
     yada_id="demo",
     next_button_props={
@@ -219,20 +235,7 @@ yada = YadaAIO(
         "children": "prev",
     },
     steps_offcanvas_style=steps_offcanvas_style,
-    scripts={
-        "Intro tour for developers": dev_intro_script
-        + filter_script
-        + dev_sort_script
-        + dev_edit_script
-        + dev_conclusion_script,
-        "Intro tour for users": user_intro_script
-        + user_sort_script
-        + filter_script
-        + conclusion_script,
-        "Filter": filter_script + conclusion_script,
-        "Sort": dev_sort_script + conclusion_script,
-        "Edit": dev_edit_script + conclusion_script,
-    },
+    scripts=SCRIPTS,
 )
 
 # This will open the yada welcome message when the app starts
