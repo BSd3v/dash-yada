@@ -88,6 +88,68 @@ function shouldHighlightTarget(step) {
     return !step || step.highlight_target !== false;
 }
 
+function getEffectiveZIndex(element) {
+    let currentElement = element;
+    while (currentElement && currentElement !== document.documentElement) {
+        const computedZIndex = window.getComputedStyle(currentElement).zIndex;
+        if (computedZIndex !== 'auto') {
+            const parsedZIndex = Number.parseInt(computedZIndex, 10);
+            if (!Number.isNaN(parsedZIndex)) {
+                return parsedZIndex;
+            }
+        }
+        currentElement = currentElement.parentElement;
+    }
+    return 0;
+}
+
+function bringElementToFront(element, minZIndex) {
+    if (!element) {
+        return;
+    }
+
+    const computed = window.getComputedStyle(element).zIndex;
+    const currentComputed = Number.parseInt(computed, 10);
+    let zIndex = Number.isNaN(currentComputed) ? 1 : currentComputed;
+    if (Number.isInteger(minZIndex)) {
+        zIndex = Math.max(zIndex, minZIndex);
+    }
+
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+        element.style.zIndex = String(zIndex);
+        return;
+    }
+
+    const x = Math.min(
+        Math.max(rect.left + rect.width / 2, 0),
+        window.innerWidth - 1
+    );
+    const y = Math.min(
+        Math.max(rect.top + rect.height / 2, 0),
+        window.innerHeight - 1
+    );
+
+    const maxIterations = 300;
+    const zStep = 10;
+    for (let i = 0; i < maxIterations; i++) {
+        element.style.zIndex = String(zIndex);
+        const topElement = document.elementFromPoint(x, y);
+        if (!topElement || topElement === element || element.contains(topElement)) {
+            return;
+        }
+        zIndex += zStep;
+    }
+}
+
+function setYadaAboveTarget(yadaElement, targetElement) {
+    if (!yadaElement || !targetElement) {
+        return;
+    }
+    const targetZIndex = getEffectiveZIndex(targetElement);
+    bringElementToFront(yadaElement, targetZIndex + 1);
+}
+
 function deepClone(value) {
     if (value === undefined) {
         return undefined;
@@ -389,7 +451,101 @@ function buildPatchPayload(componentId, actionArgs) {
     return payload;
 }
 
-async function runScriptAction(step, target) {
+function dashStringifyId(value) {
+    if (
+        window.dash_clientside &&
+        typeof window.dash_clientside.stringify_id === 'function'
+    ) {
+        try {
+            return window.dash_clientside.stringify_id(value);
+        } catch {
+            return null;
+        }
+    }
+    return null;
+}
+
+function resolveTargetElement(targetSpec) {
+    if (!targetSpec) {
+        return null;
+    }
+    if (targetSpec instanceof Element) {
+        return targetSpec;
+    }
+
+    if (typeof targetSpec === 'string') {
+        const selector = targetSpec.trim();
+        if (selector === '') {
+            return null;
+        }
+        try {
+            const matched = document.querySelector(selector);
+            if (matched) {
+                return matched;
+            }
+        } catch {
+            // Continue to ID fallback for non-CSS Dash ids.
+        }
+
+        const unprefixedId = selector.startsWith('#')
+            ? selector.slice(1)
+            : selector;
+        const byId = document.getElementById(unprefixedId);
+        if (byId) {
+            return byId;
+        }
+
+        if (selector.startsWith('{') && selector.endsWith('}')) {
+            try {
+                const parsedId = JSON.parse(selector);
+                const dashId = dashStringifyId(parsedId);
+                if (dashId) {
+                    return document.getElementById(dashId);
+                }
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    if (typeof targetSpec === 'object') {
+        const dashId = dashStringifyId(targetSpec);
+        if (dashId) {
+            return document.getElementById(dashId);
+        }
+        return null;
+    }
+
+    return null;
+}
+
+function resolveSetPropsId(rawId) {
+    if (typeof rawId !== 'string') {
+        return rawId;
+    }
+
+    let trimmed = rawId.trim();
+    if (trimmed === '') {
+        return trimmed;
+    }
+
+    if (trimmed.startsWith('#')) {
+        trimmed = trimmed.slice(1).trim();
+    }
+
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        try {
+            return JSON.parse(trimmed);
+        } catch {
+            return trimmed;
+        }
+    }
+
+    return trimmed;
+}
+
+async function runScriptAction(step, target, originalTargetSpec) {
     if (!step || !('action' in step)) {
         return;
     }
@@ -486,7 +642,7 @@ async function runScriptAction(step, target) {
         await delay(100);
     }
     if (step.action === 'type') {
-        const typingElement = document.querySelector(step.target);
+        const typingElement = resolveTargetElement(step.target) || target;
         Object.getOwnPropertyDescriptor(
             window.HTMLInputElement.prototype,
             'value'
@@ -508,10 +664,12 @@ async function runScriptAction(step, target) {
     }
     if (step.action === 'set_props') {
         const actionArgs = step.action_args || {};
-        let setPropsId = actionArgs.id || step.set_props_id || step.target;
-        if (typeof setPropsId === 'string' && setPropsId.startsWith('#')) {
-            setPropsId = setPropsId.slice(1);
-        }
+        const rawSetPropsId =
+            actionArgs.id ||
+            step.set_props_id ||
+            originalTargetSpec ||
+            step.target;
+        const setPropsId = resolveSetPropsId(rawSetPropsId);
         const setPropsPayload =
             actionArgs.props && typeof actionArgs.props === 'object'
                 ? actionArgs.props
@@ -534,6 +692,8 @@ async function runScriptAction(step, target) {
             window.dash_clientside &&
             window.dash_clientside.set_props
         ) {
+
+
             window.dash_clientside.set_props(setPropsId, finalPayload);
             await delay(100);
         }
@@ -547,6 +707,7 @@ async function play_script(data) {
     dash_yada.yada = document.querySelector('.yada');
     dash_yada.yada_img = document.querySelector('.yada > img');
     dash_yada.initialYada = dash_yada.yada.getBoundingClientRect();
+    dash_yada.initialYadaZIndex = dash_yada.yada.style.zIndex ?? '';
     dash_yada.yada.style.top = dash_yada.initialYada.top + 'px';
     dash_yada.yada.style.left = dash_yada.initialYada.left + 'px';
     dash_yada.yada_img.classList.remove('sleeping');
@@ -591,11 +752,11 @@ async function play_script(data) {
                 );
             }
             if (currentStep.target) {
-                dash_yada.target = document.querySelector(currentStep.target);
+                dash_yada.target = resolveTargetElement(currentStep.target);
                 if (!dash_yada.target) {
                     await delay(500);
                 }
-                dash_yada.target = document.querySelector(currentStep.target);
+                dash_yada.target = resolveTargetElement(currentStep.target);
 
                 if (dash_yada.target) {
                     const shouldHighlight = shouldHighlightTarget(currentStep);
@@ -606,6 +767,7 @@ async function play_script(data) {
                         dash_yada.target.focus();
                     }
                     if (shouldHighlight) {
+                        setYadaAboveTarget(dash_yada.yada, dash_yada.target);
                         dash_yada.target.classList.add('highlighting');
                         dash_yada.tBounds =
                             dash_yada.target.getBoundingClientRect();
@@ -785,7 +947,11 @@ async function play_script(data) {
                     }
                     if (!dash_yada.previous) {
                         dash_yada.target.focus();
-                        await runScriptAction(currentStep, dash_yada.target);
+                        await runScriptAction(
+                            currentStep,
+                            dash_yada.target,
+                            currentStep.target
+                        );
                     } else {
                         while (
                             !document.querySelector(
@@ -802,7 +968,7 @@ async function play_script(data) {
                     }
                 }
             } else if (currentStep.action === 'set_props') {
-                await runScriptAction(currentStep, null);
+                await runScriptAction(currentStep, null, currentStep.target);
             }
         }
     }
@@ -837,6 +1003,7 @@ async function play_script(data) {
     dash_yada.yada.style.top = '';
     dash_yada.yada.style.left = '';
     dash_yada.yada.style.width = '';
+    dash_yada.yada.style.zIndex = dash_yada.initialYadaZIndex;
 
     // resetting placement
     dash_yada.placement = 'bottom';
