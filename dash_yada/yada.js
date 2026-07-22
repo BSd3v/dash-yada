@@ -84,6 +84,10 @@ function hasVisibleConvo(step) {
     );
 }
 
+function shouldHighlightTarget(step) {
+    return !step || step.highlight_target !== false;
+}
+
 function deepClone(value) {
     if (value === undefined) {
         return undefined;
@@ -594,85 +598,88 @@ async function play_script(data) {
                 dash_yada.target = document.querySelector(currentStep.target);
 
                 if (dash_yada.target) {
+                    const shouldHighlight = shouldHighlightTarget(currentStep);
                     try {
                         dash_yada.target.select();
                         dash_yada.target.focus();
                     } catch {
                         dash_yada.target.focus();
                     }
-                    dash_yada.target.classList.add('highlighting');
-                    dash_yada.tBounds =
-                        dash_yada.target.getBoundingClientRect();
-                    if (!isInViewport(dash_yada.target)) {
-                        //                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
-                        await delay(100);
+                    if (shouldHighlight) {
+                        dash_yada.target.classList.add('highlighting');
                         dash_yada.tBounds =
                             dash_yada.target.getBoundingClientRect();
-                        setTimeout(() => {
-                            window.scrollTo(
-                                dash_yada.tBounds.left - 20,
-                                dash_yada.tBounds.top - 20
-                            );
-                        }, 1000);
-                    }
+                        if (!isInViewport(dash_yada.target)) {
+                            //                window.scrollTo(dash_yada.tBounds.left, dash_yada.tBounds.top);
+                            await delay(100);
+                            dash_yada.tBounds =
+                                dash_yada.target.getBoundingClientRect();
+                            setTimeout(() => {
+                                window.scrollTo(
+                                    dash_yada.tBounds.left - 20,
+                                    dash_yada.tBounds.top - 20
+                                );
+                            }, 1000);
+                        }
 
-                    var newLocation = {
-                        top:
-                            dash_yada.tBounds.top +
-                            dash_yada.tBounds.height / 4 +
-                            window.scrollY,
-                        left:
-                            dash_yada.tBounds.left +
-                            dash_yada.tBounds.width / 2.5 +
-                            window.scrollX,
-                        bottom:
-                            dash_yada.tBounds.top +
-                            dash_yada.tBounds.height / 4 +
-                            window.scrollY +
-                            dash_yada.yada.getBoundingClientRect().height,
-                        right:
-                            dash_yada.tBounds.left +
-                            dash_yada.tBounds.width / 2.5 +
-                            window.scrollX +
-                            dash_yada.yada.getBoundingClientRect().width,
-                    };
-
-                    if (!isInViewportFunc(newLocation)) {
-                        var newTop = newLocation.top;
-                        var newLeft = newLocation.left;
-
-                        if (
-                            newLocation.top > dash_yada.tBounds.top &&
-                            newLocation.top + dash_yada.tBounds.height >
-                                window.innerHeight
-                        ) {
-                            newTop =
+                        var newLocation = {
+                            top:
                                 dash_yada.tBounds.top +
-                                window.scrollY -
-                                dash_yada.yada.getBoundingClientRect().height +
-                                (dash_yada.tBounds.top +
-                                    window.scrollY -
-                                    newLocation.top);
-                        }
-                        if (
-                            newLocation.left > dash_yada.tBounds.left &&
-                            newLocation.left +
-                                dash_yada.yada.getBoundingClientRect().width >
-                                window.innerWidth
-                        ) {
-                            newLeft =
+                                dash_yada.tBounds.height / 4 +
+                                window.scrollY,
+                            left:
                                 dash_yada.tBounds.left +
-                                window.scrollX -
-                                dash_yada.yada.getBoundingClientRect().width +
-                                (dash_yada.tBounds.left +
+                                dash_yada.tBounds.width / 2.5 +
+                                window.scrollX,
+                            bottom:
+                                dash_yada.tBounds.top +
+                                dash_yada.tBounds.height / 4 +
+                                window.scrollY +
+                                dash_yada.yada.getBoundingClientRect().height,
+                            right:
+                                dash_yada.tBounds.left +
+                                dash_yada.tBounds.width / 2.5 +
+                                window.scrollX +
+                                dash_yada.yada.getBoundingClientRect().width,
+                        };
+
+                        if (!isInViewportFunc(newLocation)) {
+                            var newTop = newLocation.top;
+                            var newLeft = newLocation.left;
+
+                            if (
+                                newLocation.top > dash_yada.tBounds.top &&
+                                newLocation.top + dash_yada.tBounds.height >
+                                    window.innerHeight
+                            ) {
+                                newTop =
+                                    dash_yada.tBounds.top +
+                                    window.scrollY -
+                                    dash_yada.yada.getBoundingClientRect().height +
+                                    (dash_yada.tBounds.top +
+                                        window.scrollY -
+                                        newLocation.top);
+                            }
+                            if (
+                                newLocation.left > dash_yada.tBounds.left &&
+                                newLocation.left +
+                                    dash_yada.yada.getBoundingClientRect().width >
+                                    window.innerWidth
+                            ) {
+                                newLeft =
+                                    dash_yada.tBounds.left +
                                     window.scrollX -
-                                    newLocation.left);
+                                    dash_yada.yada.getBoundingClientRect().width +
+                                    (dash_yada.tBounds.left +
+                                        window.scrollX -
+                                        newLocation.left);
+                            }
+                            newLocation.top = newTop;
+                            newLocation.left = newLeft;
                         }
-                        newLocation.top = newTop;
-                        newLocation.left = newLeft;
+                        dash_yada.yada.style.top = newLocation.top + 'px';
+                        dash_yada.yada.style.left = newLocation.left + 'px';
                     }
-                    dash_yada.yada.style.top = newLocation.top + 'px';
-                    dash_yada.yada.style.left = newLocation.left + 'px';
 
                     if (hasVisibleConvo(currentStep)) {
                         dash_yada.yada.setAttribute(
@@ -790,7 +797,9 @@ async function play_script(data) {
                         }
                     }
 
-                    dash_yada.target.classList.remove('highlighting');
+                    if (shouldHighlight) {
+                        dash_yada.target.classList.remove('highlighting');
+                    }
                 }
             } else if (currentStep.action === 'set_props') {
                 await runScriptAction(currentStep, null);

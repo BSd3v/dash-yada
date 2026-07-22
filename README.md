@@ -132,6 +132,9 @@ yada = YadaAIO(yada_id="my_yada", yada_src=yada_img, hover_message_dict=hover_me
 
 ---
 
+Script playback and editing are available in `dash-yada-pro`.
+Use `YadaProAIO` and `ScriptEditorAIO` for guided tours and the built-in scripts editor.
+
 You can add one or more scripts for the user to select the tour.
 
 Yada navigates by CSS selector, so it can go to any element on a page.  Learn more about selectors at [Mozilla web-docs](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector)
@@ -140,8 +143,9 @@ For example you could use a component's `id` prop like this:  `"#component_id"`.
 
 - `scripts` (dict of list of dicts; optional):  Dictionary of keys to scripts:
     - each key will have an array of:
-    {target (string; required), convo (string; optional), show_text (bool; optional), action (string; optional), action_args (string|dict; optional)}
+    {target (string; required), convo (string; optional), show_text (bool; optional), highlight_target (bool; optional), action (string; optional), action_args (string|dict; optional)}
     - If `show_text=False` (or `convo=""`), the step runs as an automation and won't show step text.
+    - If `highlight_target=False`, the step runs without adding the highlight ring and Yada will not move to that target.
     - `set_props` action supports:
       - `action_args={"id": "<component-id>", "props": {"value": "new value"}}`
       - or direct props in `action_args` when `target` is an id selector (for example `"#my-input"`).
@@ -370,6 +374,7 @@ dash-yada.YadaAIO is an All-In-One component.  Learn more about AIO components i
         Dictionary of keys to scripts:
             - each key will have an array of a directory:
             {target (string; required), convo (string; optional), show_text (bool; optional),
+            highlight_target (bool; optional),
             action (string; optional), action_args (string|dict; optional)}
 
     - next_button_props (dict; optional):

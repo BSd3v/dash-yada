@@ -39,8 +39,10 @@ class YadaAIO(html.Div):
         Dictionary of keys to scripts:
             - each key will have an array of a directory:
             {target (string; required), convo (string; optional), show_text (bool; optional),
+            highlight_target (bool; optional),
             action (string; optional), action_args (string|dict; optional)}
             - when show_text is False (or convo is blank), action steps run without showing text
+            - when highlight_target is False, yada will not highlight or move to the target
             - set_props action_args supports either:
                 {"id": "<component-id>", "props": {"<prop>": <value>}}
               or a direct prop mapping when target is an id selector (for example "#my-input")
