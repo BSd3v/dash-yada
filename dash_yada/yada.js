@@ -550,10 +550,10 @@ async function runScriptAction(step, target, originalTargetSpec) {
         return;
     }
 
-    if (step.action === 'click') {
+    if (step.action.toLowerCase() === 'click') {
         simulateMouseClick(target, step.action_args);
     }
-    if (step.action === 'dblclick') {
+    if (step.action.toLowerCase() === 'dblclick') {
         simulateMouseClick(target, step.action_args);
         setTimeout(() => {
             simulateMouseClick(target, step.action_args);
@@ -571,57 +571,26 @@ async function runScriptAction(step, target, originalTargetSpec) {
             );
         }, 100);
     }
-    if (step.action === 'sendKeys') {
-        const actionArgs = step.action_args || {};
-        const keyValue =
-            typeof actionArgs.key === 'string'
-                ? actionArgs.key
-                : typeof actionArgs.text === 'string'
-                  ? actionArgs.text
-                  : typeof actionArgs.value === 'string'
-                    ? actionArgs.value
-                    : '';
-        const isEditableTarget =
-            target &&
-            (target instanceof HTMLInputElement ||
-                target instanceof HTMLTextAreaElement ||
-                target.isContentEditable);
+    if (step.action.toLowerCase() === 'sendkeys') {
+        let actionArgs = step.action_args || {};
+        if (!actionArgs || typeof actionArgs !== 'object') {
+            try {
+                actionArgs = JSON.parse(step.action_args);
+            } catch (err) {
+                console.log('Error parsing action_args for sendKeys:', err);
+                actionArgs = {};
+            }
+        }
 
         target.focus();
-        const keydownEvent = new KeyboardEvent('keydown', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-            ...actionArgs,
-        });
-        const shouldApplyDefault = target.dispatchEvent(keydownEvent);
-
-        if (shouldApplyDefault && isEditableTarget && keyValue) {
-            if (
-                target instanceof HTMLInputElement ||
-                target instanceof HTMLTextAreaElement
-            ) {
-                const prototype =
-                    target instanceof HTMLInputElement
-                        ? window.HTMLInputElement.prototype
-                        : window.HTMLTextAreaElement.prototype;
-                Object.getOwnPropertyDescriptor(prototype, 'value').set.call(
-                    target,
-                    target.value + keyValue
-                );
-            } else if (target.isContentEditable) {
-                target.textContent = `${target.textContent || ''}${keyValue}`;
-            }
-
-            target.dispatchEvent(
-                new InputEvent('input', {
-                    bubbles: true,
-                    data: keyValue,
-                    inputType: 'insertText',
-                })
-            );
-            target.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+        target.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                bubbles: true,
+                cancelable: true,
+                view: window,
+                ...actionArgs,
+            })
+        );
 
         target.dispatchEvent(
             new KeyboardEvent('keypress', {
@@ -641,12 +610,12 @@ async function runScriptAction(step, target, originalTargetSpec) {
         );
         await delay(100);
     }
-    if (step.action === 'type') {
+    if (step.action.toLowerCase() === 'type') {
         const typingElement = resolveTargetElement(step.target) || target;
         Object.getOwnPropertyDescriptor(
             window.HTMLInputElement.prototype,
             'value'
-        ).set.call(target, step.action_args);
+        ).set.call(target, step.action_args || '');
         typingElement.focus();
         typingElement.dispatchEvent(
             new KeyboardEvent('change', {
@@ -662,7 +631,7 @@ async function runScriptAction(step, target, originalTargetSpec) {
         );
         await delay(100);
     }
-    if (step.action === 'set_props') {
+    if (step.action.toLowerCase() === 'set_props') {
         const actionArgs = step.action_args || {};
         const rawSetPropsId =
             actionArgs.id ||
@@ -693,9 +662,12 @@ async function runScriptAction(step, target, originalTargetSpec) {
             window.dash_clientside.set_props
         ) {
 
-
-            window.dash_clientside.set_props(setPropsId, finalPayload);
-            await delay(100);
+            try {
+                window.dash_clientside.set_props(setPropsId, finalPayload);
+                await delay(100);
+            } catch (error) {
+                console.error('Error setting props:', error);
+            }
         }
     }
 }
