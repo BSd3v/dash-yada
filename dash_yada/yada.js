@@ -536,13 +536,27 @@ function resolveSetPropsId(rawId) {
 
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
         try {
-            return JSON.parse(trimmed);
-        } catch {
+            return JSON.parse(trimmed.replace(/'/g, '"'));
+        } catch (err) {
+            console.log(err, trimmed);
             return trimmed;
         }
     }
 
     return trimmed;
+}
+
+function resolveExactSetPropsId(rawId, targetElement) {
+    const normalizedId = resolveSetPropsId(rawId);
+    if (
+        targetElement &&
+        typeof targetElement.id === 'string' &&
+        targetElement.id.trim() !== ''
+    ) {
+        // Use the concrete DOM id to avoid broad selector-style targets.
+        return resolveSetPropsId(targetElement.id);
+    }
+    return normalizedId;
 }
 
 async function runScriptAction(step, target, originalTargetSpec) {
@@ -633,12 +647,12 @@ async function runScriptAction(step, target, originalTargetSpec) {
     }
     if (step.action.toLowerCase() === 'set_props') {
         const actionArgs = step.action_args || {};
+        const explicitSetPropsId = actionArgs.id || step.set_props_id;
         const rawSetPropsId =
-            actionArgs.id ||
-            step.set_props_id ||
-            originalTargetSpec ||
-            step.target;
-        const setPropsId = resolveSetPropsId(rawSetPropsId);
+            explicitSetPropsId || originalTargetSpec || step.target;
+        const setPropsId = explicitSetPropsId
+            ? resolveSetPropsId(explicitSetPropsId)
+            : resolveExactSetPropsId(rawSetPropsId, target);
         const setPropsPayload =
             actionArgs.props && typeof actionArgs.props === 'object'
                 ? actionArgs.props
@@ -714,6 +728,10 @@ async function play_script(data) {
         }
         if (data[dash_yada.y]) {
             const currentStep = data[dash_yada.y];
+            const isSetPropsAction =
+                currentStep &&
+                typeof currentStep.action === 'string' &&
+                currentStep.action.toLowerCase() === 'set_props';
             if (hasVisibleConvo(currentStep)) {
                 setTimeout(
                     () =>
@@ -729,6 +747,12 @@ async function play_script(data) {
                     await delay(500);
                 }
                 dash_yada.target = resolveTargetElement(currentStep.target);
+
+                if (!dash_yada.target && isSetPropsAction) {
+                    // set_props can target Dash IDs that are not direct DOM elements.
+                    await runScriptAction(currentStep, null, currentStep.target);
+                    continue;
+                }
 
                 if (dash_yada.target) {
                     const shouldHighlight = shouldHighlightTarget(currentStep);
@@ -939,7 +963,7 @@ async function play_script(data) {
                         dash_yada.target.classList.remove('highlighting');
                     }
                 }
-            } else if (currentStep.action === 'set_props') {
+            } else if (isSetPropsAction) {
                 await runScriptAction(currentStep, null, currentStep.target);
             }
         }
