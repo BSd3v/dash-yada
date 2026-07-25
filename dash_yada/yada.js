@@ -451,18 +451,58 @@ function buildPatchPayload(componentId, actionArgs) {
     return payload;
 }
 
+function stableDashIdStringify(value) {
+    if (Array.isArray(value)) {
+        return value.map((item) => stableDashIdStringify(item));
+    }
+
+    if (value && typeof value === 'object') {
+        const normalized = {};
+        Object.keys(value)
+            .sort()
+            .forEach((key) => {
+                normalized[key] = stableDashIdStringify(value[key]);
+            });
+        return normalized;
+    }
+
+    return value;
+}
+
 function dashStringifyId(value) {
-    if (
-        window.dash_clientside &&
-        typeof window.dash_clientside.stringify_id === 'function'
-    ) {
+    if (window.dash_component_api && typeof window.dash_component_api.stringifyId === 'function') {
         try {
-            return window.dash_clientside.stringify_id(value);
+            return window.dash_component_api.stringifyId(value);
         } catch {
-            return null;
+            // Fall through to other implementations.
         }
     }
-    return null;
+
+    if (window.dash_clientside) {
+        if (typeof window.dash_clientside.stringify_id === 'function') {
+            try {
+                return window.dash_clientside.stringify_id(value);
+            } catch {
+                // Fall through to other implementations.
+            }
+        }
+
+        // Compatibility for environments exposing a typoed helper name.
+        if (typeof window.dash_clientside.stringifiyId === 'function') {
+            try {
+                return window.dash_clientside.stringifiyId(value);
+            } catch {
+                // Fall through to deterministic fallback.
+            }
+        }
+    }
+
+    try {
+        // Match Dash dictionary-id ordering when no runtime helper is available.
+        return JSON.stringify(stableDashIdStringify(value));
+    } catch {
+        return null;
+    }
 }
 
 function resolveTargetElement(targetSpec) {
