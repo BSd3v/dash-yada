@@ -724,6 +724,23 @@ async function runScriptAction(step, target, originalTargetSpec) {
             }
         }
     }
+    if (step.action.toLowerCase() === 'select_option') {
+        console.log('SELECT_OPTION: starting');
+        var button = target;
+        console.log('SELECT_OPTION: target is', button);
+        button.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+        await delay(300);
+        var option = document.querySelector(step.action_args);
+        console.log('SELECT_OPTION: option is', option);
+        if (option) {
+            option.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+            option.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+            option.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+            console.log('SELECT_OPTION: clicked option');
+        }
+    }
 }
 
 async function placeYadaNearTarget(targetElement) {
@@ -875,13 +892,13 @@ async function play_script(data) {
 
                 if (dash_yada.target) {
                     const shouldHighlight = shouldHighlightTarget(currentStep);
-                    try {
-                        dash_yada.target.select();
-                        dash_yada.target.focus();
-                    } catch {
-                        dash_yada.target.focus();
-                    }
                     if (shouldHighlight) {
+                        try {
+                            dash_yada.target.select();
+                            dash_yada.target.focus();
+                        } catch {
+                            dash_yada.target.focus();
+                        }
                         setYadaAboveTarget(dash_yada.yada, dash_yada.target);
                         dash_yada.target.classList.add('highlighting');
                         await placeYadaNearTarget(dash_yada.target);
