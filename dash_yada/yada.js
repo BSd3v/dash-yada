@@ -725,20 +725,24 @@ async function runScriptAction(step, target, originalTargetSpec) {
         }
     }
     if (step.action.toLowerCase() === 'select_option') {
-        console.log('SELECT_OPTION: starting');
         var button = target;
-        console.log('SELECT_OPTION: target is', button);
         button.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
         button.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
         button.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
         await delay(300);
-        var option = document.querySelector(step.action_args);
-        console.log('SELECT_OPTION: option is', option);
+        var option;
+        if (step.action_args && !step.action_args.startsWith('.') && !step.action_args.startsWith('#') && !step.action_args.startsWith('[')) {
+            option = document.querySelector('.dash-options-list-option input[value="' + step.action_args + '"]');
+            if (option) {
+                option = option.closest('.dash-options-list-option');
+            }
+        } else {
+            option = document.querySelector(step.action_args);
+        }
         if (option) {
             option.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
             option.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
             option.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
-            console.log('SELECT_OPTION: clicked option');
         }
     }
 }
