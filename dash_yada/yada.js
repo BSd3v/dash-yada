@@ -745,6 +745,24 @@ async function runScriptAction(step, target, originalTargetSpec) {
             option.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
         }
     }
+    if (step.action.toLowerCase() === 'type_in_dropdown') {
+        var button = target;
+        button.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+        await delay(300);
+        var search = document.querySelector('.dash-dropdown-search');
+        if (search) {
+            search.focus();
+            var text = step.action_args || '';
+            for (var i = 0; i < text.length; i++) {
+                search.dispatchEvent(new KeyboardEvent('keydown', {bubbles: true, cancelable: true, key: text[i], code: 'Key' + text[i].toUpperCase()}));
+                Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(search, text.substring(0, i + 1));
+                search.dispatchEvent(new Event('input', {bubbles: true}));
+                search.dispatchEvent(new KeyboardEvent('keyup', {bubbles: true, cancelable: true, key: text[i], code: 'Key' + text[i].toUpperCase()}));
+            }
+        }
+    }
 }
 
 async function placeYadaNearTarget(targetElement) {
