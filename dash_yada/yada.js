@@ -1035,7 +1035,7 @@ async function play_script(data) {
                             dash_yada.target.focus();
                         }
                         await runScriptAction(currentStep, dash_yada.target, currentStep.target);
-                        await delay(200);
+                        await delay(500);
                         dash_yada.runningAction = false;
                     } else {
                         while (
