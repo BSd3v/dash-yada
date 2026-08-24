@@ -11,6 +11,7 @@ function escaping() {
 }
 
 function nextItem() {
+    if (dash_yada.runningAction) return;
     dash_yada.paused = false;
 }
 
@@ -1029,12 +1030,13 @@ async function play_script(data) {
                         dash_yada.previous = false;
                     }
                     if (!dash_yada.previous) {
-                        dash_yada.target.focus();
-                        await runScriptAction(
-                            currentStep,
-                            dash_yada.target,
-                            currentStep.target
-                        );
+                        dash_yada.runningAction = true;
+                        if (shouldHighlightTarget(currentStep)) {
+                            dash_yada.target.focus();
+                        }
+                        await runScriptAction(currentStep, dash_yada.target, currentStep.target);
+                        await delay(200);
+                        dash_yada.runningAction = false;
                     } else {
                         while (
                             !document.querySelector(
