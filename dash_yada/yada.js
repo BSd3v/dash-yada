@@ -11,6 +11,7 @@ function escaping() {
 }
 
 function nextItem() {
+    if (dash_yada.runningAction) return;
     dash_yada.paused = false;
 }
 
@@ -724,6 +725,45 @@ async function runScriptAction(step, target, originalTargetSpec) {
             }
         }
     }
+    if (step.action.toLowerCase() === 'select_option') {
+        var button = target;
+        button.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+        await delay(300);
+        var option;
+        if (step.action_args && !step.action_args.startsWith('.') && !step.action_args.startsWith('#') && !step.action_args.startsWith('[')) {
+            option = document.querySelector('.dash-options-list-option input[value="' + step.action_args + '"]');
+            if (option) {
+                option = option.closest('.dash-options-list-option');
+            }
+        } else {
+            option = document.querySelector(step.action_args);
+        }
+        if (option) {
+            option.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+            option.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+            option.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+        }
+    }
+    if (step.action.toLowerCase() === 'type_in_dropdown') {
+        var button = target;
+        button.dispatchEvent(new PointerEvent('pointerdown', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new PointerEvent('pointerup', {bubbles: true, cancelable: true, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse'}));
+        button.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, button: 0, buttons: 1}));
+        await delay(300);
+        var search = document.querySelector('.dash-dropdown-search');
+        if (search) {
+            search.focus();
+            var text = step.action_args || '';
+            for (var i = 0; i < text.length; i++) {
+                search.dispatchEvent(new KeyboardEvent('keydown', {bubbles: true, cancelable: true, key: text[i], code: 'Key' + text[i].toUpperCase()}));
+                Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(search, text.substring(0, i + 1));
+                search.dispatchEvent(new Event('input', {bubbles: true}));
+                search.dispatchEvent(new KeyboardEvent('keyup', {bubbles: true, cancelable: true, key: text[i], code: 'Key' + text[i].toUpperCase()}));
+            }
+        }
+    }
 }
 
 async function placeYadaNearTarget(targetElement) {
@@ -875,13 +915,13 @@ async function play_script(data) {
 
                 if (dash_yada.target) {
                     const shouldHighlight = shouldHighlightTarget(currentStep);
-                    try {
-                        dash_yada.target.select();
-                        dash_yada.target.focus();
-                    } catch {
-                        dash_yada.target.focus();
-                    }
                     if (shouldHighlight) {
+                        try {
+                            dash_yada.target.select();
+                            dash_yada.target.focus();
+                        } catch {
+                            dash_yada.target.focus();
+                        }
                         setYadaAboveTarget(dash_yada.yada, dash_yada.target);
                         dash_yada.target.classList.add('highlighting');
                         await placeYadaNearTarget(dash_yada.target);
@@ -990,12 +1030,13 @@ async function play_script(data) {
                         dash_yada.previous = false;
                     }
                     if (!dash_yada.previous) {
-                        dash_yada.target.focus();
-                        await runScriptAction(
-                            currentStep,
-                            dash_yada.target,
-                            currentStep.target
-                        );
+                        dash_yada.runningAction = true;
+                        if (shouldHighlightTarget(currentStep)) {
+                            dash_yada.target.focus();
+                        }
+                        await runScriptAction(currentStep, dash_yada.target, currentStep.target);
+                        await delay(500);
+                        dash_yada.runningAction = false;
                     } else {
                         while (
                             !document.querySelector(
